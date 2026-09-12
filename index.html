@@ -2,10 +2,9 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>2027 WINTER Bday desktop</title>
 
-  <!-- 網址分享縮圖 -->
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A special retro desktop space created for WINTER">
   <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
@@ -19,6 +18,10 @@
     /* 黃色星星滑鼠游標 */
     :root {
       --star-cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9' fill='%23FFD700' stroke='%23B8860B' stroke-width='1.5'/></svg>") 4 4, auto;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --taskbar-h: calc(36px + var(--safe-bottom));
     }
 
     body {
@@ -34,10 +37,12 @@
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部操作工具列：設定較低層級，且不阻擋空白區點擊 */
+    /* 頂部操作工具列 (避開手機瀏海與頂部安全區) */
     .top-actions {
       position: absolute;
-      top: 6px; left: 6px; right: 6px;
+      top: max(6px, env(safe-area-inset-top, 6px));
+      left: max(6px, var(--safe-left));
+      right: max(6px, var(--safe-right));
       display: flex; gap: 4px;
       z-index: 50; flex-wrap: nowrap;
       overflow-x: auto; padding-bottom: 4px;
@@ -48,10 +53,13 @@
       pointer-events: auto;
     }
 
-    /* 桌面容器 */
+    /* 桌面容器 (底端不擋到工作列與安全區) */
     .desktop {
       position: absolute;
-      top: 45px; left: 0; right: 0; bottom: 35px;
+      top: 48px;
+      left: max(0px, var(--safe-left));
+      right: max(0px, var(--safe-right));
+      bottom: var(--taskbar-h);
       overflow: hidden;
     }
 
@@ -89,7 +97,7 @@
       display: block;
     }
 
-    /* 雙模式封面框 (專輯與資料夾通用) */
+    /* 雙模式封面框 */
     .icon-art-box {
       position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
     }
@@ -108,7 +116,7 @@
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
 
-    /* 視窗樣式：確保右上角按鈕永遠可點擊 */
+    /* 視窗樣式 */
     .win-modal {
       position: fixed; display: none; z-index: 100;
       box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
@@ -122,12 +130,15 @@
     }
     .win-modal .title-bar-controls {
       position: relative;
-      z-index: 100;
+      z-index: 1000;
       display: flex; gap: 2px;
+      pointer-events: auto !important;
     }
     .win-modal .title-bar-controls button {
       cursor: var(--star-cursor) !important;
       pointer-events: auto !important;
+      position: relative;
+      z-index: 1001;
     }
 
     .win-modal .window-body {
@@ -136,16 +147,20 @@
       overflow-y: auto; padding: 6px;
     }
 
-    /* 最大化樣式：高於頂部操作列，置頂無阻礙 */
+    /* 最大化樣式 */
     .win-modal.maximized {
       top: 0 !important; left: 0 !important; transform: none !important;
-      width: 100vw !important; max-width: 100vw !important; height: calc(100vh - 35px) !important;
+      width: 100vw !important; max-width: 100vw !important;
+      height: calc(100vh - var(--taskbar-h)) !important;
       z-index: 1500 !important;
       resize: none !important;
     }
+    .win-modal.maximized .title-bar {
+      cursor: default;
+    }
     .win-modal.maximized .window-body {
-      height: calc(100vh - 68px) !important;
-      max-height: calc(100vh - 68px) !important;
+      height: calc(100% - 32px) !important;
+      max-height: calc(100% - 32px) !important;
     }
 
     /* 資料夾導航列樣式 */
@@ -173,11 +188,18 @@
       max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff;
     }
 
-    /* 底部工作列：層級提升為 2500，始終置頂 */
+    /* 底部工作列：完美避開手機底部圓弧與手勢條 */
     .taskbar {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 35px;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--taskbar-h);
+      min-height: 36px;
       background: #c0c0c0; border-top: 2px solid #fff;
-      display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; z-index: 2500;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding-top: 4px;
+      padding-left: max(8px, var(--safe-left));
+      padding-right: max(14px, var(--safe-right));
+      padding-bottom: max(4px, var(--safe-bottom));
+      z-index: 2500;
     }
     .taskbar-left {
       display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1;
@@ -186,16 +208,16 @@
       font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis;
     }
     .taskbar-right {
-      font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0;
+      font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0; height: 26px;
     }
     .taskbar-right a {
       color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555;
     }
 
-    /* WINTER01 XP 開始選單 */
+    /* 開始選單 */
     .start-menu {
       position: fixed;
-      bottom: 35px; left: 4px;
+      bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
       width: 230px; max-width: 85vw;
       background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 3px 3px 12px rgba(0,0,0,0.5);
@@ -227,7 +249,6 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列 -->
   <div class="top-actions">
     <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
     <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
@@ -253,10 +274,8 @@
     <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
   </div>
 
-  <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
 
-  <!-- WINTER01 XP 開始選單 -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>⭐ WINTER01 XP</span>
@@ -269,12 +288,11 @@
     </ul>
   </div>
 
-  <!-- 移動到... 目標資料夾選擇彈窗 -->
   <div id="move-modal-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text" id="moveModalTitle">📦 移動項目至...</div>
       <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closeWindow('move-modal-win', event)"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('move-modal-win', event)"></button>
       </div>
     </div>
     <div class="window-body">
@@ -283,31 +301,29 @@
     </div>
   </div>
 
-  <!-- 開始選單自訂彈窗 -->
   <div id="start-config-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text">⭐ 自訂開始選單項目</div>
       <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closeWindow('start-config-win', event)"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('start-config-win', event)"></button>
       </div>
     </div>
     <div class="window-body">
       <p style="font-size:12px; margin-top:0;">請勾選要在 WINTER01 XP 選單中顯示的項目：</p>
       <div id="startConfigCheckboxes" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
       <div style="margin-top:8px; text-align:right;">
-        <button onclick="saveStartMenuConfig(event)">確定儲存</button>
+        <button type="button" onclick="saveStartMenuConfig(event)">確定儲存</button>
       </div>
     </div>
   </div>
 
-  <!-- 資料夾視窗 -->
   <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('folder-win', event)">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
-        <button type="button" aria-label="Minimize" onclick="minimizeWindow('folder-win', '資料夾', event)" title="最小化"></button>
-        <button type="button" aria-label="Maximize" onclick="toggleMaximize('folder-win', event)" title="最大化/還原"></button>
-        <button type="button" aria-label="Close" onclick="closeWindow('folder-win', event)" title="關閉"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('folder-win', '資料夾', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('folder-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('folder-win', event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body">
@@ -325,14 +341,13 @@
     </div>
   </div>
 
-  <!-- 專輯曲目播放器視窗 -->
   <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('album-win', event)">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
       <div class="title-bar-controls">
-        <button type="button" aria-label="Minimize" onclick="minimizeWindow('album-win', '專輯播放器', event)" title="最小化"></button>
-        <button type="button" aria-label="Maximize" onclick="toggleMaximize('album-win', event)" title="最大化/還原"></button>
-        <button type="button" aria-label="Close" onclick="closeAlbumWindow(event)" title="關閉"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('album-win', '專輯播放器', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('album-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeAlbumWindow(event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body">
@@ -347,14 +362,13 @@
     </div>
   </div>
 
-  <!-- 圖片檢視器 -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('photo-viewer-win', event)">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
       <div class="title-bar-controls">
-        <button type="button" aria-label="Minimize" onclick="minimizeWindow('photo-viewer-win', '圖片檢視器', event)" title="最小化"></button>
-        <button type="button" aria-label="Maximize" onclick="toggleMaximize('photo-viewer-win', event)" title="最大化/還原"></button>
-        <button type="button" aria-label="Close" onclick="closeWindow('photo-viewer-win', event)" title="關閉"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('photo-viewer-win', '圖片檢視器', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('photo-viewer-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('photo-viewer-win', event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body" style="background: #222; padding: 4px;">
@@ -364,14 +378,13 @@
     </div>
   </div>
 
-  <!-- 影音播放器 -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('media-player-win', event)">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
       <div class="title-bar-controls">
-        <button type="button" aria-label="Minimize" onclick="minimizeWindow('media-player-win', '播放器', event)" title="最小化"></button>
-        <button type="button" aria-label="Maximize" onclick="toggleMaximize('media-player-win', event)" title="最大化/還原"></button>
-        <button type="button" aria-label="Close" onclick="closeUniversalPlayer(event)" title="關閉"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('media-player-win', '播放器', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('media-player-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeUniversalPlayer(event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body" style="padding: 0; background: #000;">
@@ -382,29 +395,27 @@
     </div>
   </div>
 
-  <!-- 外部連結視窗 -->
   <div id="link-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
       <div class="title-bar-controls">
-        <button type="button" aria-label="Close" onclick="closeWindow('link-win', event)"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('link-win', event)"></button>
       </div>
     </div>
     <div class="window-body" style="text-align:center;">
       <p id="linkText" style="font-size:12px; margin: 10px 0;"></p>
       <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
-        <button style="width:100%; padding:6px; font-weight:bold;">開啟連結 (Visit Site)</button>
+        <button type="button" style="width:100%; padding:6px; font-weight:bold;">開啟連結 (Visit Site)</button>
       </a>
     </div>
   </div>
 
-  <!-- 底部工作列 -->
   <div class="taskbar">
     <div class="taskbar-left">
-      <button onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
+      <button type="button" onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         ⭐️ HOME
       </button>
-      <button onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
+      <button type="button" onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
       </button>
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
@@ -561,7 +572,7 @@
     };
     /* ================================================================= */
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v4";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v6";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1067,7 +1078,7 @@
         const li = document.createElement('li');
         li.innerHTML = `
           <span>${idx + 1}. ${track.title}</span>
-          ${isAdmin ? `<button onclick="event.stopPropagation(); removeAlbumTrack(${idx})">✕</button>` : ''}
+          ${isAdmin ? `<button type="button" onclick="event.stopPropagation(); removeAlbumTrack(${idx})">✕</button>` : ''}
         `;
         li.onclick = (e) => { e.stopPropagation(); playAlbumTrack(track); };
         listEl.appendChild(li);
@@ -1120,7 +1131,7 @@
       }
     }
 
-    /* ========== 視窗縮小（最小化至工作列）、最大化／還原、拖曳與關閉核心修復 ========== */
+    /* ========== 視窗縮放與關閉控制 ========== */
     let highestZ = 200;
     const minimizedWindows = {};
 
@@ -1149,7 +1160,6 @@
       if (!win) return;
       win.style.display = 'none';
       win.classList.remove('maximized');
-      
       delete windowRestoreBounds[id];
 
       if (id === 'folder-win') {
@@ -1193,7 +1203,6 @@
       if (!win) return;
 
       if (win.classList.contains('maximized')) {
-        // 還原為普通視窗
         win.classList.remove('maximized');
         const prev = windowRestoreBounds[id];
         if (prev) {
@@ -1211,7 +1220,6 @@
           win.style.height = 'auto';
         }
       } else {
-        // 記錄放大前狀態
         windowRestoreBounds[id] = {
           top: win.style.top || '50%',
           left: win.style.left || '50%',
@@ -1239,10 +1247,10 @@
       }
     }
 
-    // 拖曳視窗：點擊右上角按鈕時嚴格退出，絕不阻斷按鈕事件
     function dragElement(elmnt, event) {
+      if (elmnt.classList.contains('maximized')) return;
       if (event.target.closest('.title-bar-controls')) return;
-      if (elmnt.classList.contains('maximized') || window.innerWidth < 600) return;
+      if (window.innerWidth < 600) return;
 
       elmnt.style.zIndex = ++highestZ;
 
@@ -1265,7 +1273,6 @@
       };
     }
 
-    // 資料夾歷史紀錄
     function openFolderWithHistory(folderId, folderName) {
       if (currentOpenFolderId && currentOpenFolderId !== folderId) {
         folderHistory.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });

@@ -285,7 +285,6 @@
       </div>
     </div>
     <div class="window-body">
-      <!-- 導航與新增列 -->
       <div class="folder-nav-bar">
         <button id="btnNavBack" onclick="navGoBack(event)" title="返回上一個資料夾 (上一步)">⬅ 上一步</button>
         <button id="btnNavForward" onclick="navGoForward(event)" title="前往下一個資料夾 (下一步)">➡ 下一步</button>
@@ -395,7 +394,6 @@
     let clipboardItem = null;
     let isCutOperation = false;
 
-    // 導航歷史堆疊
     let folderHistory = [];
     let folderForwardStack = [];
 
@@ -404,10 +402,14 @@
     const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* ========== 核心永久儲存配置 ========== */
+    /* ========== 核心永久儲存配置（已同步最新內容） ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
-      "startMenuVisibleIds": ["f1", "album_winter_speed", "l1"],
+      "startMenuVisibleIds": [
+        "f1",
+        "album_winter_speed",
+        "l1"
+      ],
       "items": [
         {
           "id": "album_winter_speed",
@@ -415,58 +417,126 @@
           "type": "album",
           "name": "Winter Playlist",
           "iconType": "cover",
-          "icon": ICON_DISC_DRIVE,
-          "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0UjiQtW4V",
-          "pos": { x: 16, y: 16 },
+          "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
+          "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
+          "pos": {
+            "x": 107,
+            "y": 100
+          },
           "tracks": [
-            { "title": "Winter-Speed of summer", "src": "YTeFLKMnwjg", "type": "youtube" },
-            { "title": "What you want do for love", "src": "https://drive.google.com/file/d/1jeg0LS14Swh44kU4ymm7L5hU3kP_TJxj/preview", "type": "drive" }
+            {
+              "title": "Winter-Speed of summer",
+              "src": "YTeFLKMnwjg",
+              "type": "youtube"
+            },
+            {
+              "title": "What you want do for love",
+              "src": "https://drive.google.com/file/d/1jeg0LS14Swh44kU4ymm7L5hU3kP_TJxj/preview",
+              "type": "drive"
+            }
           ]
         },
         {
-          "id": "f1",
-          "parentId": null,
-          "type": "folder",
-          "name": "WINTER",
-          "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
-          "coverBadge": "",
-          "pos": { x: 16, y: 92 }
-        },
-        {
           "id": "img1",
-          "parentId": null,
+          "parentId": "folder_1789230890651",
           "type": "image",
           "name": "手幅Serenade ver",
           "icon": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
           "mediaUrl": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
-          "pos": { x: 16, y: 168 }
+          "pos": {
+            "x": 16,
+            "y": 168
+          }
         },
         {
           "id": "n1",
-          "parentId": null,
+          "parentId": "folder_1789230959703",
           "type": "note",
           "name": "生咖應援物",
           "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
           "content": "1. 應援小卡\n2. 明信片",
-          "pos": { x: 16, y: 244 }
+          "pos": {
+            "x": 16,
+            "y": 244
+          }
         },
         {
           "id": "l1",
           "parentId": null,
           "type": "link",
           "name": "生咖預約表單",
-          "icon": W_FORM_ICON,
+          "icon": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>",
           "url": "https://dynamic-otter-22aaaa.netlify.app/",
-          "pos": { x: 16, y: 320 }
+          "pos": {
+            "x": 16,
+            "y": 320
+          }
+        },
+        {
+          "id": "1789230813079",
+          "parentId": "folder_1789230844971",
+          "type": "note",
+          "name": "Lucky Draw",
+          "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
+          "content": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n客製化頭巾-6\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
+          "url": "",
+          "mediaUrl": "",
+          "pos": {
+            "x": 120,
+            "y": 120
+          }
+        },
+        {
+          "id": "folder_1789230844971",
+          "parentId": null,
+          "type": "folder",
+          "name": "Lucky Draw",
+          "iconType": "pure",
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "coverBadge": "",
+          "pos": {
+            "x": 21,
+            "y": 98
+          }
+        },
+        {
+          "id": "folder_1789230890651",
+          "parentId": "folder_1789230844971",
+          "type": "folder",
+          "name": "手幅-3款",
+          "iconType": "pure",
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "coverBadge": "",
+          "pos": {
+            "x": 120,
+            "y": 120
+          }
+        },
+        {
+          "id": "folder_1789230959703",
+          "parentId": null,
+          "type": "folder",
+          "name": "生咖應援物",
+          "iconType": "pure",
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "coverBadge": "",
+          "pos": {
+            "x": 21,
+            "y": 20
+          }
         }
       ]
     };
-    /* ===================================== */
+    /* ================================================================= */
 
-    const CONFIG_KEY = "winter_desktop_config_v20";
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(MASTER_CONFIG));
-    let currentConfig = MASTER_CONFIG;
+    // 自動版本校驗：確保載入最新資料，強制清除舊快取
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v1";
+    if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
+      localStorage.setItem("winter_version", CONFIG_VERSION);
+      localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
+    }
+
+    let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
     let itemsData = currentConfig.items;
 
     function extractDriveId(url) {
@@ -487,7 +557,7 @@
 
     function saveState() {
       currentConfig.items = itemsData;
-      localStorage.setItem(CONFIG_KEY, JSON.stringify(currentConfig));
+      localStorage.setItem("winter_desktop_config", JSON.stringify(currentConfig));
       renderDesktop();
       renderStartMenu();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
@@ -690,7 +760,6 @@
       });
     }
 
-    // 支援資料夾與專輯雙樣式圖示 (帶封面縮圖)
     function createIconElement(item) {
       const div = document.createElement('div');
       const isSelected = selectedItemId === item.id;
@@ -881,7 +950,6 @@
       alert("開始選單已自訂更新！");
     }
 
-    // 建立資料夾（支援封面縮圖二選一）
     function createFolderWithCoverChoice(parentId = null, e) {
       if (e) e.stopPropagation();
       const name = prompt("請輸入資料夾名稱：", "新資料夾");
@@ -913,7 +981,6 @@
       alert(`資料夾「${name}」建立完成！`);
     }
 
-    // 建立專輯曲目庫
     function createAlbumWithCoverChoice(parentId = null, e) {
       if (e) e.stopPropagation();
       const name = prompt("請輸入專輯名稱：", "My Album");
@@ -1028,11 +1095,7 @@
     function closeWindow(id, e) {
       if (e) e.stopPropagation();
       document.getElementById(id).style.display = 'none';
-      if (id === 'folder-win') {
-        currentOpenFolderId = null;
-        folderHistory = [];
-        folderForwardStack = [];
-      }
+      if (id === 'folder-win') currentOpenFolderId = null;
     }
     
     function closeAlbumWindow(e) {
@@ -1064,7 +1127,7 @@
       };
     }
 
-    // 資料夾歷史紀錄與上一步、下一步導航
+    // 導航歷史紀錄
     function openFolderWithHistory(folderId, folderName) {
       if (currentOpenFolderId && currentOpenFolderId !== folderId) {
         folderHistory.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
@@ -1176,7 +1239,6 @@
       const newName = prompt("重新命名：", item.name);
       if (newName) item.name = newName;
 
-      // 支援修改資料夾或專輯的封面縮圖
       if (item.type === 'album' || item.type === 'folder') {
         const rawBadge = prompt("更改封面縮圖網址 (支援 Google 雲端共享連結，留空則純圖示)：", item.coverBadge || "");
         if (rawBadge !== null) {

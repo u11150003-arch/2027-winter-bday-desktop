@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Retro Desktop</title>
+  <title>Retro USB Desktop</title>
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
     * { box-sizing: border-box; user-select: none; }
@@ -15,28 +15,28 @@
       background: #008080 url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600') no-repeat center center;
       background-size: cover;
     }
-    /* 頂部快捷操作列 */
     .top-actions {
       position: absolute;
       top: 10px;
       left: 10px;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       z-index: 1000;
+      flex-wrap: wrap;
     }
     /* 桌面圖示排列區 */
     .desktop {
       position: absolute;
-      top: 50px; left: 10px; right: 10px; bottom: 40px;
+      top: 55px; left: 15px; right: 15px; bottom: 40px;
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
       align-content: flex-start;
-      gap: 15px;
+      gap: 16px;
     }
     .icon-wrapper {
       position: relative;
-      width: 80px;
+      width: 76px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -46,26 +46,26 @@
       text-shadow: 1px 1px 2px black;
     }
     .icon-wrapper img {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       object-fit: contain;
       pointer-events: none;
     }
     .icon-wrapper span {
       font-size: 11px;
-      padding: 2px 4px;
+      padding: 2px 3px;
       margin-top: 4px;
       word-break: break-all;
     }
-    /* 每個圖示的編輯/刪除浮動小按鈕 */
     .icon-tools {
       display: none;
       position: absolute;
       top: -8px;
-      right: 0px;
+      right: -4px;
       gap: 2px;
     }
-    .icon-wrapper:hover .icon-tools {
+    /* 只有管理員啟用時滑過圖示才會顯示編輯/刪除 */
+    body.admin-mode .icon-wrapper:hover .icon-tools {
       display: flex;
     }
     .icon-tools button {
@@ -73,7 +73,12 @@
       padding: 1px 3px;
       cursor: pointer;
     }
-    /* 視窗樣式 */
+    .admin-only {
+      display: none;
+    }
+    body.admin-mode .admin-only {
+      display: inline-block;
+    }
     .win-modal {
       position: absolute;
       display: none;
@@ -95,23 +100,30 @@
 </head>
 <body>
 
-  <!-- 頂部功能列：可新增資料夾或更換桌布 -->
+  <!-- 工具列 -->
   <div class="top-actions">
-    <button onclick="createNewFolder()">+ 新增資料夾</button>
-    <button onclick="changeWallpaper()">🎨 更換背景圖</button>
+    <!-- 管理員切換按鈕 -->
+    <button id="authBtn" onclick="toggleAdmin()">🔒 管理員登入</button>
+    
+    <!-- 僅管理員可見的編輯功能 -->
+    <button class="admin-only" onclick="createFolder()">+ 資料夾</button>
+    <button class="admin-only" onclick="createNote()">+ 便利貼</button>
+    <button class="admin-only" onclick="createLink()">+ 外部連結</button>
+    <button class="admin-only" onclick="changeMusic()">🎵 換音樂</button>
+    <button class="admin-only" onclick="changeWallpaper()">🎨 換背景</button>
   </div>
 
-  <!-- 桌面圖示區 -->
+  <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer">
-    <!-- 固定工具（YouTube 音樂播放器） -->
+    <!-- 預設音樂視窗圖示 -->
     <div class="icon-wrapper" onclick="openWindow('music-win')">
       <img src="https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png" alt="music">
       <span>Playlist</span>
     </div>
   </div>
 
-  <!-- 資料夾彈出視窗 -->
-  <div id="folder-win" class="window win-modal" style="top: 100px; left: 100px; width: 340px;">
+  <!-- 資料夾檢視視窗 -->
+  <div id="folder-win" class="window win-modal" style="top: 80px; left: 80px; width: 360px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
@@ -119,15 +131,12 @@
       </div>
     </div>
     <div class="window-body">
-      <p id="folderTip" style="font-size: 12px; margin-top: 0;"></p>
-      <div id="folderInnerContent" style="display: flex; gap: 10px; flex-wrap: wrap; min-height: 80px;">
-        <!-- 資料夾內部可放置的項目 -->
-      </div>
+      <div id="folderInnerContent" style="display:flex; gap:12px; flex-wrap:wrap; min-height:80px; padding:10px;"></div>
     </div>
   </div>
 
-  <!-- YouTube 音樂視窗 -->
-  <div id="music-win" class="window win-modal" style="top: 120px; left: 160px; width: 350px;">
+  <!-- YouTube 音樂播放視窗 -->
+  <div id="music-win" class="window win-modal" style="top: 100px; left: 120px; width: 360px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text">🎵 Now Playing</div>
       <div class="title-bar-controls">
@@ -135,7 +144,23 @@
       </div>
     </div>
     <div class="window-body">
-      <iframe width="100%" height="200" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <iframe id="ytPlayer" width="100%" height="200" src="https://www.youtube.com/embed/kzdJkT4kp-A" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- 外部連結跳轉確認視窗 -->
+  <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 300px;">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('link-win')"></button>
+      </div>
+    </div>
+    <div class="window-body" style="text-align:center;">
+      <p id="linkText" style="margin-bottom:12px; font-size:12px;"></p>
+      <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
+        <button style="width:100%; padding:6px;">前往網站 (Visit Site)</button>
+      </a>
     </div>
   </div>
 
@@ -147,110 +172,162 @@
   </div>
 
   <script>
-    // 預設資料夾資料
-    const defaultFolders = [
-      {
-        id: "folder_winter",
-        name: "WINTER",
-        icon: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"
-      }
+    // 預設管理員密碼（可在程式碼內自行更改）
+    const ADMIN_PASSWORD = "admin";
+    let isAdmin = false;
+
+    // 初始資料物件
+    const defaultItems = [
+      { id: "1", type: "folder", name: "WINTER", icon: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" },
+      { id: "2", type: "note", name: "生咖應援清單", icon: "https://win98icons.alexmeub.com/icons/png/notepad-5.png", content: "1. 應援物清點\n2. 易拉架佈置確認" },
+      { id: "3", type: "link", name: "預約表單", icon: "https://win98icons.alexmeub.com/icons/png/html-2.png", url: "https://google.com" }
     ];
 
-    // 從 localStorage 讀取或初始化
-    let folderData = JSON.parse(localStorage.getItem('my_folders')) || defaultFolders;
+    let itemsData = JSON.parse(localStorage.getItem('desktop_items')) || defaultItems;
 
-    // 渲染桌面圖示
-    function renderDesktop() {
-      const container = document.getElementById('desktopContainer');
-      // 清空舊的自定義資料夾圖示（保留預設音樂播放器）
-      const existingCustomIcons = container.querySelectorAll('.custom-folder');
-      existingCustomIcons.forEach(icon => icon.remove());
-
-      folderData.forEach(folder => {
-        const item = document.createElement('div');
-        item.className = 'icon-wrapper custom-folder';
-        item.innerHTML = `
-          <div class="icon-tools">
-            <button onclick="event.stopPropagation(); editFolder('${folder.id}')">✏️</button>
-            <button onclick="event.stopPropagation(); deleteFolder('${folder.id}')">❌</button>
-          </div>
-          <img src="${folder.icon}" alt="folder-icon" onerror="this.src='https://win98icons.alexmeub.com/icons/png/directory_closed-4.png'">
-          <span>${folder.name}</span>
-        `;
-        item.onclick = () => openFolder(folder.name);
-        container.appendChild(item);
-      });
-    }
-
-    // 儲存資料到瀏覽器快取
-    function saveStorage() {
-      localStorage.setItem('my_folders', JSON.stringify(folderData));
+    // 權限切換
+    function toggleAdmin() {
+      if (isAdmin) {
+        isAdmin = false;
+        document.body.classList.remove('admin-mode');
+        document.getElementById('authBtn').innerText = "🔒 管理員登入";
+        alert("已退出編輯模式！");
+      } else {
+        const input = prompt("請輸入管理員密碼：");
+        if (input === ADMIN_PASSWORD) {
+          isAdmin = true;
+          document.body.classList.add('admin-mode');
+          document.getElementById('authBtn').innerText = "🔓 退出管理";
+          alert("登入成功！已解鎖編輯、新增與刪除功能。");
+        } else if (input !== null) {
+          alert("密碼錯誤！");
+        }
+      }
       renderDesktop();
     }
 
-    // 1. 新增資料夾
-    function createNewFolder() {
-      const name = prompt("請輸入新資料夾名稱：", "New Folder");
+    // 渲染桌面
+    function renderDesktop() {
+      const container = document.getElementById('desktopContainer');
+      const dynamicIcons = container.querySelectorAll('.dynamic-item');
+      dynamicIcons.forEach(i => i.remove());
+
+      itemsData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'icon-wrapper dynamic-item';
+        div.innerHTML = `
+          <div class="icon-tools">
+            <button onclick="event.stopPropagation(); editItem('${item.id}')">✏️</button>
+            <button onclick="event.stopPropagation(); deleteItem('${item.id}')">❌</button>
+          </div>
+          <img src="${item.icon}" alt="icon" onerror="this.src='https://win98icons.alexmeub.com/icons/png/file_lines-0.png'">
+          <span>${item.name}</span>
+        `;
+        div.onclick = () => handleItemClick(item);
+        container.appendChild(div);
+      });
+    }
+
+    function handleItemClick(item) {
+      if (item.type === 'folder') {
+        document.getElementById('folderTitle').innerText = `📁 ${item.name}`;
+        openWindow('folder-win');
+      } else if (item.type === 'note') {
+        alert(`【${item.name}】\n\n${item.content}`);
+      } else if (item.type === 'link') {
+        document.getElementById('linkTitle').innerText = `🔗 ${item.name}`;
+        document.getElementById('linkText').innerText = `即將前往：${item.url}`;
+        document.getElementById('linkBtn').href = item.url;
+        openWindow('link-win');
+      }
+    }
+
+    function saveAndRefresh() {
+      localStorage.setItem('desktop_items', JSON.stringify(itemsData));
+      renderDesktop();
+    }
+
+    // 新增資料夾
+    function createFolder() {
+      const name = prompt("資料夾名稱：", "New Folder");
       if (!name) return;
-
-      const iconUrl = prompt(
-        "請貼上圖示圖片網址（支援 PNG、JPG 等網址，留空則使用經典預設）：",
-        "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png"
-      );
-
-      const newFolder = {
-        id: "folder_" + Date.now(),
-        name: name,
-        icon: iconUrl || "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png"
-      };
-
-      folderData.push(newFolder);
-      saveStorage();
+      const icon = prompt("圖示網址 (PNG/JPG，留空則使用預設)：", "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png");
+      itemsData.push({ id: Date.now().toString(), type: 'folder', name, icon: icon || "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png" });
+      saveAndRefresh();
     }
 
-    // 2. 重新命名與更改 Icon
-    function editFolder(id) {
-      const folder = folderData.find(f => f.id === id);
-      if (!folder) return;
-
-      const newName = prompt("重新命名資料夾：", folder.name);
-      if (newName !== null && newName.trim() !== "") {
-        folder.name = newName.trim();
-      }
-
-      const newIcon = prompt("更改圖示網址 (PNG/JPG)：", folder.icon);
-      if (newIcon !== null && newIcon.trim() !== "") {
-        folder.icon = newIcon.trim();
-      }
-
-      saveStorage();
+    // 新增便利貼
+    function createNote() {
+      const name = prompt("便利貼名稱：", "備忘錄");
+      if (!name) return;
+      const content = prompt("請輸入便利貼內文：", "寫下備忘內容...");
+      const icon = prompt("圖示網址 (PNG/JPG，留空預設)：", "https://win98icons.alexmeub.com/icons/png/notepad-5.png");
+      itemsData.push({ id: Date.now().toString(), type: 'note', name, content, icon: icon || "https://win98icons.alexmeub.com/icons/png/notepad-5.png" });
+      saveAndRefresh();
     }
 
-    // 3. 刪除資料夾
-    function deleteFolder(id) {
-      if (confirm("確定要刪除這個資料夾嗎？")) {
-        folderData = folderData.filter(f => f.id !== id);
-        saveStorage();
+    // 新增外部連結
+    function createLink() {
+      const name = prompt("連結名稱：", "Google 表單");
+      if (!name) return;
+      const url = prompt("請輸入完整網址 (含 https://)：", "https://");
+      if (!url) return;
+      const icon = prompt("圖示網址 (PNG/JPG，留空預設)：", "https://win98icons.alexmeub.com/icons/png/html-2.png");
+      itemsData.push({ id: Date.now().toString(), type: 'link', name, url, icon: icon || "https://win98icons.alexmeub.com/icons/png/html-2.png" });
+      saveAndRefresh();
+    }
+
+    // 編輯項目
+    function editItem(id) {
+      const item = itemsData.find(i => i.id === id);
+      if (!item) return;
+
+      const newName = prompt("重新命名：", item.name);
+      if (newName) item.name = newName;
+
+      const newIcon = prompt("更改圖示網址 (PNG/JPG)：", item.icon);
+      if (newIcon) item.icon = newIcon;
+
+      if (item.type === 'note') {
+        const newContent = prompt("更改便利貼內文：", item.content);
+        if (newContent !== null) item.content = newContent;
+      } else if (item.type === 'link') {
+        const newUrl = prompt("更改目標網址：", item.url);
+        if (newUrl) item.url = newUrl;
+      }
+      saveAndRefresh();
+    }
+
+    // 刪除項目
+    function deleteItem(id) {
+      if (confirm("確定要刪除嗎？")) {
+        itemsData = itemsData.filter(i => i.id !== id);
+        saveAndRefresh();
       }
     }
 
-    // 4. 更換背景桌布
+    // 更換音樂
+    function changeMusic() {
+      const vid = prompt("請輸入 YouTube 影片網址或 11 碼 Video ID：", "kzdJkT4kp-A");
+      if (vid) {
+        let cleanId = vid;
+        if (vid.includes("v=")) cleanId = vid.split("v=")[1].substring(0, 11);
+        else if (vid.includes("youtu.be/")) cleanId = vid.split("youtu.be/")[1].substring(0, 11);
+        document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${cleanId}`;
+        localStorage.setItem('desktop_music', cleanId);
+      }
+    }
+
+    // 更換桌布
     function changeWallpaper() {
       const url = prompt("請輸入桌布圖片網址 (PNG/JPG)：", "");
       if (url) {
         document.body.style.backgroundImage = `url('${url}')`;
-        localStorage.setItem('my_wallpaper', url);
+        localStorage.setItem('desktop_wallpaper', url);
       }
     }
 
-    // 開啟資料夾視窗
-    function openFolder(folderName) {
-      document.getElementById('folderTitle').innerText = `📁 ${folderName}`;
-      document.getElementById('folderTip').innerText = `目前位置：${folderName}（可放子項目）`;
-      openWindow('folder-win');
-    }
-
-    // 視窗開啟與關閉
+    // 視窗拖曳與層級控制
     let highestZ = 20;
     function openWindow(id) {
       const win = document.getElementById(id);
@@ -260,15 +337,10 @@
     function closeWindow(id) {
       document.getElementById(id).style.display = 'none';
     }
-
-    // 視窗拖曳機制
     function dragElement(elmnt, event) {
       elmnt.style.zIndex = ++highestZ;
       let pos1 = 0, pos2 = 0, pos3 = event.clientX, pos4 = event.clientY;
-      document.onmouseup = () => {
-        document.onmouseup = null;
-        document.onmousemove = null;
-      };
+      document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
       document.onmousemove = (e) => {
         pos1 = pos3 - e.clientX;
         pos2 = pos4 - e.clientY;
@@ -279,9 +351,12 @@
       };
     }
 
-    // 初始化讀取桌布與資料夾
-    const savedWallpaper = localStorage.getItem('my_wallpaper');
-    if (savedWallpaper) document.body.style.backgroundImage = `url('${savedWallpaper}')`;
+    // 初始化讀取配置
+    const savedBg = localStorage.getItem('desktop_wallpaper');
+    if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
+    const savedMusic = localStorage.getItem('desktop_music');
+    if (savedMusic) document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${savedMusic}`;
+
     renderDesktop();
   </script>
 </body>

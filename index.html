@@ -34,29 +34,53 @@
       background-size: cover;
     }
     
-    .icon-wrapper, .top-actions button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button {
+    .icon-wrapper, .top-bar-container button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button {
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部操作工具列：完全恢復滑鼠滑動與滾輪判定 */
-    .top-actions {
+    /* 頂部操作工具列外框 (含左右導航箭頭) */
+    .top-bar-container {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
       left: max(6px, var(--safe-left));
       right: max(6px, var(--safe-right));
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      z-index: 50;
+      background: rgba(192, 192, 192, 0.85);
+      border: 2px outset #fff;
+      padding: 2px;
+    }
+    .top-scroll-btn {
+      width: 20px; height: 26px;
+      padding: 0; font-size: 10px; font-weight: bold;
+      flex-shrink: 0; cursor: pointer;
+    }
+    .top-actions {
       display: flex; gap: 4px;
-      z-index: 50; flex-wrap: nowrap;
-      overflow-x: auto; padding-bottom: 4px;
-      pointer-events: auto;
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      white-space: nowrap;
+      scroll-behavior: smooth;
+    }
+    .top-actions::-webkit-scrollbar {
+      height: 8px;
+    }
+    .top-actions::-webkit-scrollbar-thumb {
+      background: #dfdfdf;
+      border: 1px outset #fff;
     }
     .top-actions button, .top-actions span {
-      flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer;
+      flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer; height: 24px;
     }
 
     /* 桌面容器 */
     .desktop {
       position: absolute;
-      top: 48px;
+      top: 52px;
       left: max(0px, var(--safe-left));
       right: max(0px, var(--safe-right));
       bottom: var(--taskbar-h);
@@ -249,30 +273,34 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列 -->
-  <div class="top-actions" id="topActionsBar">
-    <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
-    <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
-    <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 專輯曲目庫</button>
-    <button class="admin-only" onclick="createItem('video', null, event)">+ 音樂/影片</button>
-    <button class="admin-only" onclick="createItem('image', null, event)">+ 圖片</button>
-    <button class="admin-only" onclick="createItem('note', null, event)">+ 便利貼</button>
-    <button class="admin-only" onclick="createItem('link', null, event)">+ 外部連結</button>
+  <!-- 頂部操作工具列 (含直覺左右點擊箭頭) -->
+  <div class="top-bar-container">
+    <button type="button" class="top-scroll-btn" onclick="scrollTopBar(-120)" title="向左捲動">◀</button>
+    <div class="top-actions" id="topActionsBar">
+      <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
+      <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
+      <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 專輯曲目庫</button>
+      <button class="admin-only" onclick="createItem('video', null, event)">+ 音樂/影片</button>
+      <button class="admin-only" onclick="createItem('image', null, event)">+ 圖片</button>
+      <button class="admin-only" onclick="createItem('note', null, event)">+ 便利貼</button>
+      <button class="admin-only" onclick="createItem('link', null, event)">+ 外部連結</button>
 
-    <button id="topPasteBtn" class="admin-only" onclick="pasteItem(null, event)" style="background:#ffffe0; font-weight:bold;">📌 貼上</button>
+      <button id="topPasteBtn" class="admin-only" onclick="pasteItem(null, event)" style="background:#ffffe0; font-weight:bold;">📌 貼上</button>
 
-    <span class="admin-only selected-ops" style="display:none; gap:3px;">
-      <span style="color:#888; margin: 0 2px;">|</span>
-      <button onclick="moveSelectedItemToDialog(event)" style="background:#e0f7fa; font-weight:bold;">📦 移動到...</button>
-      <button onclick="copySelectedItem(event)">📋 複製</button>
-      <button onclick="cutSelectedItem(event)">✂️ 剪下</button>
-      <button onclick="editSelectedItem(event)">✏️ 編輯</button>
-      <button onclick="deleteSelectedItem(event)">❌ 刪除</button>
-    </span>
+      <span class="admin-only selected-ops" style="display:none; gap:3px;">
+        <span style="color:#888; margin: 0 2px;">|</span>
+        <button onclick="moveSelectedItemToDialog(event)" style="background:#e0f7fa; font-weight:bold;">📦 移動到...</button>
+        <button onclick="copySelectedItem(event)">📋 複製</button>
+        <button onclick="cutSelectedItem(event)">✂️ 剪下</button>
+        <button onclick="editSelectedItem(event)">✏️ 編輯</button>
+        <button onclick="deleteSelectedItem(event)">❌ 刪除</button>
+      </span>
 
-    <button class="admin-only" onclick="changeWallpaper(event)">🎨 桌布</button>
-    <button class="admin-only" onclick="openStartMenuConfigModal(event)">⭐ 設定開始選單</button>
-    <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
+      <button class="admin-only" onclick="changeWallpaper(event)">🎨 桌布</button>
+      <button class="admin-only" onclick="openStartMenuConfigModal(event)">⭐ 設定開始選單</button>
+      <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
+    </div>
+    <button type="button" class="top-scroll-btn" onclick="scrollTopBar(120)" title="向右捲動">▶</button>
   </div>
 
   <!-- 桌面容器 -->
@@ -460,9 +488,9 @@
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "startMenuVisibleIds": [
-        "f1",
-        "album_winter_speed",
-        "l1"
+        "l1",
+        "folder_1789230844971",
+        "folder_1789230959703"
       ],
       "items": [
         {
@@ -474,8 +502,8 @@
           "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
           "pos": {
-            "x": 107,
-            "y": 100
+            "x": 14,
+            "y": 357
           },
           "tracks": [
             {
@@ -520,10 +548,10 @@
           "type": "link",
           "name": "生咖預約表單",
           "icon": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>",
-          "url": "https://dynamic-otter-22aaaa.netlify.app/",
+          "url": "https://wintertst0101.netlify.app/",
           "pos": {
             "x": 16,
-            "y": 320
+            "y": 256
           }
         },
         {
@@ -578,12 +606,25 @@
             "x": 21,
             "y": 20
           }
+        },
+        {
+          "id": "folder_1789233534244",
+          "parentId": null,
+          "type": "folder",
+          "name": "生咖資訊",
+          "iconType": "pure",
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "coverBadge": "",
+          "pos": {
+            "x": 19,
+            "y": 174
+          }
         }
       ]
     };
     /* ================================================================= */
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v7";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v8";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -592,16 +633,24 @@
     let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
     let itemsData = currentConfig.items;
 
-    // 滑鼠滾輪橫向滾動工具列
-    const topBar = document.getElementById('topActionsBar');
-    if (topBar) {
-      topBar.addEventListener('wheel', (e) => {
-        if (e.deltaY !== 0) {
-          topBar.scrollLeft += e.deltaY;
-          e.preventDefault();
-        }
-      }, { passive: false });
+    // 實體箭頭捲動函式
+    function scrollTopBar(amount) {
+      const bar = document.getElementById('topActionsBar');
+      if (bar) bar.scrollBy({ left: amount, behavior: 'smooth' });
     }
+
+    // 滑鼠滾輪橫向捲動
+    window.addEventListener('load', () => {
+      const bar = document.getElementById('topActionsBar');
+      if (bar) {
+        bar.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0) {
+            bar.scrollLeft += e.deltaY;
+            e.preventDefault();
+          }
+        }, { passive: false });
+      }
+    });
 
     function extractDriveId(url) {
       if (!url) return null;

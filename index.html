@@ -86,7 +86,7 @@
       max-height: calc(100vh - 70px) !important;
     }
 
-    /* 資料夾工具導航列 */
+    /* 資料夾導航列 */
     .folder-nav-bar {
       display: flex; gap: 4px; align-items: center; margin-bottom: 6px; background: #dfdfdf;
       padding: 3px 5px; border: 1px solid #7f9db9; flex-wrap: wrap;
@@ -205,7 +205,7 @@
     </div>
   </div>
 
-  <!-- 資料夾 / CD 內容視窗（含上一步、下一步導航） -->
+  <!-- 資料夾 / CD 內容視窗 -->
   <div id="folder-win" class="window win-modal">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
@@ -215,11 +215,10 @@
       </div>
     </div>
     <div class="window-body">
-      <!-- 導航列：歷史記錄返回/前進，以及管理員專用新增按鈕 -->
       <div class="folder-nav-bar">
         <button id="btnNavBack" onclick="navGoBack()" title="返回上一個資料夾 (上一步)">⬅ 上一步</button>
         <button id="btnNavForward" onclick="navGoForward()" title="前往下一個資料夾 (下一步)">➡ 下一步</button>
-        <span style="color:#888; margin: 0 4px;">|</span>
+        <span class="admin-only" style="color:#888; margin: 0 4px;">|</span>
         <button class="admin-only" onclick="createItemInsideFolder('folder')" title="在此建立子資料夾">+ 子資料夾</button>
         <button class="admin-only" onclick="createItemInsideFolder('album')" title="在此建立專輯 CD">+ 專輯/CD</button>
         <button class="admin-only" onclick="createItemInsideFolder('video')" title="在此新增音樂影片 (單張CD圖示)">+ 音樂/影片</button>
@@ -312,21 +311,18 @@
     let isAdmin = false;
     let currentOpenFolderId = null;
 
-    // 資料夾導航歷史記錄堆疊
     let folderHistory = [];
     let folderForwardStack = [];
 
-    // 剪貼簿系統
     let clipboardItem = null;
     let isCutOperation = false;
 
-    // 預設標準圖示
-    const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"; // 黃色資料夾
-    const ICON_ALBUM_DEFAULT = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";                     // 光碟機/專輯
-    const ICON_VIDEO_DEFAULT = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";                 // 音樂/影片：單張光碟 (CD)
+    const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
+    const ICON_ALBUM_DEFAULT = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
+    const ICON_VIDEO_DEFAULT = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* ========== 核心永久儲存配置 ========== */
+    /* ========== 核心永久儲存配置（已完整同步您的所有最新項目） ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "startMenuVisibleIds": ["f1", "item_playlist_core", "1789205032583"],
@@ -337,7 +333,7 @@
           "type": "youtube"
         },
         {
-          "title": "新曲目",
+          "title": "What you want do for love",
           "src": "https://drive.google.com/file/d/1jeg0LS14Swh44kU4ymm7L5hU3kP_TJxj/preview",
           "type": "drive"
         }
@@ -382,22 +378,53 @@
           "url": "https://dynamic-otter-22aaaa.netlify.app/"
         },
         {
-          "id": "1789205032583",
+          "id": "1789211186349",
           "parentId": null,
-          "type": "album",
-          "name": "Winter Playlist",
+          "type": "link",
+          "name": "imwinter",
+          "icon": ICON_FOLDER_DEFAULT,
+          "content": "",
+          "url": "https://www.instagram.com/p/Db56LLYE8f4/",
+          "mediaUrl": ""
+        },
+        {
+          "id": "1789211569564",
+          "parentId": null,
+          "type": "folder",
+          "name": "Winter playlist",
           "icon": ICON_ALBUM_DEFAULT,
           "content": "",
           "url": "",
           "mediaUrl": ""
+        },
+        {
+          "id": "1789211921710",
+          "parentId": "1789211569564",
+          "type": "album",
+          "name": "Speed of summer",
+          "icon": ICON_ALBUM_DEFAULT,
+          "content": "",
+          "url": "",
+          "mediaUrl": ""
+        },
+        {
+          "id": "1789211997310",
+          "parentId": "1789211569564",
+          "type": "video",
+          "name": "新影音",
+          "icon": ICON_VIDEO_DEFAULT,
+          "content": "",
+          "url": "",
+          "mediaUrl": "https://youtu.be/YTeFLKMnwjg?si=SpfVaQsc_NIK2FEp"
         }
       ]
     };
-    /* ===================================== */
+    /* ================================================================= */
 
-    const CONFIG_KEY = "winter_desktop_config_v11";
-    let currentConfig = JSON.parse(localStorage.getItem(CONFIG_KEY)) || MASTER_CONFIG;
-    if (!currentConfig.startMenuVisibleIds) currentConfig.startMenuVisibleIds = ["f1", "item_playlist_core", "1789205032583"];
+    // 每次更新程式碼時強制同步最新配置
+    const CONFIG_KEY = "winter_desktop_config_v12";
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(MASTER_CONFIG));
+    let currentConfig = MASTER_CONFIG;
 
     let playlist = currentConfig.playlist;
     let itemsData = currentConfig.items;
@@ -440,9 +467,9 @@
       const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
 
       navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製完整設定！請至 GitHub index.html 替換 MASTER_CONFIG 並 Commit changes 永久儲存。");
+        alert("✅ 成功複製配置代碼！\n\n請至 GitHub index.html 替換第 200 行左右的『const MASTER_CONFIG = ...』區域（注意：不要整份網頁全刪！），並 Commit changes 即可永久儲存！");
       }).catch(() => {
-        prompt("請複製以下代碼並貼回 index.html：", output);
+        prompt("請複製以下代碼並貼回 index.html 的 MASTER_CONFIG 區域：", output);
       });
     }
 
@@ -625,7 +652,7 @@
           <button onclick="event.stopPropagation(); editItem('${item.id}')" title="編輯名稱與內容">✏️</button>
           <button onclick="event.stopPropagation(); deleteItem('${item.id}')" title="刪除此項目">❌</button>
         </div>
-        <img src="${displayIcon}" alt="icon" onerror="this.src='https://win98icons.alexmeub.com/icons/png/file_lines-0.png'">
+        <img src="${displayIcon}" alt="icon" onerror="this.src='${ICON_VIDEO_DEFAULT}'">
         <span>${item.name}</span>
       `;
 
@@ -717,11 +744,11 @@
       openWindow('photo-viewer-win');
     }
 
-    // 資料夾導航系統：上一步與下一步
+    // 資料夾導航系統
     function openFolderWithHistory(folderId, folderName) {
       if (currentOpenFolderId && currentOpenFolderId !== folderId) {
         folderHistory.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
-        folderForwardStack = []; // 點擊新資料夾時清空前進棧
+        folderForwardStack = [];
       }
       currentOpenFolderId = folderId;
       document.getElementById('folderTitle').innerText = `📁 ${folderName}`;
@@ -802,13 +829,13 @@
 
       if (type === 'folder') {
         defaultTitle = "新資料夾";
-        defaultIcon = ICON_FOLDER_DEFAULT; // 預設黃色資料夾
+        defaultIcon = ICON_FOLDER_DEFAULT;
       } else if (type === 'album') {
         defaultTitle = "新專輯 CD";
-        defaultIcon = ICON_ALBUM_DEFAULT;  // 預設光碟機/專輯
+        defaultIcon = ICON_ALBUM_DEFAULT;
       } else if (type === 'video') {
         defaultTitle = "新音樂/影片";
-        defaultIcon = ICON_VIDEO_DEFAULT;  // 預設單張光碟 (CD)
+        defaultIcon = ICON_VIDEO_DEFAULT;
       }
 
       const name = prompt("請輸入名稱：", defaultTitle);

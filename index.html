@@ -17,113 +17,84 @@
     }
     .top-actions {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      display: flex;
-      gap: 6px;
-      z-index: 1000;
-      flex-wrap: wrap;
+      top: 10px; left: 10px;
+      display: flex; gap: 6px;
+      z-index: 1000; flex-wrap: wrap;
     }
-    /* 桌面圖示排列區 */
     .desktop {
       position: absolute;
       top: 55px; left: 15px; right: 15px; bottom: 40px;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      align-content: flex-start;
-      gap: 16px;
+      display: flex; flex-direction: column; flex-wrap: wrap;
+      align-content: flex-start; gap: 16px;
     }
     .icon-wrapper {
       position: relative;
-      width: 76px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      text-align: center;
-      color: white;
-      text-shadow: 1px 1px 2px black;
+      width: 78px;
+      display: flex; flex-direction: column; align-items: center;
+      cursor: pointer; text-align: center;
+      color: white; text-shadow: 1px 1px 2px black;
+    }
+    .icon-wrapper.drag-hover {
+      outline: 2px dashed #ffff00;
+      background: rgba(255, 255, 255, 0.2);
     }
     .icon-wrapper img {
-      width: 44px;
-      height: 44px;
-      object-fit: contain;
-      pointer-events: none;
+      width: 44px; height: 44px; object-fit: contain; pointer-events: none;
     }
     .icon-wrapper span {
-      font-size: 11px;
-      padding: 2px 3px;
-      margin-top: 4px;
-      word-break: break-all;
+      font-size: 11px; padding: 2px 4px; margin-top: 4px; word-break: break-all;
     }
     .icon-tools {
-      display: none;
-      position: absolute;
-      top: -8px;
-      right: -4px;
-      gap: 2px;
+      display: none; position: absolute; top: -8px; right: -4px; gap: 2px;
     }
-    /* 只有管理員啟用時滑過圖示才會顯示編輯/刪除 */
-    body.admin-mode .icon-wrapper:hover .icon-tools {
-      display: flex;
-    }
-    .icon-tools button {
-      font-size: 9px;
-      padding: 1px 3px;
-      cursor: pointer;
-    }
-    .admin-only {
-      display: none;
-    }
-    body.admin-mode .admin-only {
-      display: inline-block;
-    }
+    body.admin-mode .icon-wrapper:hover .icon-tools { display: flex; }
+    .icon-tools button { font-size: 9px; padding: 1px 3px; cursor: pointer; }
+    .admin-only { display: none; }
+    body.admin-mode .admin-only { display: inline-block; }
+    
     .win-modal {
-      position: absolute;
-      display: none;
-      z-index: 10;
+      position: absolute; display: none; z-index: 10;
       box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
     }
     .taskbar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 35px;
-      background: #c0c0c0;
-      border-top: 2px solid #fff;
-      display: flex;
-      align-items: center;
-      padding: 2px 6px;
-      z-index: 999;
+      position: fixed; bottom: 0; left: 0; right: 0; height: 35px;
+      background: #c0c0c0; border-top: 2px solid #fff;
+      display: flex; align-items: center; padding: 2px 6px; z-index: 999;
     }
+    /* Playlist 樣式 */
+    .playlist-box {
+      list-style: none; margin: 8px 0 0 0; padding: 0;
+      background: #fff; border: 2px inset #dfdfdf; height: 110px; overflow-y: auto;
+    }
+    .playlist-box li {
+      padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; justify-content: space-between;
+    }
+    .playlist-box li:hover { background: #000080; color: #fff; }
+    .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <!-- 工具列 -->
   <div class="top-actions">
-    <!-- 管理員切換按鈕 -->
     <button id="authBtn" onclick="toggleAdmin()">🔒 管理員登入</button>
-    
-    <!-- 僅管理員可見的編輯功能 -->
-    <button class="admin-only" onclick="createFolder()">+ 資料夾</button>
-    <button class="admin-only" onclick="createNote()">+ 便利貼</button>
-    <button class="admin-only" onclick="createLink()">+ 外部連結</button>
-    <button class="admin-only" onclick="changeMusic()">🎵 換音樂</button>
+    <button class="admin-only" onclick="createItem('folder')">+ 資料夾</button>
+    <button class="admin-only" onclick="createItem('note')">+ 便利貼</button>
+    <button class="admin-only" onclick="createItem('link')">+ 外部連結</button>
     <button class="admin-only" onclick="changeWallpaper()">🎨 換背景</button>
   </div>
 
-  <!-- 桌面容器 -->
+  <!-- 桌面圖示容器 -->
   <div class="desktop" id="desktopContainer">
-    <!-- 預設音樂視窗圖示 -->
+    <!-- 固定 Playlist 音樂圖示 -->
     <div class="icon-wrapper" onclick="openWindow('music-win')">
       <img src="https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png" alt="music">
       <span>Playlist</span>
     </div>
   </div>
 
-  <!-- 資料夾檢視視窗 -->
-  <div id="folder-win" class="window win-modal" style="top: 80px; left: 80px; width: 360px;">
+  <!-- 資料夾視窗 -->
+  <div id="folder-win" class="window win-modal" style="top: 80px; left: 80px; width: 380px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
@@ -131,25 +102,33 @@
       </div>
     </div>
     <div class="window-body">
-      <div id="folderInnerContent" style="display:flex; gap:12px; flex-wrap:wrap; min-height:80px; padding:10px;"></div>
+      <div style="margin-bottom: 8px;" class="admin-only">
+        <button onclick="createItemInsideCurrentFolder()">+ 在此資料夾新增項目</button>
+      </div>
+      <div id="folderInnerContent" style="display:flex; gap:12px; flex-wrap:wrap; min-height:100px; padding:6px; background:#fff; border: 2px inset #dfdfdf;"></div>
     </div>
   </div>
 
-  <!-- YouTube 音樂播放視窗 -->
-  <div id="music-win" class="window win-modal" style="top: 100px; left: 120px; width: 360px;">
+  <!-- YouTube Playlist 播放清單視窗 -->
+  <div id="music-win" class="window win-modal" style="top: 100px; left: 120px; width: 380px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text">🎵 Now Playing</div>
+      <div class="title-bar-text" id="nowPlayingTitle">🎵 Playlist 播放器</div>
       <div class="title-bar-controls">
         <button aria-label="Close" onclick="closeWindow('music-win')"></button>
       </div>
     </div>
     <div class="window-body">
-      <iframe id="ytPlayer" width="100%" height="200" src="https://www.youtube.com/embed/kzdJkT4kp-A" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <iframe id="ytPlayer" width="100%" height="180" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div style="margin-top: 6px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; font-weight:bold;">曲目清單：</span>
+        <button class="admin-only" onclick="addMusicTrack()">+ 新增歌曲</button>
+      </div>
+      <ul class="playlist-box" id="playlistItems"></ul>
     </div>
   </div>
 
   <!-- 外部連結跳轉確認視窗 -->
-  <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 300px;">
+  <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 280px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
       <div class="title-bar-controls">
@@ -157,9 +136,9 @@
       </div>
     </div>
     <div class="window-body" style="text-align:center;">
-      <p id="linkText" style="margin-bottom:12px; font-size:12px;"></p>
+      <p id="linkText" style="font-size:12px;"></p>
       <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
-        <button style="width:100%; padding:6px;">前往網站 (Visit Site)</button>
+        <button style="width:100%; padding:6px;">Visit Site</button>
       </a>
     </div>
   </div>
@@ -172,18 +151,25 @@
   </div>
 
   <script>
-    // 預設管理員密碼（可在程式碼內自行更改）
     const ADMIN_PASSWORD = "admin";
     let isAdmin = false;
+    let currentOpenFolderId = null;
 
-    // 初始資料物件
-    const defaultItems = [
-      { id: "1", type: "folder", name: "WINTER", icon: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" },
-      { id: "2", type: "note", name: "生咖應援清單", icon: "https://win98icons.alexmeub.com/icons/png/notepad-5.png", content: "1. 應援物清點\n2. 易拉架佈置確認" },
-      { id: "3", type: "link", name: "預約表單", icon: "https://win98icons.alexmeub.com/icons/png/html-2.png", url: "https://google.com" }
+    // 預設音樂清單
+    const defaultTracks = [
+      { title: "Winter - 딩고뮤직 세레나데", vid: "YTeFLKMpwjg" },
+      { title: "aespa - Supernova", vid: "phuiAIqwPE8" }
     ];
+    let playlist = JSON.parse(localStorage.getItem('desktop_playlist')) || defaultTracks;
+    let currentTrackIdx = 0;
 
-    let itemsData = JSON.parse(localStorage.getItem('desktop_items')) || defaultItems;
+    // 預設物件資料 (parentId: null 代表在桌面上)
+    const defaultItems = [
+      { id: "f1", parentId: null, type: "folder", name: "WINTER", icon: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" },
+      { id: "n1", parentId: null, type: "note", name: "生咖應援清單", icon: "https://win98icons.alexmeub.com/icons/png/notepad-5.png", content: "1. 應援物清點\n2. 易拉架確認" },
+      { id: "l1", parentId: null, type: "link", name: "預約表單", icon: "https://win98icons.alexmeub.com/icons/png/html-2.png", url: "https://google.com" }
+    ];
+    let itemsData = JSON.parse(localStorage.getItem('desktop_items_v2')) || defaultItems;
 
     // 權限切換
     function toggleAdmin() {
@@ -191,47 +177,89 @@
         isAdmin = false;
         document.body.classList.remove('admin-mode');
         document.getElementById('authBtn').innerText = "🔒 管理員登入";
-        alert("已退出編輯模式！");
+        alert("已退出管理員模式");
       } else {
         const input = prompt("請輸入管理員密碼：");
         if (input === ADMIN_PASSWORD) {
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！已解鎖編輯、新增與刪除功能。");
+          alert("登入成功！已解鎖新增、刪除、編輯與拖曳放入資料夾功能。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
       }
       renderDesktop();
+      renderPlaylistUI();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+    }
+
+    // 儲存資料
+    function saveData() {
+      localStorage.setItem('desktop_items_v2', JSON.stringify(itemsData));
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
     // 渲染桌面
     function renderDesktop() {
       const container = document.getElementById('desktopContainer');
-      const dynamicIcons = container.querySelectorAll('.dynamic-item');
-      dynamicIcons.forEach(i => i.remove());
+      container.querySelectorAll('.dynamic-item').forEach(i => i.remove());
 
-      itemsData.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'icon-wrapper dynamic-item';
-        div.innerHTML = `
-          <div class="icon-tools">
-            <button onclick="event.stopPropagation(); editItem('${item.id}')">✏️</button>
-            <button onclick="event.stopPropagation(); deleteItem('${item.id}')">❌</button>
-          </div>
-          <img src="${item.icon}" alt="icon" onerror="this.src='https://win98icons.alexmeub.com/icons/png/file_lines-0.png'">
-          <span>${item.name}</span>
-        `;
-        div.onclick = () => handleItemClick(item);
-        container.appendChild(div);
+      itemsData.filter(item => !item.parentId).forEach(item => {
+        const el = createIconElement(item);
+        container.appendChild(el);
       });
     }
 
+    // 產生圖示 DOM
+    function createIconElement(item) {
+      const div = document.createElement('div');
+      div.className = 'icon-wrapper dynamic-item';
+      div.draggable = isAdmin; // 只有管理員可以拖曳
+
+      div.innerHTML = `
+        <div class="icon-tools">
+          <button onclick="event.stopPropagation(); editItem('${item.id}')">✏️</button>
+          <button onclick="event.stopPropagation(); deleteItem('${item.id}')">❌</button>
+        </div>
+        <img src="${item.icon}" alt="icon" onerror="this.src='https://win98icons.alexmeub.com/icons/png/file_lines-0.png'">
+        <span>${item.name}</span>
+      `;
+
+      // 點擊事件
+      div.onclick = () => handleItemClick(item);
+
+      // 拖曳放入資料夾事件 (HTML5 Drag & Drop)
+      div.ondragstart = (e) => {
+        if (!isAdmin) return;
+        e.dataTransfer.setData('text/plain', item.id);
+      };
+
+      if (item.type === 'folder') {
+        div.ondragover = (e) => { e.preventDefault(); div.classList.add('drag-hover'); };
+        div.ondragleave = () => div.classList.remove('drag-hover');
+        div.ondrop = (e) => {
+          e.preventDefault();
+          div.classList.remove('drag-hover');
+          const draggedId = e.dataTransfer.getData('text/plain');
+          if (draggedId && draggedId !== item.id) {
+            const target = itemsData.find(i => i.id === draggedId);
+            if (target) {
+              target.parentId = item.id;
+              saveData();
+              alert(`已將「${target.name}」移入資料夾「${item.name}」！`);
+            }
+          }
+        };
+      }
+      return div;
+    }
+
+    // 開啟項目
     function handleItemClick(item) {
       if (item.type === 'folder') {
-        document.getElementById('folderTitle').innerText = `📁 ${item.name}`;
-        openWindow('folder-win');
+        openFolder(item.id, item.name);
       } else if (item.type === 'note') {
         alert(`【${item.name}】\n\n${item.content}`);
       } else if (item.type === 'link') {
@@ -242,92 +270,163 @@
       }
     }
 
-    function saveAndRefresh() {
-      localStorage.setItem('desktop_items', JSON.stringify(itemsData));
-      renderDesktop();
+    // 資料夾內部渲染
+    function openFolder(folderId, folderName) {
+      currentOpenFolderId = folderId;
+      document.getElementById('folderTitle').innerText = `📁 ${folderName}`;
+      renderFolderContent(folderId);
+      openWindow('folder-win');
     }
 
-    // 新增資料夾
-    function createFolder() {
-      const name = prompt("資料夾名稱：", "New Folder");
+    function renderFolderContent(folderId) {
+      const box = document.getElementById('folderInnerContent');
+      box.innerHTML = '';
+      const children = itemsData.filter(i => i.parentId === folderId);
+
+      if (children.length === 0) {
+        box.innerHTML = '<span style="font-size:12px; color:#888; padding:10px;">資料夾為空</span>';
+        return;
+      }
+
+      children.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.style.cssText = 'display:flex; flex-direction:column; align-items:center; width:65px; cursor:pointer; position:relative;';
+        itemEl.innerHTML = `
+          <img src="${item.icon}" style="width:36px; height:36px; object-fit:contain;">
+          <span style="font-size:11px; text-align:center; word-break:break-all;">${item.name}</span>
+          ${isAdmin ? `<button style="font-size:9px; margin-top:2px;" onclick="event.stopPropagation(); moveBackToDesktop('${item.id}')">移至桌面</button>` : ''}
+        `;
+        itemEl.onclick = () => handleItemClick(item);
+        box.appendChild(itemEl);
+      });
+    }
+
+    function moveBackToDesktop(id) {
+      const it = itemsData.find(i => i.id === id);
+      if (it) {
+        it.parentId = null;
+        saveData();
+      }
+    }
+
+    // 新增項目 (桌面)
+    function createItem(type) {
+      addItemToParent(type, null);
+    }
+    function createItemInsideCurrentFolder() {
+      if (!currentOpenFolderId) return;
+      const type = prompt("請選擇新增類型：輸入 folder (資料夾)、note (便利貼) 或 link (外部連結)：", "note");
+      if (['folder', 'note', 'link'].includes(type)) {
+        addItemToParent(type, currentOpenFolderId);
+      }
+    }
+
+    function addItemToParent(type, parentId) {
+      const name = prompt("請輸入名稱：", "新項目");
       if (!name) return;
-      const icon = prompt("圖示網址 (PNG/JPG，留空則使用預設)：", "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png");
-      itemsData.push({ id: Date.now().toString(), type: 'folder', name, icon: icon || "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png" });
-      saveAndRefresh();
+      let icon = prompt("圖示網址 (PNG/JPG，留空預設)：", "");
+      let content = "", url = "";
+
+      if (type === 'note') content = prompt("請輸入便利貼內文：", "寫下備忘...");
+      if (type === 'link') url = prompt("請輸入網址 (含 https://)：", "https://");
+
+      if (!icon) {
+        if (type === 'folder') icon = "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png";
+        if (type === 'note') icon = "https://win98icons.alexmeub.com/icons/png/notepad-5.png";
+        if (type === 'link') icon = "https://win98icons.alexmeub.com/icons/png/html-2.png";
+      }
+
+      itemsData.push({ id: Date.now().toString(), parentId, type, name, icon, content, url });
+      saveData();
     }
 
-    // 新增便利貼
-    function createNote() {
-      const name = prompt("便利貼名稱：", "備忘錄");
-      if (!name) return;
-      const content = prompt("請輸入便利貼內文：", "寫下備忘內容...");
-      const icon = prompt("圖示網址 (PNG/JPG，留空預設)：", "https://win98icons.alexmeub.com/icons/png/notepad-5.png");
-      itemsData.push({ id: Date.now().toString(), type: 'note', name, content, icon: icon || "https://win98icons.alexmeub.com/icons/png/notepad-5.png" });
-      saveAndRefresh();
-    }
-
-    // 新增外部連結
-    function createLink() {
-      const name = prompt("連結名稱：", "Google 表單");
-      if (!name) return;
-      const url = prompt("請輸入完整網址 (含 https://)：", "https://");
-      if (!url) return;
-      const icon = prompt("圖示網址 (PNG/JPG，留空預設)：", "https://win98icons.alexmeub.com/icons/png/html-2.png");
-      itemsData.push({ id: Date.now().toString(), type: 'link', name, url, icon: icon || "https://win98icons.alexmeub.com/icons/png/html-2.png" });
-      saveAndRefresh();
-    }
-
-    // 編輯項目
     function editItem(id) {
       const item = itemsData.find(i => i.id === id);
       if (!item) return;
-
       const newName = prompt("重新命名：", item.name);
       if (newName) item.name = newName;
-
       const newIcon = prompt("更改圖示網址 (PNG/JPG)：", item.icon);
       if (newIcon) item.icon = newIcon;
-
       if (item.type === 'note') {
-        const newContent = prompt("更改便利貼內文：", item.content);
-        if (newContent !== null) item.content = newContent;
-      } else if (item.type === 'link') {
-        const newUrl = prompt("更改目標網址：", item.url);
-        if (newUrl) item.url = newUrl;
+        const c = prompt("編輯便利貼內容：", item.content);
+        if (c !== null) item.content = c;
       }
-      saveAndRefresh();
+      if (item.type === 'link') {
+        const u = prompt("更改連結網址：", item.url);
+        if (u) item.url = u;
+      }
+      saveData();
     }
 
-    // 刪除項目
     function deleteItem(id) {
-      if (confirm("確定要刪除嗎？")) {
-        itemsData = itemsData.filter(i => i.id !== id);
-        saveAndRefresh();
+      if (confirm("確定刪除此項目嗎？")) {
+        itemsData = itemsData.filter(i => i.id !== id && i.parentId !== id);
+        saveData();
       }
     }
 
-    // 更換音樂
-    function changeMusic() {
-      const vid = prompt("請輸入 YouTube 影片網址或 11 碼 Video ID：", "kzdJkT4kp-A");
-      if (vid) {
-        let cleanId = vid;
-        if (vid.includes("v=")) cleanId = vid.split("v=")[1].substring(0, 11);
-        else if (vid.includes("youtu.be/")) cleanId = vid.split("youtu.be/")[1].substring(0, 11);
-        document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${cleanId}`;
-        localStorage.setItem('desktop_music', cleanId);
+    // Playlist 音樂播放清單管理
+    function parseYTId(url) {
+      let id = url.trim();
+      if (id.includes("v=")) id = id.split("v=")[1].substring(0, 11);
+      else if (id.includes("youtu.be/")) id = id.split("youtu.be/")[1].substring(0, 11);
+      return id;
+    }
+
+    function renderPlaylistUI() {
+      const listEl = document.getElementById('playlistItems');
+      listEl.innerHTML = '';
+      playlist.forEach((track, idx) => {
+        const li = document.createElement('li');
+        li.className = idx === currentTrackIdx ? 'active' : '';
+        li.innerHTML = `
+          <span>${idx + 1}. ${track.title}</span>
+          ${isAdmin ? `<button onclick="event.stopPropagation(); removeMusicTrack(${idx})">✕</button>` : ''}
+        `;
+        li.onclick = () => playTrack(idx);
+        listEl.appendChild(li);
+      });
+      if (playlist.length > 0) {
+        document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${playlist[currentTrackIdx].vid}`;
+        document.getElementById('nowPlayingTitle').innerText = `🎵 播放中：${playlist[currentTrackIdx].title}`;
+      }
+    }
+
+    function playTrack(idx) {
+      currentTrackIdx = idx;
+      renderPlaylistUI();
+    }
+
+    function addMusicTrack() {
+      const title = prompt("請輸入歌曲名稱：", "New Track");
+      if (!title) return;
+      const link = prompt("請輸入 YouTube 影片連結：");
+      if (!link) return;
+      const vid = parseYTId(link);
+      playlist.push({ title, vid });
+      localStorage.setItem('desktop_playlist', JSON.stringify(playlist));
+      renderPlaylistUI();
+    }
+
+    function removeMusicTrack(idx) {
+      if (confirm("刪除這首歌曲？")) {
+        playlist.splice(idx, 1);
+        if (currentTrackIdx >= playlist.length) currentTrackIdx = 0;
+        localStorage.setItem('desktop_playlist', JSON.stringify(playlist));
+        renderPlaylistUI();
       }
     }
 
     // 更換桌布
     function changeWallpaper() {
-      const url = prompt("請輸入桌布圖片網址 (PNG/JPG)：", "");
+      const url = prompt("請輸入桌布直接圖片網址 (結尾通常為 .jpg/.png)：", "");
       if (url) {
         document.body.style.backgroundImage = `url('${url}')`;
         localStorage.setItem('desktop_wallpaper', url);
       }
     }
 
-    // 視窗拖曳與層級控制
+    // 視窗基本機制
     let highestZ = 20;
     function openWindow(id) {
       const win = document.getElementById(id);
@@ -351,13 +450,11 @@
       };
     }
 
-    // 初始化讀取配置
+    // 初始化
     const savedBg = localStorage.getItem('desktop_wallpaper');
     if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
-    const savedMusic = localStorage.getItem('desktop_music');
-    if (savedMusic) document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${savedMusic}`;
-
     renderDesktop();
+    renderPlaylistUI();
   </script>
 </body>
 </html>

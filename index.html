@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>2027 WINTER Bday desktop</title>
 
-  <!-- 5. 網址分享縮圖 (Open Graph / Twitter Card) -->
+  <!-- 網址分享縮圖 (已替換為指定背景圖) -->
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A special retro desktop space created for WINTER">
-  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS">
+  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS">
+  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
 
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
@@ -24,7 +24,7 @@
       background-size: cover;
     }
     
-    /* 頂部操作工具列 */
+    /* 頂部操作列 */
     .top-actions {
       position: absolute;
       top: 6px; left: 6px; right: 6px;
@@ -36,7 +36,7 @@
       flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer;
     }
 
-    /* 桌面容器 (支援自由絕對定位與觸控拖曳) */
+    /* 桌面容器 */
     .desktop {
       position: absolute;
       top: 45px; left: 0; right: 0; bottom: 35px;
@@ -65,26 +65,26 @@
       opacity: 0.45; filter: grayscale(80%);
     }
 
-    /* 雙模式光碟圖示 (含自訂封面卡槽) */
+    /* 雙模式光碟圖示 */
     .icon-art-box {
       position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
     }
     .icon-art-box .base-disc {
-      width: 42px; height: 42px; object-fit: contain;
+      width: 42px; height: 42px; object-fit: contain; pointer-events: none;
     }
     .icon-art-box .custom-cover-badge {
       position: absolute; width: 22px; height: 22px; object-fit: cover; border: 1px solid #fff; border-radius: 2px;
-      bottom: 0; right: 0; box-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+      bottom: 0; right: 0; box-shadow: 1px 1px 3px rgba(0,0,0,0.6); pointer-events: none;
     }
 
     .icon-wrapper span {
-      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: break-all;
+      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: break-all; pointer-events: none;
     }
 
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
 
-    /* 視窗樣式與全螢幕還原 */
+    /* 視窗樣式 */
     .win-modal {
       position: fixed; display: none; z-index: 100;
       box-shadow: 2px 2px 12px rgba(0,0,0,0.5);
@@ -104,7 +104,6 @@
       max-height: calc(100vh - 70px) !important;
     }
 
-    /* 影音與相片容器 */
     .media-container {
       position: relative; width: 100%; aspect-ratio: 16 / 9;
       background: #000; display: flex; align-items: center; justify-content: center;
@@ -136,6 +135,28 @@
     .taskbar-right a {
       color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555;
     }
+
+    /* WINTER01 XP 開始選單 */
+    .start-menu {
+      position: fixed;
+      bottom: 35px; left: 4px;
+      width: 230px; max-width: 85vw;
+      background: #c0c0c0; border: 2px outset #fff;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.5);
+      display: none; z-index: 10000; padding: 3px;
+    }
+    .start-menu-banner {
+      background: linear-gradient(180deg, #104e8b, #1e90ff);
+      color: #fff; font-weight: bold;
+      padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
+      letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .start-menu ul { list-style: none; margin: 0; padding: 0; }
+    .start-menu li {
+      padding: 7px 10px; font-size: 12px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .start-menu li:hover { background: #000080; color: #fff; }
 
     .playlist-box {
       list-style: none; margin: 8px 0 0 0; padding: 0;
@@ -171,11 +192,42 @@
 
     <button id="topPasteBtn" class="admin-only" style="display:none; background:#ffffe0;" onclick="pasteItem(null)">📌 貼到桌面</button>
     <button class="admin-only" onclick="changeWallpaper()">🎨 桌布</button>
+    <button class="admin-only" onclick="openStartMenuConfigModal()">⭐ 設定開始選單</button>
     <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()">💾 永久儲存</button>
   </div>
 
   <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
+
+  <!-- WINTER01 XP 開始選單 -->
+  <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
+    <div class="start-menu-banner">
+      <span>⭐ WINTER01 XP</span>
+      <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal()">設定</button>
+    </div>
+    <ul id="startMenuList"></ul>
+    <hr style="margin: 4px 0;">
+    <ul>
+      <li onclick="toggleAdmin(); toggleStartMenu();">⚙️ 切換管理員模式</li>
+    </ul>
+  </div>
+
+  <!-- 開始選單管理勾選彈窗 -->
+  <div id="start-config-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
+    <div class="title-bar">
+      <div class="title-bar-text">⭐ 自訂開始選單項目</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('start-config-win')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p style="font-size:12px; margin-top:0;">請勾選要在 WINTER01 XP 選單中顯示的項目：</p>
+      <div id="startConfigCheckboxes" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
+      <div style="margin-top:8px; text-align:right;">
+        <button onclick="saveStartMenuConfig()">確定儲存</button>
+      </div>
+    </div>
+  </div>
 
   <!-- 資料夾視窗 -->
   <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
@@ -198,7 +250,7 @@
     </div>
   </div>
 
-  <!-- 專輯曲目播放器視窗 (支援自訂多首曲目與封面) -->
+  <!-- 專輯曲目播放器視窗 -->
   <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
@@ -268,14 +320,13 @@
     </div>
   </div>
 
-  <!-- 2. 底部工作列：含 HOME、WINTER 與 Copyright 連結 -->
+  <!-- 底部工作列：含 HOME、WINTER 與 Copyright 連結 -->
   <div class="taskbar">
     <div class="taskbar-left">
-      <!-- 回到首頁按鍵 -->
-      <button onclick="goHome()" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;" title="關閉所有視窗回到桌面">
+      <button onclick="goHome()" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         ⭐️ HOME
       </button>
-      <button onclick="goHome()" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
+      <button onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
       </button>
     </div>
@@ -302,13 +353,14 @@
     /* ========== 核心永久儲存配置 ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
+      "startMenuVisibleIds": ["f1", "album_winter_speed", "l1"],
       "items": [
         {
           "id": "album_winter_speed",
           "parentId": null,
           "type": "album",
           "name": "Winter Playlist",
-          "iconType": "cover", // cover 或 pure
+          "iconType": "cover",
           "icon": ICON_DISC_DRIVE,
           "coverBadge": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200",
           "pos": { x: 16, y: 16 },
@@ -356,7 +408,7 @@
     };
     /* ===================================== */
 
-    const CONFIG_KEY = "winter_desktop_config_v14";
+    const CONFIG_KEY = "winter_desktop_config_v15";
     localStorage.setItem(CONFIG_KEY, JSON.stringify(MASTER_CONFIG));
     let currentConfig = MASTER_CONFIG;
     let itemsData = currentConfig.items;
@@ -381,6 +433,7 @@
       currentConfig.items = itemsData;
       localStorage.setItem(CONFIG_KEY, JSON.stringify(currentConfig));
       renderDesktop();
+      renderStartMenu();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
       updateSelectionUI();
     }
@@ -395,11 +448,12 @@
       });
     }
 
-    // 回到首頁（關閉所有視窗）
     function goHome() {
       document.querySelectorAll('.win-modal').forEach(win => win.style.display = 'none');
       currentOpenFolderId = null;
       currentOpenAlbumId = null;
+      const menu = document.getElementById('startMenu');
+      if (menu) menu.style.display = 'none';
     }
 
     function handleGlobalClick(e) {
@@ -407,10 +461,12 @@
       updateSelectionUI();
       renderDesktop();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+      const menu = document.getElementById('startMenu');
+      if (menu) menu.style.display = 'none';
     }
 
     function selectItem(id, e) {
-      e.stopPropagation();
+      if (e) e.stopPropagation();
       selectedItemId = (selectedItemId === id) ? null : id;
       updateSelectionUI();
       renderDesktop();
@@ -500,7 +556,7 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！已解鎖自訂拖曳定位、新增專輯曲目庫與編輯功能。");
+          alert("登入成功！點擊項目可選取或開啟，長按拖曳可調整位置。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
@@ -510,7 +566,6 @@
       updateSelectionUI();
     }
 
-    // 桌面渲染與跨裝置（手機 Touch + 電腦 Mouse）拖曳定位
     function renderDesktop() {
       const container = document.getElementById('desktopContainer');
       container.innerHTML = '';
@@ -535,7 +590,6 @@
       const isCut = clipboardItem && clipboardItem.id === item.id && isCutOperation;
       div.className = `icon-wrapper dynamic-item ${isSelected ? 'selected' : ''} ${isCut ? 'cut-mode' : ''}`;
 
-      // 雙模式光碟圖示
       let iconHtml = "";
       if (item.type === 'album') {
         if (item.iconType === 'cover' && item.coverBadge) {
@@ -554,47 +608,56 @@
       }
 
       div.innerHTML = `${iconHtml}<span>${item.name}</span>`;
-
-      div.onclick = (e) => {
-        if (isAdmin) selectItem(item.id, e);
-        else handleItemClick(item);
-      };
-      div.ondblclick = (e) => { e.stopPropagation(); handleItemClick(item); };
       return div;
     }
 
-    // 跨裝置通用觸控/滑鼠拖曳定位
+    // 拖曳與點擊分離機制 (防止移動觸發點擊，修復無法開啟視窗問題)
     function makeDraggable(el, item) {
       let isDragging = false;
       let startX, startY, origX, origY;
+      let moved = false;
 
       function onStart(e) {
-        if (!isAdmin) return;
-        isDragging = true;
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         startX = clientX;
         startY = clientY;
         origX = item.pos.x;
         origY = item.pos.y;
+        moved = false;
+
+        if (isAdmin) isDragging = true;
       }
 
       function onMove(e) {
-        if (!isDragging || !isAdmin) return;
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         const dx = clientX - startX;
         const dy = clientY - startY;
-        el.style.left = (origX + dx) + "px";
-        el.style.top = (origY + dy) + "px";
+
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          moved = true;
+          if (isDragging && isAdmin) {
+            el.style.left = (origX + dx) + "px";
+            el.style.top = (origY + dy) + "px";
+          }
+        }
       }
 
       function onEnd(e) {
-        if (!isDragging) return;
+        if (isDragging && moved) {
+          item.pos.x = parseInt(el.style.left);
+          item.pos.y = parseInt(el.style.top);
+          saveState();
+        } else if (!moved) {
+          // 純單擊事件
+          if (isAdmin) {
+            selectItem(item.id, e);
+          } else {
+            handleItemClick(item);
+          }
+        }
         isDragging = false;
-        item.pos.x = parseInt(el.style.left);
-        item.pos.y = parseInt(el.style.top);
-        saveState();
       }
 
       el.addEventListener('mousedown', onStart);
@@ -604,6 +667,11 @@
       el.addEventListener('touchstart', onStart, { passive: true });
       window.addEventListener('touchmove', onMove, { passive: true });
       window.addEventListener('touchend', onEnd);
+
+      el.ondblclick = (e) => {
+        e.stopPropagation();
+        handleItemClick(item);
+      };
     }
 
     function handleItemClick(item) {
@@ -625,7 +693,72 @@
       }
     }
 
-    // 4. 新增專輯曲目庫（含雙圖示選擇）
+    // WINTER 開始選單
+    function toggleStartMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('startMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function renderStartMenu() {
+      const list = document.getElementById('startMenuList');
+      if (!list) return;
+      list.innerHTML = '';
+      
+      const visibleIds = currentConfig.startMenuVisibleIds || [];
+      const showItems = itemsData.filter(i => visibleIds.includes(i.id));
+
+      if (showItems.length === 0) {
+        list.innerHTML = '<li style="color:#666; font-size:11px;">(選單未勾選顯示項目)</li>';
+        return;
+      }
+
+      showItems.forEach(item => {
+        const li = document.createElement('li');
+        const iconSrc = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : (item.icon || ICON_FOLDER_DEFAULT);
+        li.title = `開啟 ${item.name}`;
+        li.innerHTML = `<img src="${iconSrc}" width="18" height="18" style="object-fit:contain;"> <span>${item.name}</span>`;
+        li.onclick = () => {
+          toggleStartMenu();
+          handleItemClick(item);
+        };
+        list.appendChild(li);
+      });
+    }
+
+    function openStartMenuConfigModal() {
+      if (!isAdmin) {
+        alert("請先登入管理員！");
+        return;
+      }
+      const box = document.getElementById('startConfigCheckboxes');
+      box.innerHTML = '';
+      const currentIds = currentConfig.startMenuVisibleIds || [];
+
+      itemsData.forEach(item => {
+        const row = document.createElement('label');
+        row.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;";
+        const isChecked = currentIds.includes(item.id) ? 'checked' : '';
+        row.innerHTML = `<input type="checkbox" value="${item.id}" ${isChecked}> <span>${item.name}</span>`;
+        box.appendChild(row);
+      });
+
+      openWindow('start-config-win');
+    }
+
+    function saveStartMenuConfig() {
+      const checkboxes = document.querySelectorAll('#startConfigCheckboxes input[type="checkbox"]');
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) selected.push(cb.value);
+      });
+      currentConfig.startMenuVisibleIds = selected;
+      saveState();
+      closeWindow('start-config-win');
+      alert("開始選單已自訂更新！");
+    }
+
+    // 建立專輯曲目庫
     function createAlbumWithCoverChoice(parentId = null) {
       const name = prompt("請輸入專輯名稱：", "My Album");
       if (!name) return;
@@ -659,7 +792,6 @@
       alert(`專輯「${name}」建立完成！雙擊該專輯即可播放或新增更多曲目。`);
     }
 
-    // 開啟專輯播放器
     function openAlbumPlayer(albumItem) {
       currentOpenAlbumId = albumItem.id;
       document.getElementById('albumTitleBar').innerText = `💿 專輯：${albumItem.name}`;
@@ -729,7 +861,6 @@
       }
     }
 
-    // 視窗拖曳與關閉
     let highestZ = 200;
     function openWindow(id) {
       const win = document.getElementById(id);
@@ -738,6 +869,7 @@
     }
     function closeWindow(id) {
       document.getElementById(id).style.display = 'none';
+      if (id === 'folder-win') currentOpenFolderId = null;
     }
     function toggleMaximize(id) {
       const win = document.getElementById(id);
@@ -779,6 +911,14 @@
       children.forEach(item => {
         const itemEl = createIconElement(item);
         itemEl.style.position = 'relative';
+        itemEl.onclick = (e) => {
+          if (isAdmin) selectItem(item.id, e);
+          else handleItemClick(item);
+        };
+        itemEl.ondblclick = (e) => {
+          e.stopPropagation();
+          handleItemClick(item);
+        };
         box.appendChild(itemEl);
       });
     }
@@ -873,11 +1013,11 @@
       }
     }
 
-    // 初始化載入桌布與桌面
     if (currentConfig.wallpaper) {
       document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;
     }
     renderDesktop();
+    renderStartMenu();
   </script>
 </body>
 </html>

@@ -16,7 +16,7 @@
       background-size: cover;
     }
     
-    /* 頂部操作列 */
+    /* 頂部操作工具列 */
     .top-actions {
       position: absolute;
       top: 6px; left: 6px; right: 6px;
@@ -36,12 +36,24 @@
       align-content: flex-start; gap: 14px;
       overflow: auto;
     }
+
+    /* 圖示外觀與選取狀態 */
     .icon-wrapper {
       position: relative;
       width: 76px;
       display: flex; flex-direction: column; align-items: center;
       cursor: pointer; text-align: center;
       color: white; text-shadow: 1px 1px 2px black;
+      padding: 3px;
+      border-radius: 2px;
+    }
+    .icon-wrapper.selected {
+      background: rgba(0, 0, 128, 0.45);
+      outline: 1px dotted #ffff00;
+    }
+    .icon-wrapper.selected span {
+      background: #000080;
+      color: #fff;
     }
     .icon-wrapper.cut-mode {
       opacity: 0.45;
@@ -53,20 +65,11 @@
     .icon-wrapper span {
       font-size: 11px; padding: 2px 4px; margin-top: 3px; word-break: break-all;
     }
-    
-    /* 浮動工具按鈕（僅管理員模式滑鼠懸停顯示） */
-    .icon-tools {
-      display: none; position: absolute; top: -10px; right: -6px; gap: 1px; z-index: 5;
-    }
-    body.admin-mode .icon-wrapper:hover .icon-tools { display: flex; }
-    .icon-tools button {
-      font-size: 9px; padding: 1px 3px; height: 18px; line-height: 12px; cursor: pointer;
-    }
 
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
     
-    /* 彈跳視窗（自適應寬度） */
+    /* 視窗樣式 */
     .win-modal {
       position: fixed; display: none; z-index: 100;
       box-shadow: 2px 2px 12px rgba(0,0,0,0.5);
@@ -86,7 +89,7 @@
       max-height: calc(100vh - 70px) !important;
     }
 
-    /* 資料夾導航列 */
+    /* 資料夾導航與操作列 */
     .folder-nav-bar {
       display: flex; gap: 4px; align-items: center; margin-bottom: 6px; background: #dfdfdf;
       padding: 3px 5px; border: 1px solid #7f9db9; flex-wrap: wrap;
@@ -155,28 +158,38 @@
     .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
   </style>
 </head>
-<body>
+<body onclick="handleGlobalClick(event)">
 
   <!-- 頂部管理列 -->
-  <div class="top-actions">
-    <button id="authBtn" onclick="toggleAdmin()" title="登入管理員以解鎖編輯功能">🔒 管理員</button>
-    <button class="admin-only" onclick="createItem('folder')" title="在桌面上建立新資料夾">+ 資料夾</button>
-    <button class="admin-only" onclick="createItem('album')" title="在桌面上建立新專輯 CD">+ 專輯/CD</button>
-    <button class="admin-only" onclick="createItem('video')" title="在桌面上新增 YouTube 或雲端音樂影片">+ 音樂/影片</button>
-    <button class="admin-only" onclick="createItem('image')" title="在桌面上新增相片圖片">+ 圖片</button>
-    <button class="admin-only" onclick="createItem('note')" title="在桌面上新增便利貼備忘錄">+ 便利貼</button>
-    <button class="admin-only" onclick="createItem('link')" title="在桌面上新增外部跳轉網址">+ 外部連結</button>
-    <button id="topPasteBtn" class="admin-only" style="display:none; background:#ffffe0;" onclick="pasteItem(null)" title="將剪貼簿中的項目貼到桌面">📌 貼到桌面</button>
-    <button class="admin-only" onclick="changeWallpaper()" title="自訂更換桌面背景桌布">🎨 桌布</button>
-    <button class="admin-only" onclick="openStartMenuConfigModal()" title="勾選設定哪些項目要顯示在左下角開始選單中">⭐ 設定開始選單</button>
-    <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()" title="匯出並複製目前所有設定代碼，覆蓋回 GitHub 即可永久保存">💾 永久儲存</button>
+  <div class="top-actions" onclick="event.stopPropagation()">
+    <button id="authBtn" onclick="toggleAdmin()" title="登入管理員以解鎖編輯與操作功能">🔒 管理員</button>
+    <button class="admin-only" onclick="createItem('folder')" title="建立黃色資料夾">+ 資料夾</button>
+    <button class="admin-only" onclick="createItem('album')" title="建立專輯/CD">+ 專輯/CD</button>
+    <button class="admin-only" onclick="createItem('video')" title="新增 YouTube 或雲端音樂影片 (光碟圖示)">+ 音樂/影片</button>
+    <button class="admin-only" onclick="createItem('image')" title="新增相片圖片">+ 圖片</button>
+    <button class="admin-only" onclick="createItem('note')" title="新增便利貼備忘錄">+ 便利貼</button>
+    <button class="admin-only" onclick="createItem('link')" title="新增外部跳轉網址">+ 外部連結</button>
+
+    <!-- 選取檔案後觸發的操作 -->
+    <span class="admin-only selected-ops" style="display:none; gap:3px;">
+      <span style="color:#888; margin: 0 2px;">|</span>
+      <button onclick="copySelectedItem()" title="複製所選項目">📋 複製</button>
+      <button onclick="cutSelectedItem()" title="剪下所選項目">✂️ 剪下</button>
+      <button onclick="editSelectedItem()" title="編輯所選項目名稱與內容">✏️ 編輯</button>
+      <button onclick="deleteSelectedItem()" title="刪除所選項目">❌ 刪除</button>
+    </span>
+
+    <button id="topPasteBtn" class="admin-only" style="display:none; background:#ffffe0;" onclick="pasteItem(null)" title="將項目貼到桌面">📌 貼到桌面</button>
+    <button class="admin-only" onclick="changeWallpaper()" title="更換桌面背景桌布">🎨 桌布</button>
+    <button class="admin-only" onclick="openStartMenuConfigModal()" title="自訂開始選單項目">⭐ 設定開始選單</button>
+    <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()" title="複製最新配置代碼貼回 GitHub index.html 即可永久儲存">💾 永久儲存</button>
   </div>
 
   <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
 
   <!-- WINTER01 XP 開始選單 -->
-  <div id="startMenu" class="start-menu">
+  <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>⭐ WINTER01 XP</span>
       <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal()" title="設定開始選單項目">設定</button>
@@ -184,12 +197,12 @@
     <ul id="startMenuList"></ul>
     <hr style="margin: 4px 0;">
     <ul>
-      <li onclick="toggleAdmin(); toggleStartMenu();" title="切換管理員登入或訪客模式">⚙️ 切換管理員模式</li>
+      <li onclick="toggleAdmin(); toggleStartMenu();" title="切換管理員模式">⚙️ 切換管理員模式</li>
     </ul>
   </div>
 
   <!-- 開始選單管理勾選彈窗 -->
-  <div id="start-config-win" class="window win-modal" style="max-width: 320px;">
+  <div id="start-config-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text">⭐ 自訂開始選單項目</div>
       <div class="title-bar-controls">
@@ -197,7 +210,7 @@
       </div>
     </div>
     <div class="window-body">
-      <p style="font-size:12px; margin-top:0;">請勾選要在 WINTER01 XP 選單中顯示的捷徑：</p>
+      <p style="font-size:12px; margin-top:0;">請勾選要在 WINTER01 XP 選單中顯示的項目：</p>
       <div id="startConfigCheckboxes" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
       <div style="margin-top:8px; text-align:right;">
         <button onclick="saveStartMenuConfig()" title="儲存選單設定">確定儲存</button>
@@ -206,7 +219,7 @@
   </div>
 
   <!-- 資料夾 / CD 內容視窗 -->
-  <div id="folder-win" class="window win-modal">
+  <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
@@ -221,16 +234,26 @@
         <span class="admin-only" style="color:#888; margin: 0 4px;">|</span>
         <button class="admin-only" onclick="createItemInsideFolder('folder')" title="在此建立子資料夾">+ 子資料夾</button>
         <button class="admin-only" onclick="createItemInsideFolder('album')" title="在此建立專輯 CD">+ 專輯/CD</button>
-        <button class="admin-only" onclick="createItemInsideFolder('video')" title="在此新增音樂影片 (單張CD圖示)">+ 音樂/影片</button>
-        <button class="admin-only" onclick="createItemInsideFolder('image')" title="在此新增相片圖片">+ 圖片</button>
-        <button id="folderPasteBtn" class="admin-only" style="display:none; background:#ffffe0;" onclick="pasteItem(currentOpenFolderId)" title="將複製/剪下的項目貼上到此資料夾">📌 貼上到此</button>
+        <button class="admin-only" onclick="createItemInsideFolder('video')" title="在此新增音樂影片 (光碟圖示)">+ 音樂/影片</button>
+        <button class="admin-only" onclick="createItemInsideFolder('image')" title="在此新增圖片">+ 圖片</button>
+        
+        <!-- 資料夾內選取項目操作按鈕 -->
+        <span class="admin-only folder-selected-ops" style="display:none; gap:3px;">
+          <span style="color:#888; margin: 0 2px;">|</span>
+          <button onclick="copySelectedItem()" title="複製所選項目">📋 複製</button>
+          <button onclick="cutSelectedItem()" title="剪下所選項目">✂️ 剪下</button>
+          <button onclick="editSelectedItem()" title="編輯所選項目">✏️ 編輯</button>
+          <button onclick="deleteSelectedItem()" title="刪除所選項目">❌ 刪除</button>
+        </span>
+
+        <button id="folderPasteBtn" class="admin-only" style="display:none; background:#ffffe0;" onclick="pasteItem(currentOpenFolderId)" title="貼上至此資料夾">📌 貼上到此</button>
       </div>
       <div id="folderInnerContent" style="display:flex; gap:10px; flex-wrap:wrap; min-height:130px; padding:8px; background:#fff; border: 2px inset #dfdfdf;"></div>
     </div>
   </div>
 
   <!-- 圖片檢視器 -->
-  <div id="photo-viewer-win" class="window win-modal">
+  <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
       <div class="title-bar-controls">
@@ -246,7 +269,7 @@
   </div>
 
   <!-- 影音播放器 -->
-  <div id="media-player-win" class="window win-modal" style="max-width: 640px;">
+  <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
       <div class="title-bar-controls">
@@ -263,7 +286,7 @@
   </div>
 
   <!-- Playlist 播放器視窗 -->
-  <div id="playlist-win" class="window win-modal" style="max-width: 600px;">
+  <div id="playlist-win" class="window win-modal" style="max-width: 600px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="playlistTitleBar">🎵 Playlist 播放器</div>
       <div class="title-bar-controls">
@@ -277,14 +300,14 @@
       </div>
       <div style="margin-top: 6px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:12px; font-weight:bold;">曲目列表：</span>
-        <button class="admin-only" onclick="addMusicTrack()" title="新增歌曲到播放清單">+ 新增曲目</button>
+        <button class="admin-only" onclick="addMusicTrack()" title="新增曲目">+ 新增曲目</button>
       </div>
       <ul class="playlist-box" id="playlistItems"></ul>
     </div>
   </div>
 
   <!-- 外部連結跳轉確認視窗 -->
-  <div id="link-win" class="window win-modal" style="max-width: 320px;">
+  <div id="link-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
       <div class="title-bar-controls">
@@ -294,14 +317,14 @@
     <div class="window-body" style="text-align:center;">
       <p id="linkText" style="font-size:12px; margin: 10px 0;"></p>
       <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
-        <button style="width:100%; padding:6px; font-weight:bold;" title="點擊在新分頁開啟目標網址">開啟連結 (Visit Site)</button>
+        <button style="width:100%; padding:6px; font-weight:bold;">開啟連結 (Visit Site)</button>
       </a>
     </div>
   </div>
 
-  <!-- 底部工作列：WINTER 按鈕 -->
+  <!-- 底部工作列 -->
   <div class="taskbar">
-    <button onclick="toggleStartMenu()" style="font-weight:bold; display:flex; align-items:center; gap:5px; height:26px; padding:0 6px;" title="開啟 WINTER 開始選單">
+    <button onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:5px; height:26px; padding:0 6px;" title="開啟 WINTER 開始選單">
       <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
     </button>
   </div>
@@ -311,21 +334,22 @@
     let isAdmin = false;
     let currentOpenFolderId = null;
 
+    let selectedItemId = null; // 當前選取的項目 ID
+    let clipboardItem = null;  // 剪貼簿項目
+    let isCutOperation = false;
+
     let folderHistory = [];
     let folderForwardStack = [];
-
-    let clipboardItem = null;
-    let isCutOperation = false;
 
     const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
     const ICON_ALBUM_DEFAULT = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
     const ICON_VIDEO_DEFAULT = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* ========== 核心永久儲存配置（已完整同步您的所有最新項目） ========== */
+    /* ========== 核心永久儲存配置 ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
-      "startMenuVisibleIds": ["f1", "item_playlist_core", "1789205032583"],
+      "startMenuVisibleIds": ["f1", "item_playlist_core", "1789211569564"],
       "playlist": [
         {
           "title": "Winter-Speed of summer",
@@ -421,8 +445,7 @@
     };
     /* ================================================================= */
 
-    // 每次更新程式碼時強制同步最新配置
-    const CONFIG_KEY = "winter_desktop_config_v12";
+    const CONFIG_KEY = "winter_desktop_config_v13";
     localStorage.setItem(CONFIG_KEY, JSON.stringify(MASTER_CONFIG));
     let currentConfig = MASTER_CONFIG;
 
@@ -458,7 +481,7 @@
       renderDesktop();
       renderStartMenu();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      updatePasteButtons();
+      updateSelectionUI();
     }
 
     function exportCurrentState() {
@@ -467,33 +490,74 @@
       const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
 
       navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製配置代碼！\n\n請至 GitHub index.html 替換第 200 行左右的『const MASTER_CONFIG = ...』區域（注意：不要整份網頁全刪！），並 Commit changes 即可永久儲存！");
+        alert("✅ 成功複製配置代碼！\n\n請至 GitHub index.html 替換 MASTER_CONFIG 區域並 Commit changes 即可永久儲存。");
       }).catch(() => {
-        prompt("請複製以下代碼並貼回 index.html 的 MASTER_CONFIG 區域：", output);
+        prompt("請複製代碼並貼回 index.html：", output);
       });
     }
 
-    // 剪貼簿操作
-    function copyItem(id) {
-      const item = itemsData.find(i => i.id === id);
+    // 全域點擊取消選取
+    function handleGlobalClick(e) {
+      selectedItemId = null;
+      updateSelectionUI();
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+    }
+
+    // 選取與取消選取
+    function selectItem(id, e) {
+      e.stopPropagation();
+      selectedItemId = (selectedItemId === id) ? null : id;
+      updateSelectionUI();
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+    }
+
+    function updateSelectionUI() {
+      const hasSelection = selectedItemId !== null && isAdmin;
+      document.querySelectorAll('.selected-ops').forEach(el => el.style.display = hasSelection ? 'inline-flex' : 'none');
+      document.querySelectorAll('.folder-selected-ops').forEach(el => el.style.display = hasSelection ? 'inline-flex' : 'none');
+
+      const showPaste = isAdmin && clipboardItem !== null;
+      const topBtn = document.getElementById('topPasteBtn');
+      const folderBtn = document.getElementById('folderPasteBtn');
+      if (topBtn) topBtn.style.display = showPaste ? 'inline-block' : 'none';
+      if (folderBtn) folderBtn.style.display = showPaste ? 'inline-block' : 'none';
+    }
+
+    // 選取後的操作：複製、剪下、編輯、刪除
+    function copySelectedItem() {
+      if (!selectedItemId) return;
+      const item = itemsData.find(i => i.id === selectedItemId);
       if (!item) return;
       clipboardItem = item;
       isCutOperation = false;
-      renderDesktop();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      updatePasteButtons();
-      alert(`已複製「${item.name}」！請前往目的地點擊「貼上」。`);
+      updateSelectionUI();
+      alert(`已複製「${item.name}」！請前往目的地資料夾點擊「貼上」。`);
     }
 
-    function cutItem(id) {
-      const item = itemsData.find(i => i.id === id);
+    function cutSelectedItem() {
+      if (!selectedItemId) return;
+      const item = itemsData.find(i => i.id === selectedItemId);
       if (!item) return;
       clipboardItem = item;
       isCutOperation = true;
+      updateSelectionUI();
       renderDesktop();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      updatePasteButtons();
       alert(`已剪下「${item.name}」！請前往目的地點擊「貼上」。`);
+    }
+
+    function editSelectedItem() {
+      if (!selectedItemId) return;
+      editItem(selectedItemId);
+    }
+
+    function deleteSelectedItem() {
+      if (!selectedItemId) return;
+      deleteItem(selectedItemId);
+      selectedItemId = null;
+      updateSelectionUI();
     }
 
     function pasteItem(targetParentId) {
@@ -501,17 +565,15 @@
 
       if (isCutOperation) {
         if (clipboardItem.id === targetParentId) {
-          alert("無法將項目貼入自己內部！");
+          alert("無法將項目移入自己內部！");
           return;
         }
         clipboardItem.parentId = targetParentId;
         clipboardItem = null;
         isCutOperation = false;
       } else {
-        const newIdMap = {};
         function cloneRecursive(origItem, pId) {
           const newId = "copy_" + Date.now() + "_" + Math.floor(Math.random()*1000);
-          newIdMap[origItem.id] = newId;
           const cloned = { ...origItem, id: newId, parentId: pId, name: origItem.name + " (副本)" };
           itemsData.push(cloned);
 
@@ -521,30 +583,16 @@
         cloneRecursive(clipboardItem, targetParentId);
       }
 
+      selectedItemId = null;
       saveState();
     }
 
-    function updatePasteButtons() {
-      const show = isAdmin && clipboardItem !== null;
-      const topBtn = document.getElementById('topPasteBtn');
-      const folderBtn = document.getElementById('folderPasteBtn');
-      if (topBtn) topBtn.style.display = show ? 'inline-block' : 'none';
-      if (folderBtn) folderBtn.style.display = show ? 'inline-block' : 'none';
-    }
-
     // WINTER01 XP 開始選單
-    function toggleStartMenu() {
+    function toggleStartMenu(e) {
+      if (e) e.stopPropagation();
       const menu = document.getElementById('startMenu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
-
-    document.addEventListener('click', (e) => {
-      const menu = document.getElementById('startMenu');
-      const startBtn = document.querySelector('.taskbar button');
-      if (!menu.contains(e.target) && !startBtn.contains(e.target)) {
-        menu.style.display = 'none';
-      }
-    });
 
     function renderStartMenu() {
       const list = document.getElementById('startMenuList');
@@ -608,6 +656,7 @@
         isAdmin = false;
         document.body.classList.remove('admin-mode');
         document.getElementById('authBtn').innerText = "🔒 管理員";
+        selectedItemId = null;
         alert("已退出管理員模式（所有資料夾與桌面均禁止外部編輯）");
       } else {
         const input = prompt("請輸入管理員密碼：");
@@ -615,7 +664,7 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！已解鎖所有新增、編輯與複製貼上功能。");
+          alert("登入成功！單擊項目即可選取，並進行複製、剪下、刪除或編輯。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
@@ -624,7 +673,7 @@
       renderPlaylistUI();
       renderStartMenu();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      updatePasteButtons();
+      updateSelectionUI();
     }
 
     function renderDesktop() {
@@ -639,47 +688,32 @@
 
     function createIconElement(item) {
       const div = document.createElement('div');
+      const isSelected = selectedItemId === item.id;
       const isCut = clipboardItem && clipboardItem.id === item.id && isCutOperation;
-      div.className = `icon-wrapper dynamic-item ${isCut ? 'cut-mode' : ''}`;
-      div.draggable = isAdmin;
+      div.className = `icon-wrapper dynamic-item ${isSelected ? 'selected' : ''} ${isCut ? 'cut-mode' : ''}`;
 
       const displayIcon = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : item.icon;
 
       div.innerHTML = `
-        <div class="icon-tools">
-          <button onclick="event.stopPropagation(); copyItem('${item.id}')" title="複製此項目">📋</button>
-          <button onclick="event.stopPropagation(); cutItem('${item.id}')" title="剪下此項目">✂️</button>
-          <button onclick="event.stopPropagation(); editItem('${item.id}')" title="編輯名稱與內容">✏️</button>
-          <button onclick="event.stopPropagation(); deleteItem('${item.id}')" title="刪除此項目">❌</button>
-        </div>
         <img src="${displayIcon}" alt="icon" onerror="this.src='${ICON_VIDEO_DEFAULT}'">
         <span>${item.name}</span>
       `;
 
-      div.onclick = () => handleItemClick(item);
-
-      div.ondragstart = (e) => {
-        if (!isAdmin) return;
-        e.dataTransfer.setData('text/plain', item.id);
+      // 單擊選取
+      div.onclick = (e) => {
+        if (isAdmin) {
+          selectItem(item.id, e);
+        } else {
+          handleItemClick(item);
+        }
       };
 
-      if (item.type === 'folder' || item.type === 'album') {
-        div.ondragover = (e) => { e.preventDefault(); div.classList.add('drag-hover'); };
-        div.ondragleave = () => div.classList.remove('drag-hover');
-        div.ondrop = (e) => {
-          e.preventDefault();
-          div.classList.remove('drag-hover');
-          const draggedId = e.dataTransfer.getData('text/plain');
-          if (draggedId && draggedId !== item.id) {
-            const target = itemsData.find(i => i.id === draggedId);
-            if (target) {
-              target.parentId = item.id;
-              saveState();
-              alert(`已將「${target.name}」移入「${item.name}」！`);
-            }
-          }
-        };
-      }
+      // 雙擊開啟
+      div.ondblclick = (e) => {
+        e.stopPropagation();
+        handleItemClick(item);
+      };
+
       return div;
     }
 
@@ -796,21 +830,29 @@
 
       children.forEach(item => {
         const itemEl = document.createElement('div');
+        const isSelected = selectedItemId === item.id;
         const isCut = clipboardItem && clipboardItem.id === item.id && isCutOperation;
-        itemEl.style.cssText = `display:flex; flex-direction:column; align-items:center; width:70px; cursor:pointer; text-align:center; position:relative; ${isCut ? 'opacity:0.4;' : ''}`;
-        const displayIcon = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : item.icon;
+        itemEl.className = `icon-wrapper ${isSelected ? 'selected' : ''} ${isCut ? 'cut-mode' : ''}`;
         
+        const displayIcon = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : item.icon;
         itemEl.innerHTML = `
-          <div class="icon-tools">
-            <button onclick="event.stopPropagation(); copyItem('${item.id}')" title="複製此項目">📋</button>
-            <button onclick="event.stopPropagation(); cutItem('${item.id}')" title="剪下此項目">✂️</button>
-            <button onclick="event.stopPropagation(); editItem('${item.id}')" title="編輯名稱與內容">✏️</button>
-            <button onclick="event.stopPropagation(); deleteItem('${item.id}')" title="刪除此項目">❌</button>
-          </div>
-          <img src="${displayIcon}" style="width:38px; height:38px; object-fit:contain; border-radius:3px;" onerror="this.src='${ICON_VIDEO_DEFAULT}'">
+          <img src="${displayIcon}" alt="icon" onerror="this.src='${ICON_VIDEO_DEFAULT}'">
           <span style="font-size:11px; margin-top:3px; word-break:break-all;">${item.name}</span>
         `;
-        itemEl.onclick = () => handleItemClick(item);
+
+        itemEl.onclick = (e) => {
+          if (isAdmin) {
+            selectItem(item.id, e);
+          } else {
+            handleItemClick(item);
+          }
+        };
+
+        itemEl.ondblclick = (e) => {
+          e.stopPropagation();
+          handleItemClick(item);
+        };
+
         box.appendChild(itemEl);
       });
     }
@@ -850,7 +892,7 @@
         const rawUrl = prompt("請貼上 YouTube 網址 或 Google 雲端影片共享連結：");
         if (!rawUrl) return;
         mediaUrl = autoFormatMediaUrl(rawUrl, 'video');
-        const rawIcon = prompt("自訂圖示網址 (留空使用預設光碟 CD 圖示)：", "");
+        const rawIcon = prompt("自訂圖示網址 (留空使用光碟 CD 圖示)：", "");
         icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : defaultIcon;
       } else if (type === 'image') {
         const rawUrl = prompt("請貼上圖片網址（支援 Google 雲端共享連結）：");
@@ -902,9 +944,10 @@
     }
 
     function deleteItem(id) {
-      if (confirm("確定刪除此項目嗎？（若為資料夾，內部所有子檔案亦會一併刪除）")) {
+      if (confirm("確定刪除所選項目嗎？（若為資料夾，內部所有子檔案亦會一併刪除）")) {
         itemsData = itemsData.filter(i => i.id !== id && i.parentId !== id);
         if (clipboardItem && clipboardItem.id === id) clipboardItem = null;
+        if (selectedItemId === id) selectedItemId = null;
         saveState();
       }
     }
@@ -1049,7 +1092,7 @@
     renderDesktop();
     renderPlaylistUI();
     renderStartMenu();
-    updatePasteButtons();
+    updateSelectionUI();
   </script>
 </body>
 </html>

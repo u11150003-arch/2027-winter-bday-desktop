@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>2027 WINTER Bday desktop</title>
 
+  <!-- 網址分享縮圖 -->
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A special retro desktop space created for WINTER">
   <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
@@ -37,7 +38,7 @@
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部操作工具列 (避開手機瀏海與頂部安全區) */
+    /* 頂部操作工具列：完全恢復滑鼠滑動與滾輪判定 */
     .top-actions {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
@@ -46,14 +47,13 @@
       display: flex; gap: 4px;
       z-index: 50; flex-wrap: nowrap;
       overflow-x: auto; padding-bottom: 4px;
-      pointer-events: none;
+      pointer-events: auto;
     }
     .top-actions button, .top-actions span {
       flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer;
-      pointer-events: auto;
     }
 
-    /* 桌面容器 (底端不擋到工作列與安全區) */
+    /* 桌面容器 */
     .desktop {
       position: absolute;
       top: 48px;
@@ -188,7 +188,7 @@
       max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff;
     }
 
-    /* 底部工作列：完美避開手機底部圓弧與手勢條 */
+    /* 底部工作列 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
       height: var(--taskbar-h);
@@ -249,7 +249,8 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <div class="top-actions">
+  <!-- 頂部管理工具列 -->
+  <div class="top-actions" id="topActionsBar">
     <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
     <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
     <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 專輯曲目庫</button>
@@ -274,8 +275,10 @@
     <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
   </div>
 
+  <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
 
+  <!-- WINTER01 XP 開始選單 -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>⭐ WINTER01 XP</span>
@@ -288,6 +291,7 @@
     </ul>
   </div>
 
+  <!-- 移動到... 目標資料夾選擇彈窗 -->
   <div id="move-modal-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text" id="moveModalTitle">📦 移動項目至...</div>
@@ -301,6 +305,7 @@
     </div>
   </div>
 
+  <!-- 開始選單自訂彈窗 -->
   <div id="start-config-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text">⭐ 自訂開始選單項目</div>
@@ -317,6 +322,7 @@
     </div>
   </div>
 
+  <!-- 資料夾視窗 -->
   <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
@@ -341,6 +347,7 @@
     </div>
   </div>
 
+  <!-- 專輯曲目播放器視窗 -->
   <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
@@ -362,6 +369,7 @@
     </div>
   </div>
 
+  <!-- 圖片檢視器 -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -378,6 +386,7 @@
     </div>
   </div>
 
+  <!-- 影音播放器 -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
@@ -395,6 +404,7 @@
     </div>
   </div>
 
+  <!-- 外部連結視窗 -->
   <div id="link-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
@@ -410,6 +420,7 @@
     </div>
   </div>
 
+  <!-- 底部工作列 -->
   <div class="taskbar">
     <div class="taskbar-left">
       <button type="button" onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
@@ -572,7 +583,7 @@
     };
     /* ================================================================= */
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v6";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v7";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -580,6 +591,17 @@
 
     let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
     let itemsData = currentConfig.items;
+
+    // 滑鼠滾輪橫向滾動工具列
+    const topBar = document.getElementById('topActionsBar');
+    if (topBar) {
+      topBar.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+          topBar.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
 
     function extractDriveId(url) {
       if (!url) return null;

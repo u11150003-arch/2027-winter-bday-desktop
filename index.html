@@ -2,11 +2,11 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>2027 WINTER Bday desktop</title>
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
-    * { box-sizing: border-box; user-select: none; }
+    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
     body {
       margin: 0;
       height: 100vh;
@@ -15,21 +15,30 @@
       background: #008080 url('https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g') no-repeat center center;
       background-size: cover;
     }
+    
+    /* 頂部管理列 */
     .top-actions {
       position: absolute;
-      top: 10px; left: 10px;
-      display: flex; gap: 6px;
-      z-index: 1000; flex-wrap: wrap;
+      top: 8px; left: 8px; right: 8px;
+      display: flex; gap: 5px;
+      z-index: 1000; flex-wrap: nowrap;
+      overflow-x: auto; padding-bottom: 4px;
     }
+    .top-actions button {
+      flex-shrink: 0; font-size: 11px; padding: 2px 6px;
+    }
+
+    /* 桌面圖示容器 */
     .desktop {
       position: absolute;
-      top: 55px; left: 15px; right: 15px; bottom: 40px;
+      top: 48px; left: 10px; right: 10px; bottom: 42px;
       display: flex; flex-direction: column; flex-wrap: wrap;
-      align-content: flex-start; gap: 16px;
+      align-content: flex-start; gap: 14px;
+      overflow: auto;
     }
     .icon-wrapper {
       position: relative;
-      width: 80px;
+      width: 76px;
       display: flex; flex-direction: column; align-items: center;
       cursor: pointer; text-align: center;
       color: white; text-shadow: 1px 1px 2px black;
@@ -39,10 +48,10 @@
       background: rgba(255, 255, 255, 0.25);
     }
     .icon-wrapper img {
-      width: 44px; height: 44px; object-fit: contain; pointer-events: none;
+      width: 42px; height: 42px; object-fit: contain; pointer-events: none;
     }
     .icon-wrapper span {
-      font-size: 11px; padding: 2px 4px; margin-top: 4px; word-break: break-all;
+      font-size: 11px; padding: 2px 4px; margin-top: 3px; word-break: break-all;
     }
     .icon-tools {
       display: none; position: absolute; top: -8px; right: -4px; gap: 2px;
@@ -52,19 +61,48 @@
     .admin-only { display: none; }
     body.admin-mode .admin-only { display: inline-block; }
     
+    /* 視窗自適應（手機與桌機完全匹配） */
     .win-modal {
-      position: absolute; display: none; z-index: 10;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+      position: fixed; display: none; z-index: 100;
+      box-shadow: 2px 2px 12px rgba(0,0,0,0.5);
+      top: 50% !important; left: 50% !important;
+      transform: translate(-50%, -50%);
+      width: 94vw; max-width: 580px;
+    }
+    .win-modal .window-body {
+      max-height: 80vh; overflow-y: auto; padding: 6px;
     }
     .win-modal.maximized {
-      top: 0 !important; left: 0 !important;
-      width: 100vw !important; height: calc(100vh - 35px) !important;
+      top: 0 !important; left: 0 !important; transform: none !important;
+      width: 100vw !important; max-width: 100vw !important; height: calc(100vh - 35px) !important;
       z-index: 500 !important;
     }
     .win-modal.maximized .window-body {
-      height: calc(100% - 32px);
-      overflow: auto;
+      max-height: calc(100vh - 70px) !important;
     }
+
+    /* 手機/桌機 16:9 滿版播放容器 */
+    .media-container {
+      position: relative; width: 100%; aspect-ratio: 16 / 9;
+      background: #000; display: flex; align-items: center; justify-content: center;
+    }
+    .media-container iframe, .media-container video {
+      width: 100%; height: 100%; border: none;
+    }
+
+    /* 圖片容器：防止超出，支援桌機手機自動等比適配 */
+    .photo-stage {
+      width: 100%; min-height: 240px; max-height: 60vh;
+      display: flex; align-items: center; justify-content: center;
+      background: #1a1a1a; overflow: hidden; padding: 8px;
+    }
+    .photo-stage img {
+      max-width: 100%; max-height: 55vh; object-fit: contain;
+      border: 1px solid #fff; box-shadow: 0 0 8px rgba(0,0,0,0.6);
+      transition: transform 0.1s ease;
+    }
+
+    /* 底部工作列 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0; height: 35px;
       background: #c0c0c0; border-top: 2px solid #fff;
@@ -74,50 +112,29 @@
     /* WINTER01 XP 開始選單 */
     .start-menu {
       position: fixed;
-      bottom: 35px;
-      left: 2px;
-      width: 220px;
-      background: #c0c0c0;
-      border: 2px outset #fff;
+      bottom: 35px; left: 4px;
+      width: 230px; max-width: 85vw;
+      background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 3px 3px 12px rgba(0,0,0,0.5);
-      display: none;
-      z-index: 10000;
-      padding: 3px;
+      display: none; z-index: 10000; padding: 3px;
     }
     .start-menu-banner {
       background: linear-gradient(180deg, #104e8b, #1e90ff);
-      color: #fff;
-      font-weight: bold;
-      padding: 8px 10px;
-      font-size: 13px;
-      margin-bottom: 4px;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: #fff; font-weight: bold;
+      padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
+      letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between;
     }
-    .start-menu ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
+    .start-menu ul { list-style: none; margin: 0; padding: 0; }
     .start-menu li {
-      padding: 7px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      padding: 7px 10px; font-size: 12px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
     }
-    .start-menu li:hover {
-      background: #000080;
-      color: #fff;
-    }
+    .start-menu li:hover { background: #000080; color: #fff; }
 
-    /* 播放清單 */
+    /* Playlist 樣式 */
     .playlist-box {
       list-style: none; margin: 8px 0 0 0; padding: 0;
-      background: #fff; border: 2px inset #dfdfdf; height: 130px; overflow-y: auto;
+      background: #fff; border: 2px inset #dfdfdf; height: 120px; overflow-y: auto;
     }
     .playlist-box li {
       padding: 5px 8px; font-size: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
@@ -125,47 +142,64 @@
     .playlist-box li:hover { background: #000080; color: #fff; }
     .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
 
-    /* 圖片編輯調色板 */
+    /* 管理員專用相片調色控制列 */
     .photo-filter-bar {
-      display: flex; gap: 8px; flex-wrap: wrap; background: #dfdfdf;
+      display: flex; gap: 6px; flex-wrap: wrap; background: #dfdfdf;
       padding: 6px; margin-bottom: 6px; border: 1px solid #888; font-size: 11px; align-items: center;
     }
-    .photo-filter-bar label { display: flex; align-items: center; gap: 3px; }
+    .photo-filter-bar label { display: flex; align-items: center; gap: 2px; }
   </style>
 </head>
 <body>
 
-  <!-- 頂部管理工具列 -->
+  <!-- 頂部操作工具列 -->
   <div class="top-actions">
-    <button id="authBtn" onclick="toggleAdmin()">🔒 管理員登入</button>
+    <button id="authBtn" onclick="toggleAdmin()">🔒 管理員</button>
     <button class="admin-only" onclick="createItem('folder')">+ 資料夾/CD</button>
     <button class="admin-only" onclick="createItem('video')">+ 音樂/影片</button>
     <button class="admin-only" onclick="createItem('image')">+ 圖片</button>
     <button class="admin-only" onclick="createItem('note')">+ 便利貼</button>
     <button class="admin-only" onclick="createItem('link')">+ 外部連結</button>
-    <button class="admin-only" onclick="changeWallpaper()">🎨 換背景</button>
-    <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()">💾 匯出設定 (永久儲存)</button>
+    <button class="admin-only" onclick="changeWallpaper()">🎨 桌布</button>
+    <button class="admin-only" onclick="openStartMenuConfigModal()">⭐ 設定開始選單</button>
+    <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()">💾 永久儲存</button>
   </div>
 
   <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
 
-  <!-- WINTER01 XP 開始選單（點擊直接跳轉開啟） -->
+  <!-- WINTER01 XP 開始選單 -->
   <div id="startMenu" class="start-menu">
-    <div class="start-menu-banner">⭐ WINTER01 XP</div>
+    <div class="start-menu-banner">
+      <span>⭐ WINTER01 XP</span>
+      <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal()">設定</button>
+    </div>
+    <ul id="startMenuList"></ul>
+    <hr style="margin: 4px 0;">
     <ul>
-      <li onclick="jumpToItem('folder', 'f1')">📁 開啟 WINTER 資料夾</li>
-      <li onclick="jumpToItem('playlist', null)">🎵 開啟 Playlist 播放器</li>
-      <li onclick="jumpToItem('image', 'img1')">🖼️ 開啟 手幅Serenade ver</li>
-      <li onclick="jumpToItem('note', 'n1')">📝 開啟 生咖應援物便利貼</li>
-      <li onclick="jumpToItem('link', 'l1')">🔗 開啟 生咖預約表單</li>
-      <hr style="margin: 4px 0;">
       <li onclick="toggleAdmin(); toggleStartMenu();">⚙️ 切換管理員模式</li>
     </ul>
   </div>
 
+  <!-- 開始選單管理勾選彈出視窗 -->
+  <div id="start-config-win" class="window win-modal" style="max-width: 320px;">
+    <div class="title-bar">
+      <div class="title-bar-text">⭐ 自訂開始選單呈現項目</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('start-config-win')"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p style="font-size:12px; margin-top:0;">請勾選要在 WINTER01 XP 選單中顯示的項目：</p>
+      <div id="startConfigCheckboxes" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
+      <div style="margin-top:8px; text-align:right;">
+        <button onclick="saveStartMenuConfig()">確定儲存</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 資料夾 / CD 內容視窗 -->
-  <div id="folder-win" class="window win-modal" style="top: 70px; left: 70px; width: 480px;">
+  <div id="folder-win" class="window win-modal">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
@@ -175,17 +209,17 @@
     </div>
     <div class="window-body">
       <div style="margin-bottom: 8px; display:flex; gap:6px; align-items:center;" class="admin-only">
-        <button onclick="createItemInsideFolder('folder')">+ 子資料夾/CD</button>
+        <button onclick="createItemInsideFolder('folder')">+ 子資料夾</button>
         <button onclick="createItemInsideFolder('video')">+ 音樂/影片</button>
         <button onclick="createItemInsideFolder('image')">+ 圖片</button>
         <button onclick="createItemInsideFolder('note')">+ 便利貼</button>
       </div>
-      <div id="folderInnerContent" style="display:flex; gap:12px; flex-wrap:wrap; min-height:140px; padding:10px; background:#fff; border: 2px inset #dfdfdf;"></div>
+      <div id="folderInnerContent" style="display:flex; gap:10px; flex-wrap:wrap; min-height:120px; padding:8px; background:#fff; border: 2px inset #dfdfdf;"></div>
     </div>
   </div>
 
-  <!-- 圖片檢視器（支援位置、大小縮放、簡易調色） -->
-  <div id="photo-viewer-win" class="window win-modal" style="top: 60px; left: 100px; width: 560px;">
+  <!-- 圖片檢視器（自動適配手機/桌機，杜絕爆版） -->
+  <div id="photo-viewer-win" class="window win-modal">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
       <div class="title-bar-controls">
@@ -193,22 +227,23 @@
         <button aria-label="Close" onclick="closeWindow('photo-viewer-win')"></button>
       </div>
     </div>
-    <div class="window-body" style="background: #2b2b2b; padding: 6px;">
-      <div class="photo-filter-bar">
-        <label>縮放: <input type="range" id="filterZoom" min="50" max="180" value="100" oninput="applyPhotoFilters()"></label>
+    <div class="window-body" style="background: #222; padding: 4px;">
+      <!-- 調色與縮放控制列（僅管理員顯示） -->
+      <div class="photo-filter-bar admin-only" id="photoAdminTools">
+        <label>縮放: <input type="range" id="filterZoom" min="40" max="150" value="100" oninput="applyPhotoFilters()"></label>
         <label>亮度: <input type="range" id="filterBright" min="50" max="150" value="100" oninput="applyPhotoFilters()"></label>
         <label>對比: <input type="range" id="filterContrast" min="50" max="150" value="100" oninput="applyPhotoFilters()"></label>
-        <label>飽和度: <input type="range" id="filterSat" min="0" max="200" value="100" oninput="applyPhotoFilters()"></label>
+        <label>飽和: <input type="range" id="filterSat" min="0" max="200" value="100" oninput="applyPhotoFilters()"></label>
         <button onclick="resetPhotoFilters()">重設</button>
       </div>
-      <div style="text-align: center; overflow: auto; max-height: 65vh; padding: 10px; display:flex; justify-content:center; align-items:center;">
-        <img id="largePhotoDisplay" src="" style="max-width: 100%; height: auto; transition: 0.1s; border: 2px solid #fff;" alt="preview">
+      <div class="photo-stage">
+        <img id="largePhotoDisplay" src="" alt="preview">
       </div>
     </div>
   </div>
 
-  <!-- 影音播放器（全螢幕適配 16:9，修正縮小與停頓問題） -->
-  <div id="media-player-win" class="window win-modal" style="top: 70px; left: 100px; width: 720px;">
+  <!-- 影音播放器 -->
+  <div id="media-player-win" class="window win-modal" style="max-width: 640px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
       <div class="title-bar-controls">
@@ -216,14 +251,16 @@
         <button aria-label="Close" onclick="closeUniversalPlayer()"></button>
       </div>
     </div>
-    <div class="window-body" style="background: #000; padding: 0; display: flex; flex-direction:column; height: 420px;">
-      <iframe id="universalIframe" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-      <video id="universalVideo" controls style="width: 100%; height: 100%; display:none;"></video>
+    <div class="window-body" style="padding: 0; background: #000;">
+      <div class="media-container">
+        <iframe id="universalIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <video id="universalVideo" controls playsinline></video>
+      </div>
     </div>
   </div>
 
-  <!-- Playlist 播放器視窗（強化寬度與流暢度） -->
-  <div id="playlist-win" class="window win-modal" style="top: 80px; left: 120px; width: 680px;">
+  <!-- Playlist 播放器視窗 -->
+  <div id="playlist-win" class="window win-modal" style="max-width: 600px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="playlistTitleBar">🎵 Playlist 播放器</div>
       <div class="title-bar-controls">
@@ -231,9 +268,9 @@
         <button aria-label="Close" onclick="closeWindow('playlist-win')"></button>
       </div>
     </div>
-    <div class="window-body" style="padding: 6px;">
-      <div style="height: 340px; background:#000; width:100%; display:flex; align-items:center; justify-content:center;">
-        <iframe id="playlistIframe" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div class="window-body">
+      <div class="media-container">
+        <iframe id="playlistIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <div style="margin-top: 6px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:12px; font-weight:bold;">曲目列表：</span>
@@ -244,7 +281,7 @@
   </div>
 
   <!-- 外部連結跳轉確認視窗 -->
-  <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 280px;">
+  <div id="link-win" class="window win-modal" style="max-width: 320px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
       <div class="title-bar-controls">
@@ -252,9 +289,9 @@
       </div>
     </div>
     <div class="window-body" style="text-align:center;">
-      <p id="linkText" style="font-size:12px;"></p>
+      <p id="linkText" style="font-size:12px; margin: 10px 0;"></p>
       <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
-        <button style="width:100%; padding:6px;">Visit Site</button>
+        <button style="width:100%; padding:6px; font-weight:bold;">開啟連結 (Visit Site)</button>
       </a>
     </div>
   </div>
@@ -271,12 +308,12 @@
     let isAdmin = false;
     let currentOpenFolderId = null;
 
-    // 專屬生咖預約表單圖示 (經典白紙藍色像素 W 圖示)
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* ========== 核心永久儲存資料區 ========== */
+    /* ========== 核心永久儲存配置 ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
+      "startMenuVisibleIds": ["f1", "item_playlist_core"], // 預設只精選顯示 WINTER 資料夾與 Playlist
       "playlist": [
         {
           "title": "Winter-Speed of summer",
@@ -340,15 +377,17 @@
         }
       ]
     };
-    /* ======================================= */
+    /* ===================================== */
 
-    const CONFIG_KEY = "winter_desktop_config_v7";
+    // 每次更新程式碼強制採用最新精選選單與配置
+    const CONFIG_KEY = "winter_desktop_config_v9";
     let currentConfig = JSON.parse(localStorage.getItem(CONFIG_KEY)) || MASTER_CONFIG;
+    if (!currentConfig.startMenuVisibleIds) currentConfig.startMenuVisibleIds = ["f1", "item_playlist_core"];
+
     let playlist = currentConfig.playlist;
     let itemsData = currentConfig.items;
     let currentTrackIdx = 0;
 
-    // 提取 Google Drive 檔案 ID
     function extractDriveId(url) {
       if (!url) return null;
       const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || 
@@ -375,6 +414,7 @@
       currentConfig.items = itemsData;
       localStorage.setItem(CONFIG_KEY, JSON.stringify(currentConfig));
       renderDesktop();
+      renderStartMenu();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
@@ -384,13 +424,13 @@
       const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
 
       navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製完整設定！請至 GitHub index.html 替換 MASTER_CONFIG 並 Commit changes。");
+        alert("✅ 成功複製完整設定！請至 GitHub index.html 替換 MASTER_CONFIG 並 Commit changes 永久儲存。");
       }).catch(() => {
         prompt("請複製以下代碼並貼回 index.html：", output);
       });
     }
 
-    // WINTER 開始選單控制
+    // WINTER01 XP 開始選單
     function toggleStartMenu() {
       const menu = document.getElementById('startMenu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
@@ -404,26 +444,69 @@
       }
     });
 
-    // WINTER01 XP 開始選單直接跳轉開啟
-    function jumpToItem(type, id) {
-      toggleStartMenu();
-      if (type === 'playlist') {
-        openWindow('playlist-win');
+    function renderStartMenu() {
+      const list = document.getElementById('startMenuList');
+      list.innerHTML = '';
+      
+      const visibleIds = currentConfig.startMenuVisibleIds || [];
+      const showItems = itemsData.filter(i => visibleIds.includes(i.id));
+
+      if (showItems.length === 0) {
+        list.innerHTML = '<li style="color:#666; font-size:11px;">(選單未勾選顯示項目)</li>';
         return;
       }
-      const item = itemsData.find(i => i.id === id);
-      if (item) {
-        handleItemClick(item);
-      } else {
-        alert("找不到該項目！");
+
+      showItems.forEach(item => {
+        const li = document.createElement('li');
+        const iconSrc = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : item.icon;
+        li.innerHTML = `<img src="${iconSrc}" width="18" height="18" style="object-fit:contain;"> <span>${item.name}</span>`;
+        li.onclick = () => {
+          toggleStartMenu();
+          handleItemClick(item);
+        };
+        list.appendChild(li);
+      });
+    }
+
+    // 打開開始選單視覺化勾選視窗
+    function openStartMenuConfigModal() {
+      if (!isAdmin) {
+        alert("請先登入管理員！");
+        return;
       }
+      const box = document.getElementById('startConfigCheckboxes');
+      box.innerHTML = '';
+      const currentIds = currentConfig.startMenuVisibleIds || [];
+
+      itemsData.forEach(item => {
+        const row = document.createElement('label');
+        row.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;";
+        const isChecked = currentIds.includes(item.id) ? 'checked' : '';
+        row.innerHTML = `<input type="checkbox" value="${item.id}" ${isChecked}> <span>${item.name}</span>`;
+        box.appendChild(row);
+      });
+
+      openWindow('start-config-win');
+    }
+
+    function saveStartMenuConfig() {
+      const checkboxes = document.querySelectorAll('#startConfigCheckboxes input[type="checkbox"]');
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) selected.push(cb.value);
+      });
+      currentConfig.startMenuVisibleIds = selected;
+      saveState();
+      closeWindow('start-config-win');
+      alert("開始選單已精簡更新！");
     }
 
     function toggleAdmin() {
       if (isAdmin) {
         isAdmin = false;
         document.body.classList.remove('admin-mode');
-        document.getElementById('authBtn').innerText = "🔒 管理員登入";
+        document.getElementById('authBtn').innerText = "🔒 管理員";
+        document.getElementById('photoAdminTools').style.display = "none";
         alert("已退出管理員模式");
       } else {
         const input = prompt("請輸入管理員密碼：");
@@ -431,13 +514,15 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！已解鎖所有編輯與新增功能。");
+          document.getElementById('photoAdminTools').style.display = "flex";
+          alert("登入成功！已解鎖自訂開始選單與圖片調色編輯。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
       }
       renderDesktop();
       renderPlaylistUI();
+      renderStartMenu();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
@@ -513,9 +598,8 @@
       }
     }
 
-    // 播放影片（填滿高畫質，解除停頓問題）
     function openUniversalPlayer(title, url) {
-      document.getElementById('mediaViewerTitle').innerText = `🎬 播放中：${title}`;
+      document.getElementById('mediaViewerTitle').innerText = `🎬 ${title}`;
       const iframe = document.getElementById('universalIframe');
       const video = document.getElementById('universalVideo');
 
@@ -549,9 +633,9 @@
       closeWindow('media-player-win');
     }
 
-    // 相片檢視與簡易濾鏡調色
+    // 圖片預覽與適配
     function openPhotoViewer(title, url) {
-      document.getElementById('photoViewerTitle').innerText = `🖼️ 檢視圖片：${title}`;
+      document.getElementById('photoViewerTitle').innerText = `🖼️ ${title}`;
       const img = document.getElementById('largePhotoDisplay');
       img.src = url;
       resetPhotoFilters();
@@ -577,7 +661,7 @@
       applyPhotoFilters();
     }
 
-    // 資料夾內部操作
+    // 資料夾內容操作
     function openFolder(folderId, folderName) {
       currentOpenFolderId = folderId;
       document.getElementById('folderTitle').innerText = `📁 ${folderName}`;
@@ -591,16 +675,16 @@
       const children = itemsData.filter(i => i.parentId === folderId);
 
       if (children.length === 0) {
-        box.innerHTML = '<span style="font-size:12px; color:#888; padding:10px;">此處為空（可拖曳檔案或 Playlist 進來）</span>';
+        box.innerHTML = '<span style="font-size:12px; color:#888; padding:8px;">此處為空</span>';
         return;
       }
 
       children.forEach(item => {
         const itemEl = document.createElement('div');
-        itemEl.style.cssText = 'display:flex; flex-direction:column; align-items:center; width:72px; cursor:pointer; text-align:center; position:relative;';
+        itemEl.style.cssText = 'display:flex; flex-direction:column; align-items:center; width:70px; cursor:pointer; text-align:center; position:relative;';
         const displayIcon = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : item.icon;
         itemEl.innerHTML = `
-          <img src="${displayIcon}" style="width:40px; height:40px; object-fit:contain; border-radius:3px;">
+          <img src="${displayIcon}" style="width:38px; height:38px; object-fit:contain; border-radius:3px;">
           <span style="font-size:11px; margin-top:3px; word-break:break-all;">${item.name}</span>
           ${isAdmin ? `
             <div style="display:flex; gap:2px; margin-top:3px;">
@@ -631,20 +715,20 @@
     }
 
     function addItem(type, parentId) {
-      const defaultTitle = type === 'folder' ? '新 CD / 資料夾' : (type === 'video' ? '新歌曲 / 影片' : '新項目');
+      const defaultTitle = type === 'folder' ? '新資料夾' : (type === 'video' ? '新影音' : '新項目');
       const name = prompt("請輸入名稱：", defaultTitle);
       if (!name) return;
 
       let icon = "", content = "", url = "", mediaUrl = "";
 
       if (type === 'folder') {
-        const rawIcon = prompt("請輸入資料夾／CD 圖示網址 (留空使用經典光碟)：", "");
+        const rawIcon = prompt("圖示網址 (留空使用經典光碟)：", "");
         icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
       } else if (type === 'video') {
         const rawUrl = prompt("請貼上 YouTube 網址 或 Google 雲端影片共享連結：");
         if (!rawUrl) return;
         mediaUrl = autoFormatMediaUrl(rawUrl, 'video');
-        const rawIcon = prompt("圖示網址 (留空使用預設影音圖示)：", "");
+        const rawIcon = prompt("圖示網址 (留空預設)：", "");
         icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/video_player_cool-0.png";
       } else if (type === 'image') {
         const rawUrl = prompt("請貼上圖片網址（支援 Google 雲端共享連結）：");
@@ -672,7 +756,7 @@
       const newName = prompt("重新命名：", item.name);
       if (newName) item.name = newName;
 
-      const rawIcon = prompt("更改圖示網址 (PNG/JPG/雲端)：", item.icon);
+      const rawIcon = prompt("更改圖示網址 (留空不改)：", item.icon);
       if (rawIcon) item.icon = autoFormatMediaUrl(rawIcon, 'icon');
 
       if (item.type === 'video') {
@@ -702,7 +786,6 @@
       }
     }
 
-    // Playlist 播放清單
     function renderPlaylistUI() {
       const listEl = document.getElementById('playlistItems');
       listEl.innerHTML = '';
@@ -797,7 +880,7 @@
       document.getElementById(id).classList.toggle('maximized');
     }
 
-    let highestZ = 20;
+    let highestZ = 200;
     function openWindow(id) {
       const win = document.getElementById(id);
       win.style.display = 'block';
@@ -807,7 +890,7 @@
       document.getElementById(id).style.display = 'none';
     }
     function dragElement(elmnt, event) {
-      if (elmnt.classList.contains('maximized')) return;
+      if (elmnt.classList.contains('maximized') || window.innerWidth < 600) return;
       elmnt.style.zIndex = ++highestZ;
       let pos1 = 0, pos2 = 0, pos3 = event.clientX, pos4 = event.clientY;
       document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
@@ -836,6 +919,7 @@
     }
     renderDesktop();
     renderPlaylistUI();
+    renderStartMenu();
   </script>
 </body>
 </html>

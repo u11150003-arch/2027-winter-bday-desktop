@@ -12,7 +12,7 @@
       height: 100vh;
       overflow: hidden;
       font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
-      background: #008080 url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600') no-repeat center center;
+      background: #008080 url('https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g') no-repeat center center;
       background-size: cover;
     }
     .top-actions {
@@ -72,18 +72,13 @@
     }
     .playlist-box {
       list-style: none; margin: 8px 0 0 0; padding: 0;
-      background: #fff; border: 2px inset #dfdfdf; height: 110px; overflow-y: auto;
+      background: #fff; border: 2px inset #dfdfdf; height: 120px; overflow-y: auto;
     }
     .playlist-box li {
-      padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; justify-content: space-between;
+      padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
     }
     .playlist-box li:hover { background: #000080; color: #fff; }
     .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
-    
-    .converter-row {
-      display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; font-size: 12px;
-    }
-    .converter-row input { width: 100%; }
   </style>
 </head>
 <body>
@@ -91,26 +86,20 @@
   <!-- 工具列 -->
   <div class="top-actions">
     <button id="authBtn" onclick="toggleAdmin()">🔒 管理員登入</button>
-    <button class="admin-only" onclick="createItem('folder')">+ 資料夾</button>
+    <button class="admin-only" onclick="createItem('folder')">+ 資料夾/CD</button>
+    <button class="admin-only" onclick="createItem('video')">+ 音樂/影片</button>
     <button class="admin-only" onclick="createItem('image')">+ 圖片</button>
-    <button class="admin-only" onclick="createItem('video')">+ 影片 (MP4)</button>
     <button class="admin-only" onclick="createItem('note')">+ 便利貼</button>
     <button class="admin-only" onclick="createItem('link')">+ 外部連結</button>
     <button class="admin-only" onclick="changeWallpaper()">🎨 換背景</button>
-    <button class="admin-only" style="background:#ff8000; color:#fff;" onclick="openWindow('converter-win')">🛠️ 雲端轉直連工具</button>
     <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()">💾 匯出設定 (永久儲存)</button>
   </div>
 
-  <!-- 桌面圖示容器 -->
-  <div class="desktop" id="desktopContainer">
-    <div class="icon-wrapper" onclick="openWindow('music-win')">
-      <img src="https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png" alt="music">
-      <span>Playlist</span>
-    </div>
-  </div>
+  <!-- 桌面容器 -->
+  <div class="desktop" id="desktopContainer"></div>
 
-  <!-- 資料夾視窗 -->
-  <div id="folder-win" class="window win-modal" style="top: 80px; left: 80px; width: 420px;">
+  <!-- 資料夾 / CD 內容視窗 -->
+  <div id="folder-win" class="window win-modal" style="top: 70px; left: 70px; width: 440px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
@@ -119,10 +108,13 @@
       </div>
     </div>
     <div class="window-body">
-      <div style="margin-bottom: 8px;" class="admin-only">
-        <button onclick="createItemInsideCurrentFolder()">+ 在此資料夾新增項目</button>
+      <div style="margin-bottom: 8px; display:flex; gap:6px; align-items:center;" class="admin-only">
+        <button onclick="createItemInsideFolder('folder')">+ 子資料夾/CD</button>
+        <button onclick="createItemInsideFolder('video')">+ 音樂/影片</button>
+        <button onclick="createItemInsideFolder('image')">+ 圖片</button>
+        <button onclick="createItemInsideFolder('note')">+ 便利貼</button>
       </div>
-      <div id="folderInnerContent" style="display:flex; gap:12px; flex-wrap:wrap; min-height:120px; padding:8px; background:#fff; border: 2px inset #dfdfdf;"></div>
+      <div id="folderInnerContent" style="display:flex; gap:12px; flex-wrap:wrap; min-height:130px; padding:10px; background:#fff; border: 2px inset #dfdfdf;"></div>
     </div>
   </div>
 
@@ -140,75 +132,43 @@
     </div>
   </div>
 
-  <!-- 影片播放器 (MP4 / M4A) -->
-  <div id="video-player-win" class="window win-modal" style="top: 90px; left: 150px; width: 460px;">
+  <!-- 影音播放器（全面支援 Google 雲端預覽、MP4、YouTube） -->
+  <div id="media-player-win" class="window win-modal" style="top: 90px; left: 130px; width: 460px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="videoViewerTitle">🎬 影片播放器</div>
+      <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
       <div class="title-bar-controls">
-        <button aria-label="Maximize" onclick="toggleMaximize('video-player-win')"></button>
-        <button aria-label="Close" onclick="closeVideoPlayer()"></button>
+        <button aria-label="Maximize" onclick="toggleMaximize('media-player-win')"></button>
+        <button aria-label="Close" onclick="closeUniversalPlayer()"></button>
       </div>
     </div>
-    <div class="window-body" style="background: #000; padding: 4px; text-align: center;">
-      <video id="nativeVideoPlayer" controls style="width: 100%; max-height: 65vh;"></video>
+    <div class="window-body" style="background: #000; padding: 4px; text-align: center; min-height: 240px; display: flex; align-items:center; justify-content:center;">
+      <iframe id="universalIframe" width="100%" height="240" src="" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen style="display:none;"></iframe>
+      <video id="universalVideo" controls style="width: 100%; max-height: 65vh; display:none;"></video>
     </div>
   </div>
 
-  <!-- Google 雲端直連轉換器 -->
-  <div id="converter-win" class="window win-modal" style="top: 110px; left: 180px; width: 440px;">
+  <!-- Playlist 專屬播放器視窗 -->
+  <div id="playlist-win" class="window win-modal" style="top: 100px; left: 120px; width: 400px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text">🛠️ Google 雲端直連轉換器</div>
+      <div class="title-bar-text" id="playlistTitleBar">🎵 Playlist 播放器</div>
       <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closeWindow('converter-win')"></button>
-      </div>
-    </div>
-    <div class="window-body" style="padding: 12px;">
-      <div class="converter-row">
-        <label><b>1. 貼上 Google 雲端檔案共用連結：</b></label>
-        <input type="text" id="driveInputUrl" placeholder="https://drive.google.com/file/d/.../view?usp=sharing" oninput="runConversion()">
-      </div>
-      <hr style="margin: 10px 0;">
-      <div class="converter-row">
-        <label><b>📷 圖片／Icon 專用直連網址：</b></label>
-        <div style="display:flex; gap:4px;">
-          <input type="text" id="driveImgOut" readonly>
-          <button onclick="copyField('driveImgOut')">複製</button>
-        </div>
-      </div>
-      <div class="converter-row">
-        <label><b>🎬 影片（MP4）／音訊（MP3/M4A）專用直連網址：</b></label>
-        <div style="display:flex; gap:4px;">
-          <input type="text" id="driveMediaOut" readonly>
-          <button onclick="copyField('driveMediaOut')">複製</button>
-        </div>
-      </div>
-      <p style="font-size:11px; color:#555; margin-top:8px;">💡 提示：本網站所有輸入框皆已內建「自動轉換」，直接貼上 Google Drive 分享連結即可使用！</p>
-    </div>
-  </div>
-
-  <!-- Playlist 音樂視窗 -->
-  <div id="music-win" class="window win-modal" style="top: 100px; left: 120px; width: 380px;">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="nowPlayingTitle">🎵 Playlist 播放器</div>
-      <div class="title-bar-controls">
-        <button aria-label="Maximize" onclick="toggleMaximize('music-win')"></button>
-        <button aria-label="Close" onclick="closeWindow('music-win')"></button>
+        <button aria-label="Maximize" onclick="toggleMaximize('playlist-win')"></button>
+        <button aria-label="Close" onclick="closeWindow('playlist-win')"></button>
       </div>
     </div>
     <div class="window-body">
-      <div id="playerBox" style="min-height: 180px; display:flex; align-items:center; justify-content:center; background:#000;">
-        <iframe id="ytPlayer" width="100%" height="180" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <audio id="audioPlayer" controls style="width: 90%; display: none;"></audio>
+      <div style="min-height: 190px; background:#000; display:flex; align-items:center; justify-content:center;">
+        <iframe id="playlistIframe" width="100%" height="190" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
       <div style="margin-top: 6px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:12px; font-weight:bold;">曲目清單：</span>
-        <button class="admin-only" onclick="addMusicTrack()">+ 新增歌曲</button>
+        <span style="font-size:12px; font-weight:bold;">曲目列表：</span>
+        <button class="admin-only" onclick="addMusicTrack()">+ 新增曲目</button>
       </div>
       <ul class="playlist-box" id="playlistItems"></ul>
     </div>
   </div>
 
-  <!-- 外部連結視窗 -->
+  <!-- 外部連結跳轉確認視窗 -->
   <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 280px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
@@ -236,9 +196,13 @@
     let isAdmin = false;
     let currentOpenFolderId = null;
 
-    /* ========== 核心永久儲存資料區（已更新最新內容） ========== */
+    /* ========== 核心永久儲存資料區 ========== */
     const MASTER_CONFIG = {
-      "wallpaper": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600",
+      "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
+      "playlistConfig": {
+        "name": "Playlist",
+        "icon": "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png"
+      },
       "playlist": [
         {
           "title": "Winter-Speed of summer",
@@ -258,9 +222,9 @@
           "id": "img1",
           "parentId": null,
           "type": "image",
-          "name": "Winter 照片",
-          "icon": "https://win98icons.alexmeub.com/icons/png/camera-2.png",
-          "mediaUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800"
+          "name": "手幅Serenade ver",
+          "icon": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
+          "mediaUrl": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS"
         },
         {
           "id": "n1",
@@ -280,16 +244,16 @@
         }
       ]
     };
-    /* ========================================================== */
+    /* ======================================= */
 
-    // 每次更新程式碼時版本號遞增，確保立即清除舊快取
-    const CURRENT_CONFIG_VERSION = "2026_09_12_v1";
-    if (localStorage.getItem('desktop_version') !== CURRENT_CONFIG_VERSION) {
-      localStorage.setItem('desktop_version', CURRENT_CONFIG_VERSION);
-      localStorage.setItem('winter_desktop_config', JSON.stringify(MASTER_CONFIG));
-    }
+    const CONFIG_KEY = "winter_desktop_config_v5";
+    let currentConfig = JSON.parse(localStorage.getItem(CONFIG_KEY)) || MASTER_CONFIG;
+    if (!currentConfig.playlistConfig) currentConfig.playlistConfig = MASTER_CONFIG.playlistConfig;
+    let playlist = currentConfig.playlist;
+    let itemsData = currentConfig.items;
+    let currentTrackIdx = 0;
 
-    // Google Drive 提取與轉直連工具
+    // 智能提取 Google 雲端硬碟檔案 ID
     function extractDriveId(url) {
       if (!url) return null;
       const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || 
@@ -298,48 +262,24 @@
       return match ? match[1] : null;
     }
 
-    function autoConvertDriveUrl(url, type) {
-      if (!url || typeof url !== 'string') return url;
-      const id = extractDriveId(url);
-      if (!id) return url.trim();
-
-      if (type === 'image' || type === 'icon' || type === 'wallpaper') {
-        return `https://lh3.googleusercontent.com/d/${id}`;
-      } else if (type === 'video' || type === 'audio') {
-        return `https://drive.google.com/uc?export=download&id=${id}`;
+    function autoFormatMediaUrl(url, type) {
+      if (!url) return url;
+      const driveId = extractDriveId(url);
+      if (driveId) {
+        if (type === 'image' || type === 'icon' || type === 'wallpaper') {
+          return `https://lh3.googleusercontent.com/d/${driveId}`;
+        } else {
+          // 雲端影片改用官方支援串流的 preview 嵌入
+          return `https://drive.google.com/file/d/${driveId}/preview`;
+        }
       }
       return url.trim();
     }
 
-    function runConversion() {
-      const val = document.getElementById('driveInputUrl').value.trim();
-      const id = extractDriveId(val);
-      if (id) {
-        document.getElementById('driveImgOut').value = `https://lh3.googleusercontent.com/d/${id}`;
-        document.getElementById('driveMediaOut').value = `https://drive.google.com/uc?export=download&id=${id}`;
-      } else {
-        document.getElementById('driveImgOut').value = "";
-        document.getElementById('driveMediaOut').value = "";
-      }
-    }
-
-    function copyField(elementId) {
-      const field = document.getElementById(elementId);
-      if (!field.value) return;
-      field.select();
-      navigator.clipboard.writeText(field.value);
-      alert("已複製直連網址！");
-    }
-
-    let currentConfig = JSON.parse(localStorage.getItem('winter_desktop_config')) || MASTER_CONFIG;
-    let playlist = currentConfig.playlist;
-    let itemsData = currentConfig.items;
-    let currentTrackIdx = 0;
-
     function saveState() {
       currentConfig.playlist = playlist;
       currentConfig.items = itemsData;
-      localStorage.setItem('winter_desktop_config', JSON.stringify(currentConfig));
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(currentConfig));
       renderDesktop();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
@@ -350,9 +290,9 @@
       const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
 
       navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製最新配置代碼！\n\n請至 GitHub index.html 替換『const MASTER_CONFIG = ...』區域並 Commit changes 即可永久儲存。");
+        alert("✅ 成功複製配置代碼！請至 GitHub index.html 替換 MASTER_CONFIG 並 Commit changes。");
       }).catch(() => {
-        prompt("請手動複製代碼並貼回 index.html：", output);
+        prompt("請複製以下代碼並貼回 index.html：", output);
       });
     }
 
@@ -368,7 +308,7 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！編輯完成後記得點擊『💾 匯出設定』永久儲存。");
+          alert("登入成功！已解鎖所有編輯、改名、換圖示與 CD 專輯排版功能。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
@@ -378,14 +318,37 @@
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
+    // 渲染桌面
     function renderDesktop() {
       const container = document.getElementById('desktopContainer');
-      container.querySelectorAll('.dynamic-item').forEach(i => i.remove());
+      container.innerHTML = '';
 
+      // 1. Playlist 固定圖示（支援自訂改名換圖示）
+      const playlistEl = document.createElement('div');
+      playlistEl.className = 'icon-wrapper';
+      playlistEl.innerHTML = `
+        <div class="icon-tools">
+          <button onclick="event.stopPropagation(); editPlaylistInfo()">✏️</button>
+        </div>
+        <img src="${currentConfig.playlistConfig.icon}" alt="music" onerror="this.src='https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png'">
+        <span>${currentConfig.playlistConfig.name}</span>
+      `;
+      playlistEl.onclick = () => openWindow('playlist-win');
+      container.appendChild(playlistEl);
+
+      // 2. 渲染第一層項目
       itemsData.filter(item => !item.parentId).forEach(item => {
         const el = createIconElement(item);
         container.appendChild(el);
       });
+    }
+
+    function editPlaylistInfo() {
+      const newName = prompt("重新命名 Playlist：", currentConfig.playlistConfig.name);
+      if (newName) currentConfig.playlistConfig.name = newName;
+      const rawIcon = prompt("更改 Playlist 圖示網址 (PNG/JPG/雲端)：", currentConfig.playlistConfig.icon);
+      if (rawIcon) currentConfig.playlistConfig.icon = autoFormatMediaUrl(rawIcon, 'icon');
+      saveState();
     }
 
     function createIconElement(item) {
@@ -423,7 +386,7 @@
             if (target) {
               target.parentId = item.id;
               saveState();
-              alert(`已將「${target.name}」移入資料夾「${item.name}」！`);
+              alert(`已將「${target.name}」放入「${item.name}」！`);
             }
           }
         };
@@ -437,7 +400,7 @@
       } else if (item.type === 'image') {
         openPhotoViewer(item.name, item.mediaUrl);
       } else if (item.type === 'video') {
-        openVideoViewer(item.name, item.mediaUrl);
+        openUniversalPlayer(item.name, item.mediaUrl);
       } else if (item.type === 'note') {
         alert(`【${item.name}】\n\n${item.content}`);
       } else if (item.type === 'link') {
@@ -448,27 +411,49 @@
       }
     }
 
+    // 播放影片或音樂
+    function openUniversalPlayer(title, url) {
+      document.getElementById('mediaViewerTitle').innerText = `🎬 播放中：${title}`;
+      const iframe = document.getElementById('universalIframe');
+      const video = document.getElementById('universalVideo');
+
+      if (url.includes('drive.google.com') || url.includes('youtube.com') || url.includes('youtu.be')) {
+        let finalSrc = url;
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+          let vid = url;
+          if (url.includes("v=")) vid = url.split("v=")[1].substring(0, 11);
+          else if (url.includes("youtu.be/")) vid = url.split("youtu.be/")[1].substring(0, 11);
+          finalSrc = `https://www.youtube.com/embed/${vid}?autoplay=1`;
+        }
+        video.pause();
+        video.style.display = 'none';
+        iframe.style.display = 'block';
+        iframe.src = finalSrc;
+      } else {
+        iframe.src = '';
+        iframe.style.display = 'none';
+        video.style.display = 'block';
+        video.src = url;
+        video.play().catch(()=>{});
+      }
+      openWindow('media-player-win');
+    }
+
+    function closeUniversalPlayer() {
+      document.getElementById('universalIframe').src = '';
+      const v = document.getElementById('universalVideo');
+      v.pause();
+      v.src = '';
+      closeWindow('media-player-win');
+    }
+
     function openPhotoViewer(title, url) {
       document.getElementById('photoViewerTitle').innerText = `🖼️ 檢視圖片：${title}`;
       document.getElementById('largePhotoDisplay').src = url;
       openWindow('photo-viewer-win');
     }
 
-    function openVideoViewer(title, url) {
-      document.getElementById('videoViewerTitle').innerText = `🎬 播放影片：${title}`;
-      const v = document.getElementById('nativeVideoPlayer');
-      v.src = url;
-      openWindow('video-player-win');
-      v.play().catch(()=>{});
-    }
-
-    function closeVideoPlayer() {
-      const v = document.getElementById('nativeVideoPlayer');
-      v.pause();
-      v.src = "";
-      closeWindow('video-player-win');
-    }
-
+    // 資料夾內部操作（支援 CD 巢狀）
     function openFolder(folderId, folderName) {
       currentOpenFolderId = folderId;
       document.getElementById('folderTitle').innerText = `📁 ${folderName}`;
@@ -482,18 +467,23 @@
       const children = itemsData.filter(i => i.parentId === folderId);
 
       if (children.length === 0) {
-        box.innerHTML = '<span style="font-size:12px; color:#888; padding:10px;">資料夾為空</span>';
+        box.innerHTML = '<span style="font-size:12px; color:#888; padding:10px;">資料夾為空（可在管理員模式下拖曳放進來，或點擊上方按鈕新增）</span>';
         return;
       }
 
       children.forEach(item => {
         const itemEl = document.createElement('div');
-        itemEl.style.cssText = 'display:flex; flex-direction:column; align-items:center; width:70px; cursor:pointer; text-align:center;';
+        itemEl.style.cssText = 'display:flex; flex-direction:column; align-items:center; width:72px; cursor:pointer; text-align:center; position:relative;';
         const displayIcon = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : item.icon;
         itemEl.innerHTML = `
-          <img src="${displayIcon}" style="width:38px; height:38px; object-fit:cover; border-radius:3px;">
+          <img src="${displayIcon}" style="width:40px; height:40px; object-fit:contain; border-radius:3px;">
           <span style="font-size:11px; margin-top:3px; word-break:break-all;">${item.name}</span>
-          ${isAdmin ? `<button style="font-size:9px; margin-top:3px;" onclick="event.stopPropagation(); moveBackToDesktop('${item.id}')">移至桌面</button>` : ''}
+          ${isAdmin ? `
+            <div style="display:flex; gap:2px; margin-top:3px;">
+              <button style="font-size:9px;" onclick="event.stopPropagation(); editItem('${item.id}')">✏️</button>
+              <button style="font-size:9px;" onclick="event.stopPropagation(); moveBackToDesktop('${item.id}')">移出</button>
+              <button style="font-size:9px;" onclick="event.stopPropagation(); deleteItem('${item.id}')">❌</button>
+            </div>` : ''}
         `;
         itemEl.onclick = () => handleItemClick(item);
         box.appendChild(itemEl);
@@ -509,73 +499,76 @@
     }
 
     function createItem(type) {
-      addItemToParent(type, null);
+      addItem(type, null);
     }
-    function createItemInsideCurrentFolder() {
+    function createItemInsideFolder(type) {
       if (!currentOpenFolderId) return;
-      const type = prompt("請輸入新增類型：folder (資料夾)、image (圖片)、video (影片)、note (便利貼) 或 link (外部連結)：", "image");
-      if (['folder', 'image', 'video', 'note', 'link'].includes(type)) {
-        addItemToParent(type, currentOpenFolderId);
-      }
+      addItem(type, currentOpenFolderId);
     }
 
-    function addItemToParent(type, parentId) {
-      const name = prompt("請輸入名稱：", type === 'video' ? "新影片" : "新項目");
+    function addItem(type, parentId) {
+      const defaultTitle = type === 'folder' ? '新 CD / 資料夾' : (type === 'video' ? '新歌曲 / 影片' : '新項目');
+      const name = prompt("請輸入名稱：", defaultTitle);
       if (!name) return;
+
       let icon = "", content = "", url = "", mediaUrl = "";
 
-      if (type === 'image') {
+      if (type === 'folder') {
+        const rawIcon = prompt("請輸入資料夾／CD 圖示網址 (可貼 PNG/JPG 或留空使用預設光碟圖示)：", "");
+        icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
+      } else if (type === 'video') {
+        const rawUrl = prompt("請貼上 YouTube 網址、Google 雲端影片共享連結、或 MP4 直連網址：");
+        if (!rawUrl) return;
+        mediaUrl = autoFormatMediaUrl(rawUrl, 'video');
+        const rawIcon = prompt("圖示網址 (留空使用預設影音圖示)：", "");
+        icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/video_player_cool-0.png";
+      } else if (type === 'image') {
         const rawUrl = prompt("請貼上圖片網址（支援 Google 雲端共享連結或一般圖床）：");
         if (!rawUrl) return;
-        mediaUrl = autoConvertDriveUrl(rawUrl, 'image');
+        mediaUrl = autoFormatMediaUrl(rawUrl, 'image');
         icon = mediaUrl;
-      } else if (type === 'video') {
-        const rawUrl = prompt("請貼上 MP4/M4A 影片網址（支援 Google 雲端共享連結）：");
-        if (!rawUrl) return;
-        mediaUrl = autoConvertDriveUrl(rawUrl, 'video');
-        icon = "https://win98icons.alexmeub.com/icons/png/video_player_cool-0.png";
       } else if (type === 'note') {
         content = prompt("請輸入便利貼內文：", "寫下備忘...");
         const rawIcon = prompt("圖示網址 (留空預設)：", "");
-        icon = rawIcon ? autoConvertDriveUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/notepad-5.png";
+        icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/notepad-5.png";
       } else if (type === 'link') {
-        url = prompt("請輸入完整網址 (含 https://)：", "https://");
+        url = prompt("請輸入完整跳轉網址 (含 https://)：", "https://");
         const rawIcon = prompt("圖示網址 (留空預設)：", "");
-        icon = rawIcon ? autoConvertDriveUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/html-2.png";
-      } else if (type === 'folder') {
-        const rawIcon = prompt("圖示網址 (留空預設)：", "");
-        icon = rawIcon ? autoConvertDriveUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png";
+        icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/html-2.png";
       }
 
       itemsData.push({ id: Date.now().toString(), parentId, type, name, icon, content, url, mediaUrl });
       saveState();
     }
 
+    // 重新編輯功能（名稱、圖示、連結全面支援）
     function editItem(id) {
       const item = itemsData.find(i => i.id === id);
       if (!item) return;
+
       const newName = prompt("重新命名：", item.name);
       if (newName) item.name = newName;
 
-      if (item.type === 'image' || item.type === 'video') {
-        const rawMedia = prompt("更換媒體網址：", item.mediaUrl);
-        if (rawMedia) {
-          item.mediaUrl = autoConvertDriveUrl(rawMedia, item.type);
-          if (item.type === 'image') item.icon = item.mediaUrl;
-        }
-      } else {
-        const rawIcon = prompt("更改圖示網址 (PNG/JPG)：", item.icon);
-        if (rawIcon) item.icon = autoConvertDriveUrl(rawIcon, 'icon');
-      }
+      const rawIcon = prompt("更改圖示網址 (PNG/JPG/雲端)：", item.icon);
+      if (rawIcon) item.icon = autoFormatMediaUrl(rawIcon, 'icon');
 
-      if (item.type === 'note') {
-        const c = prompt("編輯便利貼內容：", item.content);
+      if (item.type === 'video') {
+        const rawMedia = prompt("更改音樂／影片連結 (YouTube/Google雲端/MP4)：", item.mediaUrl);
+        if (rawMedia) item.mediaUrl = autoFormatMediaUrl(rawMedia, 'video');
+      } else if (item.type === 'image') {
+        const rawMedia = prompt("更改圖片網址：", item.mediaUrl);
+        if (rawMedia) {
+          item.mediaUrl = autoFormatMediaUrl(rawMedia, 'image');
+          item.icon = item.mediaUrl;
+        }
+      } else if (item.type === 'link') {
+        const u = prompt("更改跳轉網址：", item.url);
+        if (u) item.url = u;
+      } else if (item.type === 'note') {
+        const c = prompt("更改便利貼內文：", item.content);
         if (c !== null) item.content = c;
       }
-      if (item.type === 'link') {
-        const u = prompt("更改連結網址：", item.url);
-        if (u) item.url = u;
-      }
+
       saveState();
     }
 
@@ -586,6 +579,7 @@
       }
     }
 
+    // Playlist 播放清單管理
     function renderPlaylistUI() {
       const listEl = document.getElementById('playlistItems');
       listEl.innerHTML = '';
@@ -594,7 +588,12 @@
         li.className = idx === currentTrackIdx ? 'active' : '';
         li.innerHTML = `
           <span>${idx + 1}. ${track.title}</span>
-          ${isAdmin ? `<button onclick="event.stopPropagation(); removeMusicTrack(${idx})">✕</button>` : ''}
+          ${isAdmin ? `
+            <div style="display:flex; gap:3px;">
+              <button onclick="event.stopPropagation(); editTrack(${idx})">✏️</button>
+              <button onclick="event.stopPropagation(); removeMusicTrack(${idx})">✕</button>
+            </div>
+          ` : ''}
         `;
         li.onclick = () => playTrack(idx);
         listEl.appendChild(li);
@@ -602,21 +601,13 @@
 
       if (playlist.length > 0) {
         const current = playlist[currentTrackIdx];
-        const ytIframe = document.getElementById('ytPlayer');
-        const audioTag = document.getElementById('audioPlayer');
-
-        document.getElementById('nowPlayingTitle').innerText = `🎵 播放中：${current.title}`;
-
-        if (current.type === 'audio') {
-          ytIframe.style.display = 'none';
-          audioTag.style.display = 'block';
-          audioTag.src = current.src;
-          audioTag.play().catch(()=>{});
+        const iframe = document.getElementById('playlistIframe');
+        document.getElementById('playlistTitleBar').innerText = `🎵 播放中：${current.title}`;
+        
+        if (current.src.includes('drive.google.com')) {
+          iframe.src = current.src;
         } else {
-          audioTag.style.display = 'none';
-          audioTag.pause();
-          ytIframe.style.display = 'block';
-          ytIframe.src = `https://www.youtube.com/embed/${current.src}?autoplay=1`;
+          iframe.src = `https://www.youtube.com/embed/${current.src}?autoplay=1`;
         }
       }
     }
@@ -627,21 +618,43 @@
     }
 
     function addMusicTrack() {
-      const title = prompt("請輸入歌曲名稱：", "New Song");
+      const title = prompt("請輸入歌曲名稱：", "新曲目");
       if (!title) return;
-      const link = prompt("請輸入 YouTube 影片連結 或 直連 MP3/M4A 音訊網址（支援 Google 雲端共享連結）：");
+      const link = prompt("請輸入 YouTube 連結 或 Google 雲端音訊連結：");
       if (!link) return;
 
-      let type = "youtube", src = link.trim();
-      if (link.includes("drive.google.com") || link.endsWith(".mp3") || link.endsWith(".m4a") || link.includes("export=download")) {
-        type = "audio";
-        src = autoConvertDriveUrl(link, 'audio');
-      } else {
-        if (link.includes("v=")) src = link.split("v=")[1].substring(0, 11);
-        else if (link.includes("youtu.be/")) src = link.split("youtu.be/")[1].substring(0, 11);
+      let src = link.trim();
+      const driveId = extractDriveId(link);
+      if (driveId) {
+        src = `https://drive.google.com/file/d/${driveId}/preview`;
+      } else if (link.includes("v=")) {
+        src = link.split("v=")[1].substring(0, 11);
+      } else if (link.includes("youtu.be/")) {
+        src = link.split("youtu.be/")[1].substring(0, 11);
       }
 
-      playlist.push({ title, src, type });
+      playlist.push({ title, src, type: driveId ? "drive" : "youtube" });
+      saveState();
+      renderPlaylistUI();
+    }
+
+    function editTrack(idx) {
+      const track = playlist[idx];
+      const newTitle = prompt("修改曲目名稱：", track.title);
+      if (newTitle) track.title = newTitle;
+      const newLink = prompt("修改曲目連結：", track.src);
+      if (newLink) {
+        const driveId = extractDriveId(newLink);
+        if (driveId) {
+          track.src = `https://drive.google.com/file/d/${driveId}/preview`;
+          track.type = "drive";
+        } else if (newLink.includes("v=")) {
+          track.src = newLink.split("v=")[1].substring(0, 11);
+          track.type = "youtube";
+        } else {
+          track.src = newLink.trim();
+        }
+      }
       saveState();
       renderPlaylistUI();
     }
@@ -686,7 +699,7 @@
     function changeWallpaper() {
       const rawUrl = prompt("請輸入桌布圖片網址（支援 Google 雲端共享連結）：", "");
       if (rawUrl) {
-        const finalUrl = autoConvertDriveUrl(rawUrl, 'wallpaper');
+        const finalUrl = autoFormatMediaUrl(rawUrl, 'wallpaper');
         document.body.style.backgroundImage = `url('${finalUrl}')`;
         currentConfig.wallpaper = finalUrl;
         saveState();

@@ -34,16 +34,18 @@
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部操作工具列 */
+    /* 頂部操作工具列：設定較低層級，且不阻擋空白區點擊 */
     .top-actions {
       position: absolute;
       top: 6px; left: 6px; right: 6px;
       display: flex; gap: 4px;
-      z-index: 1000; flex-wrap: nowrap;
+      z-index: 50; flex-wrap: nowrap;
       overflow-x: auto; padding-bottom: 4px;
+      pointer-events: none;
     }
-    .top-actions button {
+    .top-actions button, .top-actions span {
       flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer;
+      pointer-events: auto;
     }
 
     /* 桌面容器 */
@@ -106,7 +108,7 @@
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
 
-    /* 視窗樣式：強化標題列與縮放相容性 */
+    /* 視窗樣式：確保右上角按鈕永遠可點擊 */
     .win-modal {
       position: fixed; display: none; z-index: 100;
       box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
@@ -120,13 +122,11 @@
     }
     .win-modal .title-bar-controls {
       position: relative;
-      z-index: 30;
+      z-index: 100;
       display: flex; gap: 2px;
     }
     .win-modal .title-bar-controls button {
       cursor: var(--star-cursor) !important;
-      position: relative;
-      z-index: 35;
       pointer-events: auto !important;
     }
 
@@ -136,11 +136,11 @@
       overflow-y: auto; padding: 6px;
     }
 
-    /* 最大化樣式 */
+    /* 最大化樣式：高於頂部操作列，置頂無阻礙 */
     .win-modal.maximized {
       top: 0 !important; left: 0 !important; transform: none !important;
       width: 100vw !important; max-width: 100vw !important; height: calc(100vh - 35px) !important;
-      z-index: 500 !important;
+      z-index: 1500 !important;
       resize: none !important;
     }
     .win-modal.maximized .window-body {
@@ -173,11 +173,11 @@
       max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff;
     }
 
-    /* 底部工作列 */
+    /* 底部工作列：層級提升為 2500，始終置頂 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0; height: 35px;
       background: #c0c0c0; border-top: 2px solid #fff;
-      display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; z-index: 999;
+      display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; z-index: 2500;
     }
     .taskbar-left {
       display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1;
@@ -199,7 +199,7 @@
       width: 230px; max-width: 85vw;
       background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 3px 3px 12px rgba(0,0,0,0.5);
-      display: none; z-index: 10000; padding: 3px;
+      display: none; z-index: 3000; padding: 3px;
     }
     .start-menu-banner {
       background: linear-gradient(180deg, #104e8b, #1e90ff);
@@ -270,7 +270,7 @@
   </div>
 
   <!-- 移動到... 目標資料夾選擇彈窗 -->
-  <div id="move-modal-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
+  <div id="move-modal-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text" id="moveModalTitle">📦 移動項目至...</div>
       <div class="title-bar-controls">
@@ -284,7 +284,7 @@
   </div>
 
   <!-- 開始選單自訂彈窗 -->
-  <div id="start-config-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
+  <div id="start-config-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text">⭐ 自訂開始選單項目</div>
       <div class="title-bar-controls">
@@ -300,7 +300,7 @@
     </div>
   </div>
 
-  <!-- 資料夾視窗 (修復右上角按鈕點擊判定) -->
+  <!-- 資料夾視窗 -->
   <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('folder-win', event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
@@ -427,7 +427,6 @@
     let folderHistory = [];
     let folderForwardStack = [];
 
-    // 儲存還原時的位置狀態
     const windowRestoreBounds = {};
 
     const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
@@ -562,7 +561,7 @@
     };
     /* ================================================================= */
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v3";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v4";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1131,7 +1130,6 @@
       win.style.display = 'block';
       win.style.zIndex = ++highestZ;
 
-      // 預設若沒有設定位置，置中顯示
       if (!win.classList.contains('maximized') && !windowRestoreBounds[id]) {
         win.style.top = '50%';
         win.style.left = '50%';
@@ -1152,7 +1150,6 @@
       win.style.display = 'none';
       win.classList.remove('maximized');
       
-      // 清空最大化前儲存的位置狀態
       delete windowRestoreBounds[id];
 
       if (id === 'folder-win') {
@@ -1175,7 +1172,6 @@
       currentOpenAlbumId = null;
     }
 
-    // 視窗最小化（縮小至下方工作列）
     function minimizeWindow(id, title, e) {
       if (e) {
         e.preventDefault();
@@ -1188,7 +1184,6 @@
       updateTaskbar();
     }
 
-    // 視窗最大化 / 還原（放大縮小切換）
     function toggleMaximize(id, e) {
       if (e) {
         e.preventDefault();
@@ -1216,7 +1211,7 @@
           win.style.height = 'auto';
         }
       } else {
-        // 放大至最大化
+        // 記錄放大前狀態
         windowRestoreBounds[id] = {
           top: win.style.top || '50%',
           left: win.style.left || '50%',
@@ -1244,15 +1239,13 @@
       }
     }
 
-    // 拖曳視窗：嚴格排除點擊在控制按鈕上的情況
+    // 拖曳視窗：點擊右上角按鈕時嚴格退出，絕不阻斷按鈕事件
     function dragElement(elmnt, event) {
-      // 關鍵修復：如果點擊的是右上角按鈕群，直接退出，絕不阻斷按鈕點擊！
       if (event.target.closest('.title-bar-controls')) return;
       if (elmnt.classList.contains('maximized') || window.innerWidth < 600) return;
 
       elmnt.style.zIndex = ++highestZ;
 
-      // 如果當前有 transform: translate(-50%, -50%)，先轉換為固定像素
       if (elmnt.style.transform && elmnt.style.transform.includes('translate')) {
         const rect = elmnt.getBoundingClientRect();
         elmnt.style.transform = 'none';

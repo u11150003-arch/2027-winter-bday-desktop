@@ -30,7 +30,7 @@
       background-size: cover;
     }
     
-    .icon-wrapper, .top-actions button, .folder-nav-bar button, .start-menu li, .taskbar button, a {
+    .icon-wrapper, .top-actions button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button {
       cursor: var(--star-cursor) !important;
     }
 
@@ -106,23 +106,37 @@
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
 
-    /* 視窗樣式：支援右下角拖曳縮放大小 (Resize) */
+    /* 視窗樣式：強化標題列與縮放相容性 */
     .win-modal {
       position: fixed; display: none; z-index: 100;
-      box-shadow: 2px 2px 12px rgba(0,0,0,0.5);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
       width: 94vw; max-width: 580px;
-      resize: both;
-      overflow: hidden;
-      min-width: 260px;
-      min-height: 180px;
+      min-width: 260px; min-height: 180px;
+      resize: both; overflow: hidden;
     }
+    .win-modal .title-bar {
+      cursor: move;
+      position: relative;
+    }
+    .win-modal .title-bar-controls {
+      position: relative;
+      z-index: 30;
+      display: flex; gap: 2px;
+    }
+    .win-modal .title-bar-controls button {
+      cursor: var(--star-cursor) !important;
+      position: relative;
+      z-index: 35;
+      pointer-events: auto !important;
+    }
+
     .win-modal .window-body {
-      max-height: calc(100% - 30px);
-      height: calc(100% - 30px);
+      height: calc(100% - 32px);
+      max-height: calc(100% - 32px);
       overflow-y: auto; padding: 6px;
     }
+
+    /* 最大化樣式 */
     .win-modal.maximized {
       top: 0 !important; left: 0 !important; transform: none !important;
       width: 100vw !important; max-width: 100vw !important; height: calc(100vh - 35px) !important;
@@ -130,8 +144,8 @@
       resize: none !important;
     }
     .win-modal.maximized .window-body {
-      max-height: calc(100vh - 65px) !important;
-      height: calc(100vh - 65px) !important;
+      height: calc(100vh - 68px) !important;
+      max-height: calc(100vh - 68px) !important;
     }
 
     /* 資料夾導航列樣式 */
@@ -286,14 +300,14 @@
     </div>
   </div>
 
-  <!-- 資料夾視窗 (含最小化、最大化/還原、關閉與導航) -->
+  <!-- 資料夾視窗 (修復右上角按鈕點擊判定) -->
   <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('folder-win', event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize" onclick="minimizeWindow('folder-win', '資料夾', event)" title="最小化 (縮小至工作列)"></button>
-        <button aria-label="Maximize" onclick="toggleMaximize('folder-win', event)" title="最大化 / 還原 (放大縮小)"></button>
-        <button aria-label="Close" onclick="closeWindow('folder-win', event)" title="關閉"></button>
+        <button type="button" aria-label="Minimize" onclick="minimizeWindow('folder-win', '資料夾', event)" title="最小化"></button>
+        <button type="button" aria-label="Maximize" onclick="toggleMaximize('folder-win', event)" title="最大化/還原"></button>
+        <button type="button" aria-label="Close" onclick="closeWindow('folder-win', event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body">
@@ -311,14 +325,14 @@
     </div>
   </div>
 
-  <!-- 專輯曲目播放器視窗 (含三鍵控制) -->
+  <!-- 專輯曲目播放器視窗 -->
   <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('album-win', event)">
       <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize" onclick="minimizeWindow('album-win', '專輯播放器', event)" title="最小化"></button>
-        <button aria-label="Maximize" onclick="toggleMaximize('album-win', event)" title="最大化 / 還原"></button>
-        <button aria-label="Close" onclick="closeAlbumWindow(event)" title="關閉"></button>
+        <button type="button" aria-label="Minimize" onclick="minimizeWindow('album-win', '專輯播放器', event)" title="最小化"></button>
+        <button type="button" aria-label="Maximize" onclick="toggleMaximize('album-win', event)" title="最大化/還原"></button>
+        <button type="button" aria-label="Close" onclick="closeAlbumWindow(event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body">
@@ -333,14 +347,14 @@
     </div>
   </div>
 
-  <!-- 圖片檢視器 (含三鍵控制) -->
+  <!-- 圖片檢視器 -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('photo-viewer-win', event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize" onclick="minimizeWindow('photo-viewer-win', '圖片檢視器', event)" title="最小化"></button>
-        <button aria-label="Maximize" onclick="toggleMaximize('photo-viewer-win', event)" title="最大化 / 還原"></button>
-        <button aria-label="Close" onclick="closeWindow('photo-viewer-win', event)" title="關閉"></button>
+        <button type="button" aria-label="Minimize" onclick="minimizeWindow('photo-viewer-win', '圖片檢視器', event)" title="最小化"></button>
+        <button type="button" aria-label="Maximize" onclick="toggleMaximize('photo-viewer-win', event)" title="最大化/還原"></button>
+        <button type="button" aria-label="Close" onclick="closeWindow('photo-viewer-win', event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body" style="background: #222; padding: 4px;">
@@ -350,14 +364,14 @@
     </div>
   </div>
 
-  <!-- 影音播放器 (含三鍵控制) -->
+  <!-- 影音播放器 -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)" ondblclick="toggleMaximize('media-player-win', event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize" onclick="minimizeWindow('media-player-win', '播放器', event)" title="最小化"></button>
-        <button aria-label="Maximize" onclick="toggleMaximize('media-player-win', event)" title="最大化 / 還原"></button>
-        <button aria-label="Close" onclick="closeUniversalPlayer(event)" title="關閉"></button>
+        <button type="button" aria-label="Minimize" onclick="minimizeWindow('media-player-win', '播放器', event)" title="最小化"></button>
+        <button type="button" aria-label="Maximize" onclick="toggleMaximize('media-player-win', event)" title="最大化/還原"></button>
+        <button type="button" aria-label="Close" onclick="closeUniversalPlayer(event)" title="關閉"></button>
       </div>
     </div>
     <div class="window-body" style="padding: 0; background: #000;">
@@ -373,7 +387,7 @@
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
       <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closeWindow('link-win', event)"></button>
+        <button type="button" aria-label="Close" onclick="closeWindow('link-win', event)"></button>
       </div>
     </div>
     <div class="window-body" style="text-align:center;">
@@ -384,7 +398,7 @@
     </div>
   </div>
 
-  <!-- 底部工作列：含 HOME、WINTER、動態最小化任務欄、與版權連結 -->
+  <!-- 底部工作列 -->
   <div class="taskbar">
     <div class="taskbar-left">
       <button onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
@@ -393,7 +407,6 @@
       <button onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
       </button>
-      <!-- 動態任務欄按鈕容器 -->
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
@@ -413,6 +426,9 @@
 
     let folderHistory = [];
     let folderForwardStack = [];
+
+    // 儲存還原時的位置狀態
+    const windowRestoreBounds = {};
 
     const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
     const ICON_DISC_PURE = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
@@ -546,7 +562,7 @@
     };
     /* ================================================================= */
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v2";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v3";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -593,7 +609,10 @@
 
     function goHome(e) {
       if (e) e.stopPropagation();
-      document.querySelectorAll('.win-modal').forEach(win => win.style.display = 'none');
+      document.querySelectorAll('.win-modal').forEach(win => {
+        win.style.display = 'none';
+        win.classList.remove('maximized');
+      });
       closeUniversalPlayer();
       closeAlbumWindow();
       currentOpenFolderId = null;
@@ -1102,23 +1121,40 @@
       }
     }
 
-    /* ========== 視窗縮小（最小化至工作列）、最大化／還原、拖曳與關閉 ========== */
+    /* ========== 視窗縮小（最小化至工作列）、最大化／還原、拖曳與關閉核心修復 ========== */
     let highestZ = 200;
     const minimizedWindows = {};
 
     function openWindow(id) {
       const win = document.getElementById(id);
+      if (!win) return;
       win.style.display = 'block';
       win.style.zIndex = ++highestZ;
+
+      // 預設若沒有設定位置，置中顯示
+      if (!win.classList.contains('maximized') && !windowRestoreBounds[id]) {
+        win.style.top = '50%';
+        win.style.left = '50%';
+        win.style.transform = 'translate(-50%, -50%)';
+      }
+
       delete minimizedWindows[id];
       updateTaskbar();
     }
     
     function closeWindow(id, e) {
-      if (e) e.stopPropagation();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const win = document.getElementById(id);
+      if (!win) return;
       win.style.display = 'none';
       win.classList.remove('maximized');
+      
+      // 清空最大化前儲存的位置狀態
+      delete windowRestoreBounds[id];
+
       if (id === 'folder-win') {
         currentOpenFolderId = null;
         folderHistory = [];
@@ -1129,17 +1165,24 @@
     }
     
     function closeAlbumWindow(e) {
-      if (e) e.stopPropagation();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const iframe = document.getElementById('albumIframe');
-      iframe.src = '';
+      if (iframe) iframe.src = '';
       closeWindow('album-win', e);
       currentOpenAlbumId = null;
     }
 
     // 視窗最小化（縮小至下方工作列）
     function minimizeWindow(id, title, e) {
-      if (e) e.stopPropagation();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const win = document.getElementById(id);
+      if (!win) return;
       win.style.display = 'none';
       minimizedWindows[id] = title;
       updateTaskbar();
@@ -1147,14 +1190,47 @@
 
     // 視窗最大化 / 還原（放大縮小切換）
     function toggleMaximize(id, e) {
-      if (e) e.stopPropagation();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const win = document.getElementById(id);
-      win.classList.toggle('maximized');
+      if (!win) return;
+
+      if (win.classList.contains('maximized')) {
+        // 還原為普通視窗
+        win.classList.remove('maximized');
+        const prev = windowRestoreBounds[id];
+        if (prev) {
+          win.style.top = prev.top;
+          win.style.left = prev.left;
+          win.style.width = prev.width;
+          win.style.height = prev.height;
+          win.style.transform = prev.transform || 'none';
+        } else {
+          win.style.top = '50%';
+          win.style.left = '50%';
+          win.style.transform = 'translate(-50%, -50%)';
+          win.style.width = '94vw';
+          win.style.maxWidth = '580px';
+          win.style.height = 'auto';
+        }
+      } else {
+        // 放大至最大化
+        windowRestoreBounds[id] = {
+          top: win.style.top || '50%',
+          left: win.style.left || '50%',
+          width: win.style.width || '94vw',
+          height: win.style.height || 'auto',
+          transform: win.style.transform || 'translate(-50%, -50%)'
+        };
+        win.classList.add('maximized');
+      }
     }
 
-    // 更新底部工作列任務按鈕
     function updateTaskbar() {
       const container = document.getElementById('taskbarItems');
+      if (!container) return;
       container.innerHTML = '';
       for (const [winId, title] of Object.entries(minimizedWindows)) {
         const btn = document.createElement('button');
@@ -1168,9 +1244,22 @@
       }
     }
 
+    // 拖曳視窗：嚴格排除點擊在控制按鈕上的情況
     function dragElement(elmnt, event) {
+      // 關鍵修復：如果點擊的是右上角按鈕群，直接退出，絕不阻斷按鈕點擊！
+      if (event.target.closest('.title-bar-controls')) return;
       if (elmnt.classList.contains('maximized') || window.innerWidth < 600) return;
+
       elmnt.style.zIndex = ++highestZ;
+
+      // 如果當前有 transform: translate(-50%, -50%)，先轉換為固定像素
+      if (elmnt.style.transform && elmnt.style.transform.includes('translate')) {
+        const rect = elmnt.getBoundingClientRect();
+        elmnt.style.transform = 'none';
+        elmnt.style.top = rect.top + 'px';
+        elmnt.style.left = rect.left + 'px';
+      }
+
       let pos1 = 0, pos2 = 0, pos3 = event.clientX, pos4 = event.clientY;
       document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
       document.onmousemove = (e) => {

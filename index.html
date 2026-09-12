@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026 WINTER BDay Desktop</title>
+  <title>2027 WINTER Bday desktop</title>
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
     * { box-sizing: border-box; user-select: none; }
@@ -83,7 +83,7 @@
 </head>
 <body>
 
-  <!-- 頂部工具列 -->
+  <!-- 工具列 -->
   <div class="top-actions">
     <button id="authBtn" onclick="toggleAdmin()">🔒 管理員登入</button>
     <button class="admin-only" onclick="createItem('folder')">+ 資料夾</button>
@@ -92,9 +92,10 @@
     <button class="admin-only" onclick="createItem('note')">+ 便利貼</button>
     <button class="admin-only" onclick="createItem('link')">+ 外部連結</button>
     <button class="admin-only" onclick="changeWallpaper()">🎨 換背景</button>
+    <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()">💾 匯出設定 (永久儲存)</button>
   </div>
 
-  <!-- 桌面容器 -->
+  <!-- 桌面圖示容器 -->
   <div class="desktop" id="desktopContainer">
     <div class="icon-wrapper" onclick="openWindow('music-win')">
       <img src="https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png" alt="music">
@@ -169,7 +170,7 @@
     </div>
   </div>
 
-  <!-- 外部連結視窗 -->
+  <!-- 外部連結跳轉確認視窗 -->
   <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 280px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
@@ -197,20 +198,49 @@
     let isAdmin = false;
     let currentOpenFolderId = null;
 
-    const defaultTracks = [
-      { title: "Winter - 딩고뮤직 세레나데 (YouTube)", src: "YTeFLKMpwjg", type: "youtube" },
-      { title: "aespa - Supernova (YouTube)", src: "phuiAIqwPE8", type: "youtube" }
-    ];
-    let playlist = JSON.parse(localStorage.getItem('desktop_playlist_v4')) || defaultTracks;
+    /* ========== 核心永久儲存資料區（點擊匯出設定時複製此處） ========== */
+    const MASTER_CONFIG = {
+      wallpaper: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600",
+      playlist: [
+        { title: "Winter - 딩고뮤직 세레나데 (YouTube)", src: "YTeFLKMpwjg", type: "youtube" },
+        { title: "aespa - Supernova (YouTube)", src: "phuiAIqwPE8", type: "youtube" }
+      ],
+      items: [
+        { id: "f1", parentId: null, type: "folder", name: "WINTER", icon: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" },
+        { id: "img1", parentId: null, type: "image", name: "Winter 照片", icon: "https://win98icons.alexmeub.com/icons/png/camera-2.png", mediaUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" },
+        { id: "n1", parentId: null, type: "note", name: "生咖應援清單", icon: "https://win98icons.alexmeub.com/icons/png/notepad-5.png", content: "1. 應援物清點\n2. 易拉架確認" },
+        { id: "l1", parentId: null, type: "link", name: "預約表單", icon: "https://win98icons.alexmeub.com/icons/png/html-2.png", url: "https://google.com" }
+      ]
+    };
+    /* ============================================================= */
+
+    // 優先讀取瀏覽器本機改動，若無則載入 MASTER_CONFIG
+    let currentConfig = JSON.parse(localStorage.getItem('winter_desktop_config')) || MASTER_CONFIG;
+    let playlist = currentConfig.playlist;
+    let itemsData = currentConfig.items;
     let currentTrackIdx = 0;
 
-    const defaultItems = [
-      { id: "f1", parentId: null, type: "folder", name: "WINTER", icon: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" },
-      { id: "img1", parentId: null, type: "image", name: "Winter 照片", icon: "https://win98icons.alexmeub.com/icons/png/camera-2.png", mediaUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" },
-      { id: "n1", parentId: null, type: "note", name: "生咖應援清單", icon: "https://win98icons.alexmeub.com/icons/png/notepad-5.png", content: "1. 應援物清點\n2. 易拉架確認" },
-      { id: "l1", parentId: null, type: "link", name: "預約表單", icon: "https://win98icons.alexmeub.com/icons/png/html-2.png", url: "https://google.com" }
-    ];
-    let itemsData = JSON.parse(localStorage.getItem('desktop_items_v4')) || defaultItems;
+    function saveState() {
+      currentConfig.playlist = playlist;
+      currentConfig.items = itemsData;
+      localStorage.setItem('winter_desktop_config', JSON.stringify(currentConfig));
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+    }
+
+    // 匯出功能：一鍵複製目前所有改動
+    function exportCurrentState() {
+      currentConfig.playlist = playlist;
+      currentConfig.items = itemsData;
+      const jsonString = JSON.stringify(currentConfig, null, 2);
+      const output = `const MASTER_CONFIG = ${jsonString};`;
+
+      navigator.clipboard.writeText(output).then(() => {
+        alert("✅ 成功複製目前桌面完整配置代碼！\n\n請回到 GitHub 的 index.html，找到『const MASTER_CONFIG = ...』這段貼上替換並 Commit changes，即可永久保存所有更動，不管換任何裝置都不會重設！");
+      }).catch(() => {
+        prompt("請手動複製以下代碼並貼回 index.html 的 MASTER_CONFIG 區域：", output);
+      });
+    }
 
     function toggleAdmin() {
       if (isAdmin) {
@@ -224,19 +254,13 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！已解鎖新增 MP4 影片、圖片、資料夾拖曳等功能。");
+          alert("登入成功！完成所有桌面排版與設定後，記得點擊頂部藍色的『💾 匯出設定』永久儲存。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
       }
       renderDesktop();
       renderPlaylistUI();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-    }
-
-    function saveData() {
-      localStorage.setItem('desktop_items_v4', JSON.stringify(itemsData));
-      renderDesktop();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
@@ -275,7 +299,7 @@
 
       if (item.type === 'folder') {
         div.ondragover = (e) => { e.preventDefault(); div.classList.add('drag-hover'); };
-        div.ondleave = () => div.classList.remove('drag-hover');
+        div.ondragleave = () => div.classList.remove('drag-hover');
         div.ondrop = (e) => {
           e.preventDefault();
           div.classList.remove('drag-hover');
@@ -284,7 +308,7 @@
             const target = itemsData.find(i => i.id === draggedId);
             if (target) {
               target.parentId = item.id;
-              saveData();
+              saveState();
               alert(`已將「${target.name}」移入資料夾「${item.name}」！`);
             }
           }
@@ -366,7 +390,7 @@
       const it = itemsData.find(i => i.id === id);
       if (it) {
         it.parentId = null;
-        saveData();
+        saveState();
       }
     }
 
@@ -387,11 +411,11 @@
       let icon = "", content = "", url = "", mediaUrl = "";
 
       if (type === 'image') {
-        mediaUrl = prompt("請輸入圖片網址 (支援 Postimages 或 Google 雲端轉換連結)：");
+        mediaUrl = prompt("請輸入圖片網址 (Postimages 或 Google 雲端轉換連結)：");
         if (!mediaUrl) return;
         icon = mediaUrl;
       } else if (type === 'video') {
-        mediaUrl = prompt("請輸入 MP4 / M4A 影片直連網址 (支援 Google 雲端轉換連結)：");
+        mediaUrl = prompt("請輸入 MP4 / M4A 直連網址：");
         if (!mediaUrl) return;
         icon = "https://win98icons.alexmeub.com/icons/png/video_player_cool-0.png";
       } else if (type === 'note') {
@@ -405,7 +429,7 @@
       }
 
       itemsData.push({ id: Date.now().toString(), parentId, type, name, icon, content, url, mediaUrl });
-      saveData();
+      saveState();
     }
 
     function editItem(id) {
@@ -415,7 +439,7 @@
       if (newName) item.name = newName;
 
       if (item.type === 'image' || item.type === 'video') {
-        const newMedia = prompt("更換媒體檔案網址：", item.mediaUrl);
+        const newMedia = prompt("更換媒體網址：", item.mediaUrl);
         if (newMedia) { item.mediaUrl = newMedia; if (item.type === 'image') item.icon = newMedia; }
       } else {
         const newIcon = prompt("更改圖示網址 (PNG/JPG)：", item.icon);
@@ -430,13 +454,13 @@
         const u = prompt("更改連結網址：", item.url);
         if (u) item.url = u;
       }
-      saveData();
+      saveState();
     }
 
     function deleteItem(id) {
       if (confirm("確定刪除此項目嗎？")) {
         itemsData = itemsData.filter(i => i.id !== id && i.parentId !== id);
-        saveData();
+        saveState();
       }
     }
 
@@ -495,7 +519,7 @@
       }
 
       playlist.push({ title, src, type });
-      localStorage.setItem('desktop_playlist_v4', JSON.stringify(playlist));
+      saveState();
       renderPlaylistUI();
     }
 
@@ -503,7 +527,7 @@
       if (confirm("刪除這首歌曲？")) {
         playlist.splice(idx, 1);
         if (currentTrackIdx >= playlist.length) currentTrackIdx = 0;
-        localStorage.setItem('desktop_playlist_v4', JSON.stringify(playlist));
+        saveState();
         renderPlaylistUI();
       }
     }
@@ -541,12 +565,15 @@
       const url = prompt("請輸入桌布直接圖片網址：", "");
       if (url) {
         document.body.style.backgroundImage = `url('${url}')`;
-        localStorage.setItem('desktop_wallpaper', url);
+        currentConfig.wallpaper = url;
+        saveState();
       }
     }
 
-    const savedBg = localStorage.getItem('desktop_wallpaper');
-    if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
+    // 初始化讀取桌布與資料
+    if (currentConfig.wallpaper) {
+      document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;
+    }
     renderDesktop();
     renderPlaylistUI();
   </script>

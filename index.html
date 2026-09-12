@@ -62,7 +62,7 @@
       z-index: 500 !important;
     }
     .win-modal.maximized .window-body {
-      height: calc(100% - 30px);
+      height: calc(100% - 32px);
       overflow: auto;
     }
     .taskbar {
@@ -71,27 +71,30 @@
       display: flex; align-items: center; padding: 2px 6px; z-index: 999;
     }
 
-    /* WINTER 開始選單樣式 */
+    /* WINTER01 XP 開始選單 */
     .start-menu {
       position: fixed;
       bottom: 35px;
       left: 2px;
-      width: 200px;
+      width: 220px;
       background: #c0c0c0;
       border: 2px outset #fff;
-      box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.5);
       display: none;
       z-index: 10000;
       padding: 3px;
     }
     .start-menu-banner {
-      background: linear-gradient(180deg, #000080, #1084d0);
+      background: linear-gradient(180deg, #104e8b, #1e90ff);
       color: #fff;
       font-weight: bold;
-      padding: 6px;
+      padding: 8px 10px;
       font-size: 13px;
       margin-bottom: 4px;
       letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .start-menu ul {
       list-style: none;
@@ -99,7 +102,7 @@
       padding: 0;
     }
     .start-menu li {
-      padding: 6px 10px;
+      padding: 7px 10px;
       font-size: 12px;
       cursor: pointer;
       display: flex;
@@ -111,6 +114,7 @@
       color: #fff;
     }
 
+    /* 播放清單 */
     .playlist-box {
       list-style: none; margin: 8px 0 0 0; padding: 0;
       background: #fff; border: 2px inset #dfdfdf; height: 130px; overflow-y: auto;
@@ -120,11 +124,18 @@
     }
     .playlist-box li:hover { background: #000080; color: #fff; }
     .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
+
+    /* 圖片編輯調色板 */
+    .photo-filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap; background: #dfdfdf;
+      padding: 6px; margin-bottom: 6px; border: 1px solid #888; font-size: 11px; align-items: center;
+    }
+    .photo-filter-bar label { display: flex; align-items: center; gap: 3px; }
   </style>
 </head>
 <body>
 
-  <!-- 頂部快捷操作列 -->
+  <!-- 頂部管理工具列 -->
   <div class="top-actions">
     <button id="authBtn" onclick="toggleAdmin()">🔒 管理員登入</button>
     <button class="admin-only" onclick="createItem('folder')">+ 資料夾/CD</button>
@@ -139,22 +150,22 @@
   <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
 
-  <!-- WINTER 開始選單 -->
+  <!-- WINTER01 XP 開始選單（點擊直接跳轉開啟） -->
   <div id="startMenu" class="start-menu">
-    <div class="start-menu-banner">⭐ WINTER 98</div>
+    <div class="start-menu-banner">⭐ WINTER01 XP</div>
     <ul>
-      <li onclick="handleStartItem('folder')">📁 新增資料夾 / CD</li>
-      <li onclick="handleStartItem('video')">🎬 新增音樂 / 影片</li>
-      <li onclick="handleStartItem('image')">🖼️ 新增相片圖片</li>
-      <li onclick="handleStartItem('note')">📝 新增便利貼</li>
-      <li onclick="handleStartItem('link')">🔗 新增外部連結</li>
+      <li onclick="jumpToItem('folder', 'f1')">📁 開啟 WINTER 資料夾</li>
+      <li onclick="jumpToItem('playlist', null)">🎵 開啟 Playlist 播放器</li>
+      <li onclick="jumpToItem('image', 'img1')">🖼️ 開啟 手幅Serenade ver</li>
+      <li onclick="jumpToItem('note', 'n1')">📝 開啟 生咖應援物便利貼</li>
+      <li onclick="jumpToItem('link', 'l1')">🔗 開啟 生咖預約表單</li>
       <hr style="margin: 4px 0;">
       <li onclick="toggleAdmin(); toggleStartMenu();">⚙️ 切換管理員模式</li>
     </ul>
   </div>
 
   <!-- 資料夾 / CD 內容視窗 -->
-  <div id="folder-win" class="window win-modal" style="top: 70px; left: 70px; width: 460px;">
+  <div id="folder-win" class="window win-modal" style="top: 70px; left: 70px; width: 480px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
       <div class="title-bar-controls">
@@ -173,8 +184,8 @@
     </div>
   </div>
 
-  <!-- 圖片檢視器 -->
-  <div id="photo-viewer-win" class="window win-modal" style="top: 70px; left: 140px; width: 500px;">
+  <!-- 圖片檢視器（支援位置、大小縮放、簡易調色） -->
+  <div id="photo-viewer-win" class="window win-modal" style="top: 60px; left: 100px; width: 560px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
       <div class="title-bar-controls">
@@ -182,13 +193,22 @@
         <button aria-label="Close" onclick="closeWindow('photo-viewer-win')"></button>
       </div>
     </div>
-    <div class="window-body" style="text-align: center; background: #333; padding: 10px;">
-      <img id="largePhotoDisplay" src="" style="max-width: 100%; max-height: 70vh; object-fit: contain; border: 2px solid #fff;" alt="preview">
+    <div class="window-body" style="background: #2b2b2b; padding: 6px;">
+      <div class="photo-filter-bar">
+        <label>縮放: <input type="range" id="filterZoom" min="50" max="180" value="100" oninput="applyPhotoFilters()"></label>
+        <label>亮度: <input type="range" id="filterBright" min="50" max="150" value="100" oninput="applyPhotoFilters()"></label>
+        <label>對比: <input type="range" id="filterContrast" min="50" max="150" value="100" oninput="applyPhotoFilters()"></label>
+        <label>飽和度: <input type="range" id="filterSat" min="0" max="200" value="100" oninput="applyPhotoFilters()"></label>
+        <button onclick="resetPhotoFilters()">重設</button>
+      </div>
+      <div style="text-align: center; overflow: auto; max-height: 65vh; padding: 10px; display:flex; justify-content:center; align-items:center;">
+        <img id="largePhotoDisplay" src="" style="max-width: 100%; height: auto; transition: 0.1s; border: 2px solid #fff;" alt="preview">
+      </div>
     </div>
   </div>
 
-  <!-- 影音播放器（加大至 640x460，解決自動暫停） -->
-  <div id="media-player-win" class="window win-modal" style="top: 80px; left: 120px; width: 640px;">
+  <!-- 影音播放器（全螢幕適配 16:9，修正縮小與停頓問題） -->
+  <div id="media-player-win" class="window win-modal" style="top: 70px; left: 100px; width: 720px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
       <div class="title-bar-controls">
@@ -196,14 +216,14 @@
         <button aria-label="Close" onclick="closeUniversalPlayer()"></button>
       </div>
     </div>
-    <div class="window-body" style="background: #000; padding: 4px; text-align: center; min-height: 360px; display: flex; align-items:center; justify-content:center;">
-      <iframe id="universalIframe" width="100%" height="360" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display:none;"></iframe>
-      <video id="universalVideo" controls style="width: 100%; max-height: 65vh; display:none;"></video>
+    <div class="window-body" style="background: #000; padding: 0; display: flex; flex-direction:column; height: 420px;">
+      <iframe id="universalIframe" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <video id="universalVideo" controls style="width: 100%; height: 100%; display:none;"></video>
     </div>
   </div>
 
-  <!-- Playlist 播放器視窗（加大至 560px） -->
-  <div id="playlist-win" class="window win-modal" style="top: 90px; left: 130px; width: 560px;">
+  <!-- Playlist 播放器視窗（強化寬度與流暢度） -->
+  <div id="playlist-win" class="window win-modal" style="top: 80px; left: 120px; width: 680px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="playlistTitleBar">🎵 Playlist 播放器</div>
       <div class="title-bar-controls">
@@ -211,9 +231,9 @@
         <button aria-label="Close" onclick="closeWindow('playlist-win')"></button>
       </div>
     </div>
-    <div class="window-body">
-      <div style="min-height: 260px; background:#000; display:flex; align-items:center; justify-content:center;">
-        <iframe id="playlistIframe" width="100%" height="260" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div class="window-body" style="padding: 6px;">
+      <div style="height: 340px; background:#000; width:100%; display:flex; align-items:center; justify-content:center;">
+        <iframe id="playlistIframe" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <div style="margin-top: 6px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:12px; font-weight:bold;">曲目列表：</span>
@@ -223,7 +243,7 @@
     </div>
   </div>
 
-  <!-- 外部連結確認視窗 -->
+  <!-- 外部連結跳轉確認視窗 -->
   <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 280px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
@@ -239,7 +259,7 @@
     </div>
   </div>
 
-  <!-- 底部工作列：Start 改為 WINTER -->
+  <!-- 底部工作列：WINTER 按鈕 -->
   <div class="taskbar">
     <button onclick="toggleStartMenu()" style="font-weight:bold; display:flex; align-items:center; gap:5px; height:26px; padding:0 6px;">
       <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
@@ -251,7 +271,10 @@
     let isAdmin = false;
     let currentOpenFolderId = null;
 
-    /* ========== 核心永久儲存資料區（已完全同步你的設定） ========== */
+    // 專屬生咖預約表單圖示 (經典白紙藍色像素 W 圖示)
+    const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
+
+    /* ========== 核心永久儲存資料區 ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "playlist": [
@@ -302,7 +325,7 @@
           "parentId": null,
           "type": "link",
           "name": "生咖預約表單",
-          "icon": "https://win98icons.alexmeub.com/icons/png/html-2.png",
+          "icon": W_FORM_ICON,
           "url": "https://dynamic-otter-22aaaa.netlify.app/"
         },
         {
@@ -317,15 +340,15 @@
         }
       ]
     };
-    /* ========================================================== */
+    /* ======================================= */
 
-    const CONFIG_KEY = "winter_desktop_config_v6";
+    const CONFIG_KEY = "winter_desktop_config_v7";
     let currentConfig = JSON.parse(localStorage.getItem(CONFIG_KEY)) || MASTER_CONFIG;
     let playlist = currentConfig.playlist;
     let itemsData = currentConfig.items;
     let currentTrackIdx = 0;
 
-    // 智能提取 Google 雲端 ID
+    // 提取 Google Drive 檔案 ID
     function extractDriveId(url) {
       if (!url) return null;
       const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || 
@@ -361,7 +384,7 @@
       const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
 
       navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製完整設定！請至 GitHub index.html 替換 MASTER_CONFIG 並 Commit changes 即可永久儲存。");
+        alert("✅ 成功複製完整設定！請至 GitHub index.html 替換 MASTER_CONFIG 並 Commit changes。");
       }).catch(() => {
         prompt("請複製以下代碼並貼回 index.html：", output);
       });
@@ -381,13 +404,19 @@
       }
     });
 
-    function handleStartItem(type) {
+    // WINTER01 XP 開始選單直接跳轉開啟
+    function jumpToItem(type, id) {
       toggleStartMenu();
-      if (!isAdmin) {
-        alert("請先登入管理員以新增項目！");
+      if (type === 'playlist') {
+        openWindow('playlist-win');
         return;
       }
-      createItem(type);
+      const item = itemsData.find(i => i.id === id);
+      if (item) {
+        handleItemClick(item);
+      } else {
+        alert("找不到該項目！");
+      }
     }
 
     function toggleAdmin() {
@@ -402,7 +431,7 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！已解鎖所有編輯、拖曳與新增功能。");
+          alert("登入成功！已解鎖所有編輯與新增功能。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
@@ -412,7 +441,6 @@
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
-    // 渲染桌面
     function renderDesktop() {
       const container = document.getElementById('desktopContainer');
       container.innerHTML = '';
@@ -441,7 +469,6 @@
 
       div.onclick = () => handleItemClick(item);
 
-      // 支援拖曳放入資料夾（Playlist 也可被拖曳放入）
       div.ondragstart = (e) => {
         if (!isAdmin) return;
         e.dataTransfer.setData('text/plain', item.id);
@@ -486,7 +513,7 @@
       }
     }
 
-    // 播放影片（無間斷穩定載入）
+    // 播放影片（填滿高畫質，解除停頓問題）
     function openUniversalPlayer(title, url) {
       document.getElementById('mediaViewerTitle').innerText = `🎬 播放中：${title}`;
       const iframe = document.getElementById('universalIframe');
@@ -498,7 +525,7 @@
           let vid = url;
           if (url.includes("v=")) vid = url.split("v=")[1].substring(0, 11);
           else if (url.includes("youtu.be/")) vid = url.split("youtu.be/")[1].substring(0, 11);
-          finalSrc = `https://www.youtube.com/embed/${vid}?autoplay=1&enablejsapi=1`;
+          finalSrc = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&enablejsapi=1&rel=0`;
         }
         video.pause();
         video.style.display = 'none';
@@ -522,10 +549,32 @@
       closeWindow('media-player-win');
     }
 
+    // 相片檢視與簡易濾鏡調色
     function openPhotoViewer(title, url) {
       document.getElementById('photoViewerTitle').innerText = `🖼️ 檢視圖片：${title}`;
-      document.getElementById('largePhotoDisplay').src = url;
+      const img = document.getElementById('largePhotoDisplay');
+      img.src = url;
+      resetPhotoFilters();
       openWindow('photo-viewer-win');
+    }
+
+    function applyPhotoFilters() {
+      const zoom = document.getElementById('filterZoom').value;
+      const bright = document.getElementById('filterBright').value;
+      const contrast = document.getElementById('filterContrast').value;
+      const sat = document.getElementById('filterSat').value;
+      const img = document.getElementById('largePhotoDisplay');
+
+      img.style.transform = `scale(${zoom / 100})`;
+      img.style.filter = `brightness(${bright}%) contrast(${contrast}%) saturate(${sat}%)`;
+    }
+
+    function resetPhotoFilters() {
+      document.getElementById('filterZoom').value = 100;
+      document.getElementById('filterBright').value = 100;
+      document.getElementById('filterContrast').value = 100;
+      document.getElementById('filterSat').value = 100;
+      applyPhotoFilters();
     }
 
     // 資料夾內部操作
@@ -542,7 +591,7 @@
       const children = itemsData.filter(i => i.parentId === folderId);
 
       if (children.length === 0) {
-        box.innerHTML = '<span style="font-size:12px; color:#888; padding:10px;">此處為空（可將外面的 Playlist、歌曲或檔案直接拖曳進來）</span>';
+        box.innerHTML = '<span style="font-size:12px; color:#888; padding:10px;">此處為空（可拖曳檔案或 Playlist 進來）</span>';
         return;
       }
 
@@ -609,14 +658,13 @@
       } else if (type === 'link') {
         url = prompt("請輸入完整跳轉網址 (含 https://)：", "https://");
         const rawIcon = prompt("圖示網址 (留空預設)：", "");
-        icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/html-2.png";
+        icon = rawIcon ? autoFormatMediaUrl(rawIcon, 'icon') : W_FORM_ICON;
       }
 
       itemsData.push({ id: Date.now().toString(), parentId, type, name, icon, content, url, mediaUrl });
       saveState();
     }
 
-    // 所有指令皆可後續重新編輯（改名、換圖示、改連結）
     function editItem(id) {
       const item = itemsData.find(i => i.id === id);
       if (!item) return;
@@ -683,7 +731,7 @@
         if (current.src.includes('drive.google.com')) {
           targetSrc = current.src;
         } else {
-          targetSrc = `https://www.youtube.com/embed/${current.src}?autoplay=1&enablejsapi=1`;
+          targetSrc = `https://www.youtube-nocookie.com/embed/${current.src}?autoplay=1&enablejsapi=1&rel=0`;
         }
         if (iframe.src !== targetSrc) iframe.src = targetSrc;
       }

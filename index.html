@@ -79,6 +79,11 @@
     }
     .playlist-box li:hover { background: #000080; color: #fff; }
     .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
+    
+    .converter-row {
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; font-size: 12px;
+    }
+    .converter-row input { width: 100%; }
   </style>
 </head>
 <body>
@@ -92,6 +97,7 @@
     <button class="admin-only" onclick="createItem('note')">+ 便利貼</button>
     <button class="admin-only" onclick="createItem('link')">+ 外部連結</button>
     <button class="admin-only" onclick="changeWallpaper()">🎨 換背景</button>
+    <button class="admin-only" style="background:#ff8000; color:#fff;" onclick="openWindow('converter-win')">🛠️ 雲端轉直連工具</button>
     <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()">💾 匯出設定 (永久儲存)</button>
   </div>
 
@@ -148,7 +154,39 @@
     </div>
   </div>
 
-  <!-- Playlist 音樂播放清單視窗 -->
+  <!-- Google 雲端直連轉換器 -->
+  <div id="converter-win" class="window win-modal" style="top: 110px; left: 180px; width: 440px;">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text">🛠️ Google 雲端直連轉換器</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeWindow('converter-win')"></button>
+      </div>
+    </div>
+    <div class="window-body" style="padding: 12px;">
+      <div class="converter-row">
+        <label><b>1. 貼上 Google 雲端檔案共用連結：</b></label>
+        <input type="text" id="driveInputUrl" placeholder="https://drive.google.com/file/d/.../view?usp=sharing" oninput="runConversion()">
+      </div>
+      <hr style="margin: 10px 0;">
+      <div class="converter-row">
+        <label><b>📷 圖片／Icon 專用直連網址：</b></label>
+        <div style="display:flex; gap:4px;">
+          <input type="text" id="driveImgOut" readonly>
+          <button onclick="copyField('driveImgOut')">複製</button>
+        </div>
+      </div>
+      <div class="converter-row">
+        <label><b>🎬 影片（MP4）／音訊（MP3/M4A）專用直連網址：</b></label>
+        <div style="display:flex; gap:4px;">
+          <input type="text" id="driveMediaOut" readonly>
+          <button onclick="copyField('driveMediaOut')">複製</button>
+        </div>
+      </div>
+      <p style="font-size:11px; color:#555; margin-top:8px;">💡 提示：本網站所有輸入框皆已內建「自動轉換」，直接貼上 Google Drive 分享連結即可使用！</p>
+    </div>
+  </div>
+
+  <!-- Playlist 音樂視窗 -->
   <div id="music-win" class="window win-modal" style="top: 100px; left: 120px; width: 380px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="nowPlayingTitle">🎵 Playlist 播放器</div>
@@ -170,7 +208,7 @@
     </div>
   </div>
 
-  <!-- 外部連結跳轉確認視窗 -->
+  <!-- 外部連結視窗 -->
   <div id="link-win" class="window win-modal" style="top: 120px; left: 160px; width: 280px;">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
@@ -198,23 +236,101 @@
     let isAdmin = false;
     let currentOpenFolderId = null;
 
-    /* ========== 核心永久儲存資料區（點擊匯出設定時複製此處） ========== */
+    /* ========== 核心永久儲存資料區（已更新最新內容） ========== */
     const MASTER_CONFIG = {
-      wallpaper: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600",
-      playlist: [
-        { title: "Winter - 딩고뮤직 세레나데 (YouTube)", src: "YTeFLKMpwjg", type: "youtube" },
-        { title: "aespa - Supernova (YouTube)", src: "phuiAIqwPE8", type: "youtube" }
+      "wallpaper": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600",
+      "playlist": [
+        {
+          "title": "Winter-Speed of summer",
+          "src": "YTeFLKMnwjg",
+          "type": "youtube"
+        }
       ],
-      items: [
-        { id: "f1", parentId: null, type: "folder", name: "WINTER", icon: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" },
-        { id: "img1", parentId: null, type: "image", name: "Winter 照片", icon: "https://win98icons.alexmeub.com/icons/png/camera-2.png", mediaUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" },
-        { id: "n1", parentId: null, type: "note", name: "生咖應援清單", icon: "https://win98icons.alexmeub.com/icons/png/notepad-5.png", content: "1. 應援物清點\n2. 易拉架確認" },
-        { id: "l1", parentId: null, type: "link", name: "預約表單", icon: "https://win98icons.alexmeub.com/icons/png/html-2.png", url: "https://google.com" }
+      "items": [
+        {
+          "id": "f1",
+          "parentId": null,
+          "type": "folder",
+          "name": "WINTER",
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"
+        },
+        {
+          "id": "img1",
+          "parentId": null,
+          "type": "image",
+          "name": "Winter 照片",
+          "icon": "https://win98icons.alexmeub.com/icons/png/camera-2.png",
+          "mediaUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800"
+        },
+        {
+          "id": "n1",
+          "parentId": null,
+          "type": "note",
+          "name": "生咖應援物",
+          "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
+          "content": "1. 應援小卡\n2. 明信片"
+        },
+        {
+          "id": "l1",
+          "parentId": null,
+          "type": "link",
+          "name": "生咖預約表單",
+          "icon": "https://win98icons.alexmeub.com/icons/png/html-2.png",
+          "url": "https://dynamic-otter-22aaaa.netlify.app/"
+        }
       ]
     };
-    /* ============================================================= */
+    /* ========================================================== */
 
-    // 優先讀取瀏覽器本機改動，若無則載入 MASTER_CONFIG
+    // 每次更新程式碼時版本號遞增，確保立即清除舊快取
+    const CURRENT_CONFIG_VERSION = "2026_09_12_v1";
+    if (localStorage.getItem('desktop_version') !== CURRENT_CONFIG_VERSION) {
+      localStorage.setItem('desktop_version', CURRENT_CONFIG_VERSION);
+      localStorage.setItem('winter_desktop_config', JSON.stringify(MASTER_CONFIG));
+    }
+
+    // Google Drive 提取與轉直連工具
+    function extractDriveId(url) {
+      if (!url) return null;
+      const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || 
+                    url.match(/id=([a-zA-Z0-9_-]+)/) ||
+                    url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      return match ? match[1] : null;
+    }
+
+    function autoConvertDriveUrl(url, type) {
+      if (!url || typeof url !== 'string') return url;
+      const id = extractDriveId(url);
+      if (!id) return url.trim();
+
+      if (type === 'image' || type === 'icon' || type === 'wallpaper') {
+        return `https://lh3.googleusercontent.com/d/${id}`;
+      } else if (type === 'video' || type === 'audio') {
+        return `https://drive.google.com/uc?export=download&id=${id}`;
+      }
+      return url.trim();
+    }
+
+    function runConversion() {
+      const val = document.getElementById('driveInputUrl').value.trim();
+      const id = extractDriveId(val);
+      if (id) {
+        document.getElementById('driveImgOut').value = `https://lh3.googleusercontent.com/d/${id}`;
+        document.getElementById('driveMediaOut').value = `https://drive.google.com/uc?export=download&id=${id}`;
+      } else {
+        document.getElementById('driveImgOut').value = "";
+        document.getElementById('driveMediaOut').value = "";
+      }
+    }
+
+    function copyField(elementId) {
+      const field = document.getElementById(elementId);
+      if (!field.value) return;
+      field.select();
+      navigator.clipboard.writeText(field.value);
+      alert("已複製直連網址！");
+    }
+
     let currentConfig = JSON.parse(localStorage.getItem('winter_desktop_config')) || MASTER_CONFIG;
     let playlist = currentConfig.playlist;
     let itemsData = currentConfig.items;
@@ -228,17 +344,15 @@
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
-    // 匯出功能：一鍵複製目前所有改動
     function exportCurrentState() {
       currentConfig.playlist = playlist;
       currentConfig.items = itemsData;
-      const jsonString = JSON.stringify(currentConfig, null, 2);
-      const output = `const MASTER_CONFIG = ${jsonString};`;
+      const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
 
       navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製目前桌面完整配置代碼！\n\n請回到 GitHub 的 index.html，找到『const MASTER_CONFIG = ...』這段貼上替換並 Commit changes，即可永久保存所有更動，不管換任何裝置都不會重設！");
+        alert("✅ 成功複製最新配置代碼！\n\n請至 GitHub index.html 替換『const MASTER_CONFIG = ...』區域並 Commit changes 即可永久儲存。");
       }).catch(() => {
-        prompt("請手動複製以下代碼並貼回 index.html 的 MASTER_CONFIG 區域：", output);
+        prompt("請手動複製代碼並貼回 index.html：", output);
       });
     }
 
@@ -254,7 +368,7 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！完成所有桌面排版與設定後，記得點擊頂部藍色的『💾 匯出設定』永久儲存。");
+          alert("登入成功！編輯完成後記得點擊『💾 匯出設定』永久儲存。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
@@ -399,7 +513,7 @@
     }
     function createItemInsideCurrentFolder() {
       if (!currentOpenFolderId) return;
-      const type = prompt("請輸入新增類型：folder (資料夾)、image (圖片)、video (影片)、note (便利貼) 或 link (外部連結)：", "video");
+      const type = prompt("請輸入新增類型：folder (資料夾)、image (圖片)、video (影片)、note (便利貼) 或 link (外部連結)：", "image");
       if (['folder', 'image', 'video', 'note', 'link'].includes(type)) {
         addItemToParent(type, currentOpenFolderId);
       }
@@ -411,21 +525,26 @@
       let icon = "", content = "", url = "", mediaUrl = "";
 
       if (type === 'image') {
-        mediaUrl = prompt("請輸入圖片網址 (Postimages 或 Google 雲端轉換連結)：");
-        if (!mediaUrl) return;
+        const rawUrl = prompt("請貼上圖片網址（支援 Google 雲端共享連結或一般圖床）：");
+        if (!rawUrl) return;
+        mediaUrl = autoConvertDriveUrl(rawUrl, 'image');
         icon = mediaUrl;
       } else if (type === 'video') {
-        mediaUrl = prompt("請輸入 MP4 / M4A 直連網址：");
-        if (!mediaUrl) return;
+        const rawUrl = prompt("請貼上 MP4/M4A 影片網址（支援 Google 雲端共享連結）：");
+        if (!rawUrl) return;
+        mediaUrl = autoConvertDriveUrl(rawUrl, 'video');
         icon = "https://win98icons.alexmeub.com/icons/png/video_player_cool-0.png";
       } else if (type === 'note') {
         content = prompt("請輸入便利貼內文：", "寫下備忘...");
-        icon = prompt("圖示網址 (留空預設)：", "") || "https://win98icons.alexmeub.com/icons/png/notepad-5.png";
+        const rawIcon = prompt("圖示網址 (留空預設)：", "");
+        icon = rawIcon ? autoConvertDriveUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/notepad-5.png";
       } else if (type === 'link') {
         url = prompt("請輸入完整網址 (含 https://)：", "https://");
-        icon = prompt("圖示網址 (留空預設)：", "") || "https://win98icons.alexmeub.com/icons/png/html-2.png";
+        const rawIcon = prompt("圖示網址 (留空預設)：", "");
+        icon = rawIcon ? autoConvertDriveUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/html-2.png";
       } else if (type === 'folder') {
-        icon = prompt("圖示網址 (留空預設)：", "") || "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png";
+        const rawIcon = prompt("圖示網址 (留空預設)：", "");
+        icon = rawIcon ? autoConvertDriveUrl(rawIcon, 'icon') : "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png";
       }
 
       itemsData.push({ id: Date.now().toString(), parentId, type, name, icon, content, url, mediaUrl });
@@ -439,11 +558,14 @@
       if (newName) item.name = newName;
 
       if (item.type === 'image' || item.type === 'video') {
-        const newMedia = prompt("更換媒體網址：", item.mediaUrl);
-        if (newMedia) { item.mediaUrl = newMedia; if (item.type === 'image') item.icon = newMedia; }
+        const rawMedia = prompt("更換媒體網址：", item.mediaUrl);
+        if (rawMedia) {
+          item.mediaUrl = autoConvertDriveUrl(rawMedia, item.type);
+          if (item.type === 'image') item.icon = item.mediaUrl;
+        }
       } else {
-        const newIcon = prompt("更改圖示網址 (PNG/JPG)：", item.icon);
-        if (newIcon) item.icon = newIcon;
+        const rawIcon = prompt("更改圖示網址 (PNG/JPG)：", item.icon);
+        if (rawIcon) item.icon = autoConvertDriveUrl(rawIcon, 'icon');
       }
 
       if (item.type === 'note') {
@@ -507,12 +629,13 @@
     function addMusicTrack() {
       const title = prompt("請輸入歌曲名稱：", "New Song");
       if (!title) return;
-      const link = prompt("請輸入 YouTube 影片連結 或 直連 MP3/M4A 音訊網址：");
+      const link = prompt("請輸入 YouTube 影片連結 或 直連 MP3/M4A 音訊網址（支援 Google 雲端共享連結）：");
       if (!link) return;
 
       let type = "youtube", src = link.trim();
-      if (link.endsWith(".mp3") || link.endsWith(".m4a") || link.includes("export=download")) {
+      if (link.includes("drive.google.com") || link.endsWith(".mp3") || link.endsWith(".m4a") || link.includes("export=download")) {
         type = "audio";
+        src = autoConvertDriveUrl(link, 'audio');
       } else {
         if (link.includes("v=")) src = link.split("v=")[1].substring(0, 11);
         else if (link.includes("youtu.be/")) src = link.split("youtu.be/")[1].substring(0, 11);
@@ -533,8 +656,7 @@
     }
 
     function toggleMaximize(id) {
-      const win = document.getElementById(id);
-      win.classList.toggle('maximized');
+      document.getElementById(id).classList.toggle('maximized');
     }
 
     let highestZ = 20;
@@ -562,15 +684,15 @@
     }
 
     function changeWallpaper() {
-      const url = prompt("請輸入桌布直接圖片網址：", "");
-      if (url) {
-        document.body.style.backgroundImage = `url('${url}')`;
-        currentConfig.wallpaper = url;
+      const rawUrl = prompt("請輸入桌布圖片網址（支援 Google 雲端共享連結）：", "");
+      if (rawUrl) {
+        const finalUrl = autoConvertDriveUrl(rawUrl, 'wallpaper');
+        document.body.style.backgroundImage = `url('${finalUrl}')`;
+        currentConfig.wallpaper = finalUrl;
         saveState();
       }
     }
 
-    // 初始化讀取桌布與資料
     if (currentConfig.wallpaper) {
       document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;
     }

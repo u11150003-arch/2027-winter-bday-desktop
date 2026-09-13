@@ -20,7 +20,7 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
-      --taskbar-h: calc(36px + var(--safe-bottom));
+      --taskbar-h: calc(40px + var(--safe-bottom));
     }
 
     body {
@@ -84,7 +84,6 @@
       position: absolute; top: 0; left: 0; width: 40px; height: 100%;
       background: #c0c0c0; border: 1px outset #fff; cursor: grab;
     }
-    .scrollbar-thumb:active { cursor: grabbing; border: 1px inset #fff; }
 
     .desktop {
       position: absolute;
@@ -163,10 +162,9 @@
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
-    /* 播放器容器 */
     #embedded-cd-win {
-      height: 82vh;
-      max-height: calc(100vh - 100px);
+      height: 84vh;
+      max-height: calc(100vh - 90px);
       width: 94vw;
       max-width: 480px;
     }
@@ -197,15 +195,18 @@
     }
     .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
 
+    /* 工作列 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--taskbar-h); min-height: 36px;
+      height: var(--taskbar-h); min-height: 40px;
       background: #c0c0c0; border-top: 2px solid #fff;
       display: flex; align-items: flex-start; justify-content: space-between;
-      padding-top: 4px; padding-left: max(8px, var(--safe-left));
+      padding-top: 5px;
+      padding-left: max(8px, var(--safe-left));
       padding-right: max(14px, var(--safe-right));
-      padding-bottom: max(4px, var(--safe-bottom));
-      z-index: 2500;
+      padding-bottom: max(10px, var(--safe-bottom));
+      z-index: 9999;
+      pointer-events: auto !important;
     }
     .taskbar-left { display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1; }
     .task-item-btn { font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
@@ -215,7 +216,7 @@
     .start-menu {
       position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
       width: 235px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
-      box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 3000; padding: 3px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 10000; padding: 3px;
     }
     .start-menu-banner {
       background: linear-gradient(180deg, #104e8b, #1e90ff);
@@ -569,7 +570,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v14_fix";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v15_clamped";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -859,6 +860,7 @@
       return div;
     }
 
+    /* 圖示防拖曳脫離螢幕機制 (Boundary Clamping) */
     function bindDragAndClick(el, item) {
       let isDragging = false;
       let startX = 0, startY = 0, origX = 0, origY = 0;
@@ -887,8 +889,13 @@
           if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
             hasMoved = true;
             if (isDragging && isAdmin) {
-              el.style.left = (origX + dx) + "px";
-              el.style.top = (origY + dy) + "px";
+              const desktopEl = document.getElementById('desktopContainer');
+              const maxX = desktopEl.clientWidth - el.offsetWidth;
+              const maxY = desktopEl.clientHeight - el.offsetHeight;
+              const nextX = Math.max(0, Math.min(maxX, origX + dx));
+              const nextY = Math.max(0, Math.min(maxY, origY + dy));
+              el.style.left = nextX + "px";
+              el.style.top = nextY + "px";
             }
           }
         }
@@ -1220,12 +1227,9 @@
           win.style.width = prev.width; win.style.height = prev.height;
           win.style.transform = prev.transform || 'none';
         } else {
-          win.style.top = '50%';
-          win.style.left = '50%';
+          win.style.top = '50%'; win.style.left = '50%';
           win.style.transform = 'translate(-50%, -50%)';
-          win.style.width = '94vw';
-          win.style.maxWidth = '580px';
-          win.style.height = 'auto';
+          win.style.width = '94vw'; win.style.maxWidth = '580px'; win.style.height = 'auto';
         }
       } else {
         windowRestoreBounds[id] = {

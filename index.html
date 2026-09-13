@@ -20,16 +20,22 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
-      --taskbar-h: calc(40px + var(--safe-bottom));
+      --taskbar-h: calc(38px + var(--safe-bottom));
     }
 
-    body {
+    /* 徹底移除最上方綠色區域，全面覆蓋滿版桌布 */
+    html, body {
       margin: 0;
+      padding: 0;
+      width: 100vw;
       height: 100vh;
       overflow: hidden;
-      font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
-      background: #008080 url('https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g') no-repeat center center;
+      background-color: #000;
+      background-image: url('https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g');
+      background-repeat: no-repeat;
+      background-position: center center;
       background-size: cover;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
     }
     
     .icon-wrapper, .top-bar-wrapper button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button {
@@ -87,7 +93,7 @@
 
     .desktop {
       position: absolute;
-      top: 56px;
+      top: 50px;
       left: max(0px, var(--safe-left));
       right: max(0px, var(--safe-right));
       bottom: var(--taskbar-h);
@@ -140,7 +146,7 @@
     .win-modal {
       position: fixed; display: none; z-index: 100;
       box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
-      width: 94vw; max-width: 580px; min-width: 280px; min-height: 200px;
+      width: 96vw; max-width: 580px; min-width: 280px; min-height: 200px;
       resize: both; overflow: hidden;
     }
     .win-modal .title-bar { cursor: move; position: relative; }
@@ -162,10 +168,11 @@
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
+    /* 修正嵌入式 CD 播放器尺寸，留出邊距防遮擋 */
     #embedded-cd-win {
-      height: 84vh;
-      max-height: calc(100vh - 90px);
-      width: 94vw;
+      height: 82vh;
+      max-height: calc(100vh - var(--taskbar-h) - 30px);
+      width: 95vw;
       max-width: 480px;
     }
     .embedded-player-container {
@@ -198,13 +205,13 @@
     /* 工作列 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--taskbar-h); min-height: 40px;
+      height: var(--taskbar-h); min-height: 38px;
       background: #c0c0c0; border-top: 2px solid #fff;
       display: flex; align-items: flex-start; justify-content: space-between;
-      padding-top: 5px;
+      padding-top: 4px;
       padding-left: max(8px, var(--safe-left));
       padding-right: max(14px, var(--safe-right));
-      padding-bottom: max(10px, var(--safe-bottom));
+      padding-bottom: max(6px, var(--safe-bottom));
       z-index: 9999;
       pointer-events: auto !important;
     }
@@ -570,7 +577,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v15_clamped";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v16_nogreen";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -860,7 +867,7 @@
       return div;
     }
 
-    /* 圖示防拖曳脫離螢幕機制 (Boundary Clamping) */
+    /* 圖示防拖曳脫離螢幕邊界機制 */
     function bindDragAndClick(el, item) {
       let isDragging = false;
       let startX = 0, startY = 0, origX = 0, origY = 0;
@@ -1561,4 +1568,3 @@
   </script>
 </body>
 </html>
-

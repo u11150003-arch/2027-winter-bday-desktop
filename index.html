@@ -16,7 +16,6 @@
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
     
-    /* 黃色星星滑鼠游標 */
     :root {
       --star-cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9' fill='%23FFD700' stroke='%23B8860B' stroke-width='1.5'/></svg>") 4 4, auto;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -38,7 +37,7 @@
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部管理列容器：訪客模式時背景全透明、無外框 */
+    /* 頂部管理列容器 (訪客無灰框無滑桿) */
     .top-bar-wrapper {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
@@ -51,7 +50,6 @@
       border: none;
       pointer-events: none;
     }
-    /* 管理員模式下展開灰底視窗與滑桿 */
     body.admin-mode .top-bar-wrapper {
       background: #c0c0c0;
       border: 2px outset #fff;
@@ -61,63 +59,35 @@
     }
 
     .top-actions-viewport {
-      display: flex;
-      gap: 4px;
-      overflow-x: hidden;
-      white-space: nowrap;
-      pointer-events: auto;
+      display: flex; gap: 4px; overflow-x: hidden; white-space: nowrap; pointer-events: auto;
     }
     .top-actions-viewport button, .top-actions-viewport span {
       flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer; height: 25px;
     }
+    #authBtn { pointer-events: auto; align-self: flex-start; }
 
-    /* 訪客按鈕獨立呈現 (防遮擋) */
-    #authBtn {
-      pointer-events: auto;
-      align-self: flex-start;
-    }
-
-    /* 管理員實體滑桿 (訪客徹底隱藏) */
+    /* 管理員專用實體滑桿 */
     .admin-scrollbar-bar {
-      display: none;
-      height: 16px;
-      background: #c0c0c0;
-      border-top: 1px solid #808080;
-      margin-top: 3px;
-      align-items: center;
-      position: relative;
+      display: none; height: 16px; background: #c0c0c0; border-top: 1px solid #808080;
+      margin-top: 3px; align-items: center; position: relative;
     }
-    body.admin-mode .admin-scrollbar-bar {
-      display: flex;
-    }
+    body.admin-mode .admin-scrollbar-bar { display: flex; }
     .scrollbar-btn {
-      width: 16px; height: 16px;
-      padding: 0; font-size: 8px; font-weight: bold;
-      border: 1px outset #fff; background: #c0c0c0;
-      display: flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; padding: 0; font-size: 8px; font-weight: bold;
+      border: 1px outset #fff; background: #c0c0c0; display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; cursor: pointer;
     }
-    .scrollbar-btn:active {
-      border: 1px inset #fff;
-    }
+    .scrollbar-btn:active { border: 1px inset #fff; }
     .scrollbar-track {
       flex: 1; height: 100%;
       background: repeating-conic-gradient(#c0c0c0 0% 25%, #ffffff 0% 50%) 50% / 2px 2px;
-      position: relative;
-      cursor: pointer;
+      position: relative; cursor: pointer;
     }
     .scrollbar-thumb {
-      position: absolute;
-      top: 0; left: 0;
-      width: 40px; height: 100%;
-      background: #c0c0c0;
-      border: 1px outset #fff;
-      cursor: grab;
+      position: absolute; top: 0; left: 0; width: 40px; height: 100%;
+      background: #c0c0c0; border: 1px outset #fff; cursor: grab;
     }
-    .scrollbar-thumb:active {
-      cursor: grabbing;
-      border: 1px inset #fff;
-    }
+    .scrollbar-thumb:active { cursor: grabbing; border: 1px inset #fff; }
 
     /* 桌面容器 */
     .desktop {
@@ -136,13 +106,10 @@
       display: flex; flex-direction: column; align-items: center;
       cursor: var(--star-cursor); text-align: center;
       color: white; text-shadow: 1px 1px 2px black;
-      padding: 3px;
-      border-radius: 2px;
-      touch-action: none;
+      padding: 3px; border-radius: 2px; touch-action: none;
     }
     .icon-wrapper.selected {
-      background: rgba(0, 0, 128, 0.45);
-      outline: 1px dotted #ffff00;
+      background: rgba(0, 0, 128, 0.45); outline: 1px dotted #ffff00;
     }
     .icon-wrapper.selected span {
       background: #000080; color: #fff;
@@ -152,27 +119,22 @@
     }
 
     .icon-select-check {
-      display: none;
-      position: absolute;
-      top: -2px; left: 2px;
-      width: 14px; height: 14px;
-      cursor: var(--star-cursor);
-      z-index: 20;
+      display: none; position: absolute; top: -2px; left: 2px; width: 14px; height: 14px;
+      cursor: var(--star-cursor); z-index: 20;
     }
-    body.admin-mode .icon-select-check {
-      display: block;
-    }
+    body.admin-mode .icon-select-check { display: block; }
 
-    /* 雙模式封面框 */
+    /* 雙模式封面框 (光碟機+自訂方形卡片封面) */
     .icon-art-box {
-      position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+      position: relative; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;
     }
     .icon-art-box .base-img {
-      width: 42px; height: 42px; object-fit: contain; pointer-events: none;
+      width: 44px; height: 44px; object-fit: contain; pointer-events: none;
     }
     .icon-art-box .custom-cover-badge {
-      position: absolute; width: 22px; height: 22px; object-fit: cover; border: 1px solid #fff; border-radius: 2px;
-      bottom: 0; right: 0; box-shadow: 1px 1px 3px rgba(0,0,0,0.6); pointer-events: none;
+      position: absolute; width: 23px; height: 23px; object-fit: cover;
+      border: 1.5px solid #fff; border-radius: 3px;
+      bottom: 0; right: 0; box-shadow: 1px 1px 4px rgba(0,0,0,0.6); pointer-events: none;
     }
 
     .icon-wrapper span {
@@ -182,35 +144,22 @@
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
 
-    /* 視窗樣式 */
+    /* 視窗通用樣式 */
     .win-modal {
       position: fixed; display: none; z-index: 100;
       box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
-      width: 94vw; max-width: 580px;
-      min-width: 260px; min-height: 180px;
+      width: 94vw; max-width: 580px; min-width: 280px; min-height: 200px;
       resize: both; overflow: hidden;
     }
-    .win-modal .title-bar {
-      cursor: move;
-      position: relative;
-    }
+    .win-modal .title-bar { cursor: move; position: relative; }
     .win-modal .title-bar-controls {
-      position: relative;
-      z-index: 1000;
-      display: flex; gap: 2px;
-      pointer-events: auto !important;
+      position: relative; z-index: 1000; display: flex; gap: 2px; pointer-events: auto !important;
     }
     .win-modal .title-bar-controls button {
-      cursor: var(--star-cursor) !important;
-      pointer-events: auto !important;
-      position: relative;
-      z-index: 1001;
+      cursor: var(--star-cursor) !important; pointer-events: auto !important;
     }
-
     .win-modal .window-body {
-      height: calc(100% - 32px);
-      max-height: calc(100% - 32px);
-      overflow-y: auto; padding: 6px;
+      height: calc(100% - 32px); max-height: calc(100% - 32px); overflow-y: auto; padding: 6px;
     }
 
     /* 最大化樣式 */
@@ -218,18 +167,19 @@
       top: 0 !important; left: 0 !important; transform: none !important;
       width: 100vw !important; max-width: 100vw !important;
       height: calc(100vh - var(--taskbar-h)) !important;
-      z-index: 1500 !important;
-      resize: none !important;
+      z-index: 1500 !important; resize: none !important;
     }
-    .win-modal.maximized .title-bar {
-      cursor: default;
+    .win-modal.maximized .title-bar { cursor: default; }
+
+    /* 嵌入式 iframe 播放器視窗容器 */
+    .embedded-player-container {
+      width: 100%; height: 100%; min-height: 480px; background: #000;
     }
-    .win-modal.maximized .window-body {
-      height: calc(100% - 32px) !important;
-      max-height: calc(100% - 32px) !important;
+    .embedded-player-container iframe {
+      width: 100%; height: 100%; border: none;
     }
 
-    /* 資料夾導航列樣式 */
+    /* 資料夾導航列 */
     .folder-nav-bar {
       display: flex; gap: 4px; align-items: center; margin-bottom: 6px; background: #dfdfdf;
       padding: 3px 5px; border: 1px solid #7f9db9; flex-wrap: wrap;
@@ -242,63 +192,44 @@
       position: relative; width: 100%; aspect-ratio: 16 / 9;
       background: #000; display: flex; align-items: center; justify-content: center;
     }
-    .media-container iframe, .media-container video {
-      width: 100%; height: 100%; border: none;
-    }
+    .media-container iframe, .media-container video { width: 100%; height: 100%; border: none; }
     .photo-stage {
       width: 100%; min-height: 220px; max-height: 60vh;
       display: flex; align-items: center; justify-content: center;
       background: #1a1a1a; overflow: hidden; padding: 6px;
     }
-    .photo-stage img {
-      max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff;
-    }
+    .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
 
     /* 底部工作列 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--taskbar-h);
-      min-height: 36px;
+      height: var(--taskbar-h); min-height: 36px;
       background: #c0c0c0; border-top: 2px solid #fff;
       display: flex; align-items: flex-start; justify-content: space-between;
-      padding-top: 4px;
-      padding-left: max(8px, var(--safe-left));
+      padding-top: 4px; padding-left: max(8px, var(--safe-left));
       padding-right: max(14px, var(--safe-right));
       padding-bottom: max(4px, var(--safe-bottom));
       z-index: 2500;
     }
-    .taskbar-left {
-      display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1;
-    }
-    .task-item-btn {
-      font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis;
-    }
-    .taskbar-right {
-      font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0; height: 26px;
-    }
-    .taskbar-right a {
-      color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555;
-    }
+    .taskbar-left { display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1; }
+    .task-item-btn { font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
+    .taskbar-right { font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0; height: 26px; }
+    .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
 
-    /* 開始選單 */
+    /* WINTER01 XP 開始選單 */
     .start-menu {
-      position: fixed;
-      bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
-      width: 230px; max-width: 85vw;
-      background: #c0c0c0; border: 2px outset #fff;
-      box-shadow: 3px 3px 12px rgba(0,0,0,0.5);
-      display: none; z-index: 3000; padding: 3px;
+      position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
+      width: 235px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 3000; padding: 3px;
     }
     .start-menu-banner {
       background: linear-gradient(180deg, #104e8b, #1e90ff);
-      color: #fff; font-weight: bold;
-      padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
+      color: #fff; font-weight: bold; padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
       letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between;
     }
     .start-menu ul { list-style: none; margin: 0; padding: 0; }
     .start-menu li {
-      padding: 7px 10px; font-size: 12px; cursor: var(--star-cursor);
-      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; font-size: 12px; cursor: var(--star-cursor); display: flex; align-items: center; gap: 8px;
     }
     .start-menu li:hover { background: #000080; color: #fff; }
 
@@ -315,12 +246,13 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列架構 (訪客無灰框、無大箭頭) -->
+  <!-- 頂部管理工具列 -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
       <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
-      <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 專輯曲目庫</button>
+      <button class="admin-only" onclick="openWinterCdPlayerWindow()">💿 開啟 CD 播放器</button>
+      <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 傳統專輯</button>
       <button class="admin-only" onclick="createItem('video', null, event)">+ 音樂/影片</button>
       <button class="admin-only" onclick="createItem('image', null, event)">+ 圖片</button>
       <button class="admin-only" onclick="createItem('note', null, event)">+ 便利貼</button>
@@ -342,18 +274,35 @@
       <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
     </div>
 
-    <!-- 管理員模式專用實體滑桿條 (含左右小箭頭與可拖曳滑塊) -->
+    <!-- 管理員實體滑桿條 -->
     <div class="admin-scrollbar-bar" id="adminScrollbarBar">
-      <button type="button" class="scrollbar-btn" onclick="scrollAdminBar(-100)" title="向左">◀</button>
+      <button type="button" class="scrollbar-btn" onclick="scrollAdminBar(-100)">◀</button>
       <div class="scrollbar-track" id="scrollbarTrack" onclick="handleTrackClick(event)">
         <div class="scrollbar-thumb" id="scrollbarThumb"></div>
       </div>
-      <button type="button" class="scrollbar-btn" onclick="scrollAdminBar(100)" title="向右">▶</button>
+      <button type="button" class="scrollbar-btn" onclick="scrollAdminBar(100)">▶</button>
     </div>
   </div>
 
   <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
+
+  <!-- 嵌入式 WINTER CD PLAYER 獨立網頁視窗 (iframe 內嵌) -->
+  <div id="embedded-cd-win" class="window win-modal" style="max-width: 480px; height: 85vh;" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="embeddedCdTitle">💿 WINTER CD PLAYER</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-cd-win', 'CD Player', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-cd-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeEmbeddedCdWindow(event)" title="關閉"></button>
+      </div>
+    </div>
+    <div class="window-body" style="padding: 0; background: #000; overflow: hidden; height: calc(100% - 30px);">
+      <div class="embedded-player-container">
+        <iframe id="embeddedCdIframe" src="" allow="autoplay; accelerometer; gyroscope"></iframe>
+      </div>
+    </div>
+  </div>
 
   <!-- WINTER01 XP 開始選單 -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
@@ -361,6 +310,11 @@
       <span>⭐ WINTER01 XP</span>
       <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal(event)">設定</button>
     </div>
+    <!-- 內建前往 CD Player 的快速捷徑 -->
+    <ul>
+      <li onclick="openWinterCdPlayerWindow(); toggleStartMenu(event);">💿 <strong>WINTER CD PLAYER</strong></li>
+      <hr style="margin: 3px 0;">
+    </ul>
     <ul id="startMenuList"></ul>
     <hr style="margin: 4px 0;">
     <ul>
@@ -415,7 +369,7 @@
         <button id="btnNavForward" onclick="navGoForward(event)" title="前往下一個資料夾 (下一步)">➡ 下一步</button>
         <span class="admin-only" style="color:#888; margin: 0 4px;">|</span>
         <button class="admin-only" onclick="createFolderWithCoverChoice(currentOpenFolderId, event)">+ 子資料夾</button>
-        <button class="admin-only" onclick="createAlbumWithCoverChoice(currentOpenFolderId, event)">+ 專輯曲目庫</button>
+        <button class="admin-only" onclick="createAlbumWithCoverChoice(currentOpenFolderId, event)">+ 傳統專輯</button>
         <button class="admin-only" onclick="createItemInsideFolder('video', event)">+ 音樂/影片</button>
         <button class="admin-only" onclick="createItemInsideFolder('image', event)">+ 圖片</button>
         <button class="admin-only" onclick="pasteItem(currentOpenFolderId, event)" style="background:#ffffe0; font-weight:bold;">📌 貼上到此</button>
@@ -424,7 +378,7 @@
     </div>
   </div>
 
-  <!-- 專輯曲目播放器視窗 -->
+  <!-- 傳統專輯曲目播放器視窗 -->
   <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
@@ -509,7 +463,7 @@
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <a href="https://www.instagram.com/winter_tst" target="_blank">Copyright ©：winter_tst</a>
+      <a href="https://www.instagram.com/winter_tst" target="_blank">Copyright © : winter_tst</a>
     </div>
   </div>
 
@@ -533,39 +487,28 @@
     const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* ========== 核心永久儲存配置 ========== */
+    /* ========== 核心永久儲存配置 (嵌入 winter-cd-player 與自訂光碟封面) ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "startMenuVisibleIds": [
+        "winter_cd_standalone_entry",
         "l1",
         "folder_1789230844971",
-        "folder_1789230959703"
+        "folder_1789230959703",
+        "folder_1789233534244"
       ],
       "items": [
         {
-          "id": "album_winter_speed",
+          "id": "winter_cd_standalone_entry",
           "parentId": null,
-          "type": "album",
+          "type": "cd_standalone",
           "name": "Winter Playlist",
           "iconType": "cover",
-          "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
+          "icon": ICON_DISC_DRIVE,
+          // 右下角自訂方形照片封面 (金旼炡概念照)
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
-          "pos": {
-            "x": 14,
-            "y": 357
-          },
-          "tracks": [
-            {
-              "title": "Winter-Speed of summer",
-              "src": "YTeFLKMnwjg",
-              "type": "youtube"
-            },
-            {
-              "title": "What you want do for love",
-              "src": "https://drive.google.com/file/d/1jeg0LS14Swh44kU4ymm7L5hU3kP_TJxj/preview",
-              "type": "drive"
-            }
-          ]
+          "url": "https://u11150003-arch.github.io/winter-cd-player/",
+          "pos": { "x": 14, "y": 357 }
         },
         {
           "id": "img1",
@@ -574,10 +517,7 @@
           "name": "手幅Serenade ver",
           "icon": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
           "mediaUrl": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
-          "pos": {
-            "x": 16,
-            "y": 168
-          }
+          "pos": { "x": 16, "y": 168 }
         },
         {
           "id": "n1",
@@ -586,22 +526,16 @@
           "name": "生咖應援物",
           "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
           "content": "1. 應援小卡\n2. 明信片",
-          "pos": {
-            "x": 16,
-            "y": 244
-          }
+          "pos": { "x": 16, "y": 244 }
         },
         {
           "id": "l1",
           "parentId": null,
           "type": "link",
           "name": "生咖預約表單",
-          "icon": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>",
+          "icon": W_FORM_ICON,
           "url": "https://wintertst0101.netlify.app/",
-          "pos": {
-            "x": 16,
-            "y": 256
-          }
+          "pos": { "x": 16, "y": 256 }
         },
         {
           "id": "1789230813079",
@@ -610,12 +544,7 @@
           "name": "Lucky Draw",
           "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
           "content": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n客製化頭巾-6\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
-          "url": "",
-          "mediaUrl": "",
-          "pos": {
-            "x": 120,
-            "y": 120
-          }
+          "pos": { "x": 120, "y": 120 }
         },
         {
           "id": "folder_1789230844971",
@@ -623,12 +552,9 @@
           "type": "folder",
           "name": "Lucky Draw",
           "iconType": "pure",
-          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "icon": ICON_FOLDER_DEFAULT,
           "coverBadge": "",
-          "pos": {
-            "x": 21,
-            "y": 98
-          }
+          "pos": { "x": 21, "y": 98 }
         },
         {
           "id": "folder_1789230890651",
@@ -636,12 +562,9 @@
           "type": "folder",
           "name": "手幅-3款",
           "iconType": "pure",
-          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "icon": ICON_FOLDER_DEFAULT,
           "coverBadge": "",
-          "pos": {
-            "x": 120,
-            "y": 120
-          }
+          "pos": { "x": 120, "y": 120 }
         },
         {
           "id": "folder_1789230959703",
@@ -649,12 +572,9 @@
           "type": "folder",
           "name": "生咖應援物",
           "iconType": "pure",
-          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "icon": ICON_FOLDER_DEFAULT,
           "coverBadge": "",
-          "pos": {
-            "x": 21,
-            "y": 20
-          }
+          "pos": { "x": 21, "y": 20 }
         },
         {
           "id": "folder_1789233534244",
@@ -662,18 +582,15 @@
           "type": "folder",
           "name": "生咖資訊",
           "iconType": "pure",
-          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "icon": ICON_FOLDER_DEFAULT,
           "coverBadge": "",
-          "pos": {
-            "x": 19,
-            "y": 174
-          }
+          "pos": { "x": 19, "y": 174 }
         }
       ]
     };
     /* ================================================================= */
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v10";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v13_cd";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -682,94 +599,21 @@
     let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
     let itemsData = currentConfig.items;
 
-    /* ========== 實體滑桿系統 ========== */
-    const viewport = document.getElementById('topActionsViewport');
-    const track = document.getElementById('scrollbarTrack');
-    const thumb = document.getElementById('scrollbarThumb');
-
-    function updateScrollBarUI() {
-      if (!isAdmin || !viewport || !track || !thumb) return;
-      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-      if (maxScroll <= 0) {
-        thumb.style.width = '100%';
-        thumb.style.left = '0px';
-        return;
-      }
-      const trackWidth = track.clientWidth;
-      const thumbWidth = Math.max(30, (viewport.clientWidth / viewport.scrollWidth) * trackWidth);
-      thumb.style.width = thumbWidth + 'px';
-
-      const scrollRatio = viewport.scrollLeft / maxScroll;
-      const thumbLeft = scrollRatio * (trackWidth - thumbWidth);
-      thumb.style.left = thumbLeft + 'px';
+    // 開啟嵌入式 WINTER CD PLAYER 獨立網頁
+    function openWinterCdPlayerWindow() {
+      const item = itemsData.find(i => i.id === "winter_cd_standalone_entry");
+      const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-cd-player/";
+      const iframe = document.getElementById('embeddedCdIframe');
+      if (iframe.src !== targetUrl) iframe.src = targetUrl;
+      openWindow('embedded-cd-win');
     }
 
-    function scrollAdminBar(amount) {
-      if (!viewport) return;
-      viewport.scrollLeft += amount;
-      updateScrollBarUI();
+    function closeEmbeddedCdWindow(e) {
+      if (e) e.stopPropagation();
+      const iframe = document.getElementById('embeddedCdIframe');
+      iframe.src = ''; // 關閉時中斷音樂
+      closeWindow('embedded-cd-win', e);
     }
-
-    function handleTrackClick(e) {
-      if (e.target === thumb) return;
-      const rect = track.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const thumbWidth = thumb.offsetWidth;
-      const trackWidth = track.clientWidth;
-      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-      
-      const newScrollLeft = ((clickX - thumbWidth / 2) / (trackWidth - thumbWidth)) * maxScroll;
-      viewport.scrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
-      updateScrollBarUI();
-    }
-
-    if (thumb) {
-      let isDraggingThumb = false;
-      let thumbStartX = 0, thumbStartLeft = 0;
-
-      thumb.addEventListener('mousedown', (e) => {
-        isDraggingThumb = true;
-        thumbStartX = e.clientX;
-        thumbStartLeft = parseFloat(thumb.style.left) || 0;
-        document.body.style.userSelect = 'none';
-
-        function onMouseMove(moveEvent) {
-          if (!isDraggingThumb) return;
-          const dx = moveEvent.clientX - thumbStartX;
-          const trackWidth = track.clientWidth;
-          const thumbWidth = thumb.offsetWidth;
-          const maxThumbLeft = trackWidth - thumbWidth;
-          const newThumbLeft = Math.max(0, Math.min(maxThumbLeft, thumbStartLeft + dx));
-          
-          thumb.style.left = newThumbLeft + 'px';
-          const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-          viewport.scrollLeft = (newThumbLeft / maxThumbLeft) * maxScroll;
-        }
-
-        function onMouseUp() {
-          isDraggingThumb = false;
-          document.body.style.userSelect = '';
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-        }
-
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-      });
-    }
-
-    if (viewport) {
-      viewport.addEventListener('wheel', (e) => {
-        if (!isAdmin) return;
-        if (e.deltaY !== 0) {
-          viewport.scrollLeft += e.deltaY;
-          updateScrollBarUI();
-          e.preventDefault();
-        }
-      }, { passive: false });
-    }
-
-    window.addEventListener('resize', updateScrollBarUI);
 
     function extractDriveId(url) {
       if (!url) return null;
@@ -815,6 +659,7 @@
       });
       closeUniversalPlayer();
       closeAlbumWindow();
+      closeEmbeddedCdWindow();
       currentOpenFolderId = null;
       currentOpenAlbumId = null;
       folderHistory = [];
@@ -969,7 +814,7 @@
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
           setTimeout(updateScrollBarUI, 80);
-          alert("登入成功！滑桿已啟用，可直接左右拖曳或點擊箭頭捲動。");
+          alert("登入成功！已解鎖自訂 CD 封面照片、編輯與管理功能。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
@@ -997,6 +842,7 @@
       });
     }
 
+    // 支援托盤 CD + 自訂封面照片 (如圖一比一呈現)
     function createIconElement(item) {
       const div = document.createElement('div');
       const isSelected = selectedItemId === item.id;
@@ -1004,7 +850,7 @@
       div.className = `icon-wrapper dynamic-item ${isSelected ? 'selected' : ''} ${isCut ? 'cut-mode' : ''}`;
 
       let iconHtml = "";
-      if (item.type === 'album') {
+      if (item.type === 'cd_standalone' || item.type === 'album') {
         if (item.coverBadge) {
           iconHtml = `
             <div class="icon-art-box">
@@ -1013,7 +859,7 @@
             </div>
           `;
         } else {
-          iconHtml = `<div class="icon-art-box"><img src="${ICON_DISC_PURE}" class="base-img"></div>`;
+          iconHtml = `<div class="icon-art-box"><img src="${ICON_DISC_DRIVE}" class="base-img"></div>`;
         }
       } else if (item.type === 'folder') {
         if (item.coverBadge) {
@@ -1102,7 +948,9 @@
     }
 
     function handleItemClick(item) {
-      if (item.type === 'folder') {
+      if (item.type === 'cd_standalone') {
+        openWinterCdPlayerWindow();
+      } else if (item.type === 'folder') {
         openFolderWithHistory(item.id, item.name);
       } else if (item.type === 'album') {
         openAlbumPlayer(item);
@@ -1133,11 +981,6 @@
       
       const visibleIds = currentConfig.startMenuVisibleIds || [];
       const showItems = itemsData.filter(i => visibleIds.includes(i.id));
-
-      if (showItems.length === 0) {
-        list.innerHTML = '<li style="color:#666; font-size:11px;">(選單未勾選顯示項目)</li>';
-        return;
-      }
 
       showItems.forEach(item => {
         const li = document.createElement('li');
@@ -1249,7 +1092,7 @@
 
       itemsData.push(newAlbum);
       saveState();
-      alert(`專輯「${name}」建立完成！`);
+      alert(`傳統專輯「${name}」建立完成！`);
     }
 
     function openAlbumPlayer(albumItem) {
@@ -1397,18 +1240,13 @@
         win.classList.remove('maximized');
         const prev = windowRestoreBounds[id];
         if (prev) {
-          win.style.top = prev.top;
-          win.style.left = prev.left;
-          win.style.width = prev.width;
-          win.style.height = prev.height;
+          win.style.top = prev.top; win.style.left = prev.left;
+          win.style.width = prev.width; win.style.height = prev.height;
           win.style.transform = prev.transform || 'none';
         } else {
-          win.style.top = '50%';
-          win.style.left = '50%';
+          win.style.top = '50%'; win.style.left = '50%';
           win.style.transform = 'translate(-50%, -50%)';
-          win.style.width = '94vw';
-          win.style.maxWidth = '580px';
-          win.style.height = 'auto';
+          win.style.width = '94vw'; win.style.maxWidth = '580px'; win.style.height = 'auto';
         }
       } else {
         windowRestoreBounds[id] = {
@@ -1568,6 +1406,7 @@
       saveState();
     }
 
+    // 支援編輯純 CD 封面照片
     function editItem(id) {
       const item = itemsData.find(i => i.id === id);
       if (!item) return;
@@ -1575,8 +1414,8 @@
       const newName = prompt("重新命名：", item.name);
       if (newName) item.name = newName;
 
-      if (item.type === 'album' || item.type === 'folder') {
-        const rawBadge = prompt("更改封面縮圖網址 (支援 Google 雲端共享連結，留空則純圖示)：", item.coverBadge || "");
+      if (item.type === 'cd_standalone' || item.type === 'album' || item.type === 'folder') {
+        const rawBadge = prompt("更改右下角光碟/資料夾封面照片網址 (支援 Google 雲端共享連結)：", item.coverBadge || "");
         if (rawBadge !== null) {
           item.coverBadge = rawBadge ? autoFormatMediaUrl(rawBadge, 'image') : "";
           item.iconType = item.coverBadge ? "cover" : "pure";
@@ -1654,6 +1493,84 @@
         saveState();
       }
     }
+
+    /* ========== 頂部滑桿 ========== */
+    const viewport = document.getElementById('topActionsViewport');
+    const track = document.getElementById('scrollbarTrack');
+    const thumb = document.getElementById('scrollbarThumb');
+
+    function updateScrollBarUI() {
+      if (!isAdmin || !viewport || !track || !thumb) return;
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      if (maxScroll <= 0) {
+        thumb.style.width = '100%'; thumb.style.left = '0px'; return;
+      }
+      const trackWidth = track.clientWidth;
+      const thumbWidth = Math.max(30, (viewport.clientWidth / viewport.scrollWidth) * trackWidth);
+      thumb.style.width = thumbWidth + 'px';
+      const scrollRatio = viewport.scrollLeft / maxScroll;
+      thumb.style.left = (scrollRatio * (trackWidth - thumbWidth)) + 'px';
+    }
+
+    function scrollAdminBar(amount) {
+      if (!viewport) return;
+      viewport.scrollLeft += amount;
+      updateScrollBarUI();
+    }
+
+    function handleTrackClick(e) {
+      if (e.target === thumb) return;
+      const rect = track.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const thumbWidth = thumb.offsetWidth;
+      const trackWidth = track.clientWidth;
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      const newScrollLeft = ((clickX - thumbWidth / 2) / (trackWidth - thumbWidth)) * maxScroll;
+      viewport.scrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
+      updateScrollBarUI();
+    }
+
+    if (thumb) {
+      let isDraggingThumb = false, thumbStartX = 0, thumbStartLeft = 0;
+      thumb.addEventListener('mousedown', (e) => {
+        isDraggingThumb = true;
+        thumbStartX = e.clientX;
+        thumbStartLeft = parseFloat(thumb.style.left) || 0;
+        document.body.style.userSelect = 'none';
+
+        function onMouseMove(moveEvent) {
+          if (!isDraggingThumb) return;
+          const dx = moveEvent.clientX - thumbStartX;
+          const trackWidth = track.clientWidth;
+          const thumbWidth = thumb.offsetWidth;
+          const maxThumbLeft = trackWidth - thumbWidth;
+          const newThumbLeft = Math.max(0, Math.min(maxThumbLeft, thumbStartLeft + dx));
+          thumb.style.left = newThumbLeft + 'px';
+          viewport.scrollLeft = (newThumbLeft / maxThumbLeft) * (viewport.scrollWidth - viewport.clientWidth);
+        }
+        function onMouseUp() {
+          isDraggingThumb = false;
+          document.body.style.userSelect = '';
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
+    if (viewport) {
+      viewport.addEventListener('wheel', (e) => {
+        if (!isAdmin) return;
+        if (e.deltaY !== 0) {
+          viewport.scrollLeft += e.deltaY;
+          updateScrollBarUI();
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
+
+    window.addEventListener('resize', updateScrollBarUI);
 
     if (currentConfig.wallpaper) {
       document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;

@@ -3,42 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>2027 WINTER Bday desktop</title>
-
-  <meta property="og:title" content="2027 WINTER Bday desktop">
-  <meta property="og:description" content="A special retro desktop space created for WINTER">
-  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
+  <!-- 消除手機狀態列綠底，鎖定淡藍色 -->
+  <meta name="theme-color" content="#b8d5ec">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>WINTER CD PLAYER</title>
 
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
-    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    * { 
+      box-sizing: border-box; 
+      user-select: none; 
+      -webkit-tap-highlight-color: transparent; 
+      -webkit-font-smoothing: none;
+    }
     
     :root {
       --star-cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9' fill='%23FFD700' stroke='%23B8860B' stroke-width='1.5'/></svg>") 4 4, auto;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
-      --taskbar-h: calc(40px + var(--safe-bottom));
+      --taskbar-h: calc(38px + var(--safe-bottom));
     }
 
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      width: 100vw;
       height: 100vh;
       overflow: hidden;
-      font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
-      background: #008080 url('https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g') no-repeat center center;
-      background-size: cover;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
+      background: #b8d5ec !important;
     }
     
-    .icon-wrapper, .top-bar-wrapper button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button {
+    button, a, .title-bar-controls button, .track-list-box li, .cd-disc-3d {
       cursor: var(--star-cursor) !important;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
     }
 
+    /* 強制所有按鈕維持經典 Win98 像素凹凸外觀 */
+    button {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      border-radius: 0px !important;
+      background: #c0c0c0 !important;
+      border: 2px outset #ffffff !important;
+      color: #000000 !important;
+      font-size: 11px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    button:active {
+      border: 2px inset #ffffff !important;
+    }
+
+    /* 頂部管理工具列 */
     .top-bar-wrapper {
       position: absolute;
-      top: max(6px, env(safe-area-inset-top, 6px));
+      top: max(4px, env(safe-area-inset-top, 4px));
       left: max(6px, var(--safe-left));
       right: max(6px, var(--safe-right));
       z-index: 50;
@@ -55,7 +77,6 @@
       box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
       pointer-events: auto;
     }
-
     .top-actions-viewport {
       display: flex; gap: 4px; overflow-x: hidden; white-space: nowrap; pointer-events: auto;
     }
@@ -71,10 +92,9 @@
     body.admin-mode .admin-scrollbar-bar { display: flex; }
     .scrollbar-btn {
       width: 16px; height: 16px; padding: 0; font-size: 8px; font-weight: bold;
-      border: 1px outset #fff; background: #c0c0c0; display: flex; align-items: center; justify-content: center;
+      border: 1px outset #fff !important; background: #c0c0c0 !important;
       flex-shrink: 0; cursor: pointer;
     }
-    .scrollbar-btn:active { border: 1px inset #fff; }
     .scrollbar-track {
       flex: 1; height: 100%;
       background: repeating-conic-gradient(#c0c0c0 0% 25%, #ffffff 0% 50%) 50% / 2px 2px;
@@ -85,143 +105,171 @@
       background: #c0c0c0; border: 1px outset #fff; cursor: grab;
     }
 
-    .desktop {
+    /* 主應用區域 (解決底端按鈕按不到) */
+    .app-viewport {
       position: absolute;
-      top: 56px;
-      left: max(0px, var(--safe-left));
-      right: max(0px, var(--safe-right));
+      top: 42px;
+      left: max(6px, var(--safe-left));
+      right: max(6px, var(--safe-right));
       bottom: var(--taskbar-h);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 4px 6px 30px 6px; /* 保留安全邊距防切斷 */
+      overflow-y: auto;
+      gap: 6px;
+    }
+
+    /* 3D 隨身聽正圓舞台 */
+    .cd-stage {
+      position: relative;
+      width: 160px; height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      perspective: 1000px; touch-action: none;
+      flex-shrink: 0;
+    }
+    .walkman-base {
+      position: absolute; width: 160px; height: 160px; border-radius: 50% !important;
+      background: radial-gradient(circle, #f0f4f8 30%, #a2b4c7 70%, #586e84 100%);
+      border: 3px solid #586e84;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35), inset 0 2px 5px #fff;
+    }
+    .walkman-tray {
+      position: absolute; width: 122px; height: 122px; border-radius: 50% !important;
+      background: #1c242c; box-shadow: inset 0 4px 10px #000;
+    }
+
+    .cd-disc-3d {
+      position: absolute; width: 118px; height: 118px; border-radius: 50% !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: grab; transition: transform 0.08s ease-out;
+      background: conic-gradient(from 0deg, #e2e8f0, #fff, #cbd5e0, #fff, #a0aec0, #fff, #e2e8f0);
       overflow: hidden;
     }
-
-    .icon-wrapper {
-      position: absolute;
-      width: 76px;
-      display: flex; flex-direction: column; align-items: center;
-      cursor: var(--star-cursor); text-align: center;
-      color: white; text-shadow: 1px 1px 2px black;
-      padding: 3px; border-radius: 2px; touch-action: none;
+    .cd-disc-3d:active { cursor: grabbing; }
+    .cd-disc-3d.spinning { animation: discSpin 2.4s linear infinite; }
+    @keyframes discSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
-    .icon-wrapper.selected {
-      background: rgba(0, 0, 128, 0.45); outline: 1px dotted #ffff00;
+    .cd-disc-art {
+      position: absolute; width: 100%; height: 100%; border-radius: 50% !important;
+      object-fit: cover; pointer-events: none; opacity: 0.95;
+      mask: radial-gradient(circle, transparent 16px, black 17px);
+      -webkit-mask: radial-gradient(circle, transparent 16px, black 17px);
     }
-    .icon-wrapper.selected span {
-      background: #000080; color: #fff;
-    }
-    .icon-wrapper.cut-mode {
-      opacity: 0.45; filter: grayscale(80%);
-    }
-
-    .icon-select-check {
-      display: none; position: absolute; top: -2px; left: 2px; width: 14px; height: 14px;
-      cursor: var(--star-cursor); z-index: 20;
-    }
-    body.admin-mode .icon-select-check { display: block; }
-
-    .icon-art-box {
-      position: relative; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;
-    }
-    .icon-art-box .base-img {
-      width: 44px; height: 44px; object-fit: contain; pointer-events: none;
-    }
-    .icon-art-box .custom-cover-badge {
-      position: absolute; width: 23px; height: 23px; object-fit: cover;
-      border: 1.5px solid #fff; border-radius: 3px;
-      bottom: 0; right: 0; box-shadow: 1px 1px 4px rgba(0,0,0,0.6); pointer-events: none;
+    .cd-center-hole {
+      position: absolute; width: 30px; height: 30px; border-radius: 50% !important;
+      background: radial-gradient(circle, transparent 8px, rgba(255,255,255,0.7) 9px, #b8d5ec 12px);
+      border: 2px solid rgba(255,255,255,0.8); z-index: 10;
     }
 
-    .icon-wrapper span {
-      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: break-all; pointer-events: none;
+    /* 播放器面板視窗：滿版且邊框自適應 */
+    .player-subwin {
+      width: 100%; max-width: 380px; margin: 0 auto;
+      box-shadow: 2px 2px 12px rgba(0,0,0,0.35); flex-shrink: 0;
+      background: #c0c0c0 !important;
+      border: 2px outset #ffffff !important;
     }
-
-    .admin-only { display: none !important; }
-    body.admin-mode .admin-only { display: inline-flex !important; }
-
-    .win-modal {
-      position: fixed; display: none; z-index: 100;
-      box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
-      width: 94vw; max-width: 580px; min-width: 280px; min-height: 200px;
-      resize: both; overflow: hidden;
+    .player-subwin .title-bar {
+      background: linear-gradient(90deg, #000080, #1084d0) !important;
+      color: #fff !important; padding: 3px 5px !important;
+      font-weight: bold !important; font-size: 11px !important;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .win-modal .title-bar { cursor: move; position: relative; }
-    .win-modal .title-bar-controls {
-      position: relative; z-index: 1000; display: flex; gap: 2px; pointer-events: auto !important;
-    }
-    .win-modal .title-bar-controls button {
-      cursor: var(--star-cursor) !important; pointer-events: auto !important;
-    }
-    .win-modal .window-body {
-      height: calc(100% - 32px); max-height: calc(100% - 32px); overflow-y: auto; padding: 6px;
-    }
-
-    .win-modal.maximized {
-      top: 0 !important; left: 0 !important; transform: none !important;
-      width: 100vw !important; max-width: 100vw !important;
-      height: calc(100vh - var(--taskbar-h)) !important;
-      z-index: 1500 !important; resize: none !important;
-    }
-    .win-modal.maximized .title-bar { cursor: default; }
-
-    #embedded-cd-win {
-      height: 84vh;
-      max-height: calc(100vh - 90px);
-      width: 94vw;
-      max-width: 480px;
-    }
-    .embedded-player-container {
-      width: 100%; height: 100%; background: #000;
-    }
-    .embedded-player-container iframe {
-      width: 100%; height: 100%; border: none;
+    .player-subwin .window-body {
+      padding: 6px !important; background: #c0c0c0 !important;
     }
 
     .folder-nav-bar {
-      display: flex; gap: 4px; align-items: center; margin-bottom: 6px; background: #dfdfdf;
-      padding: 3px 5px; border: 1px solid #7f9db9; flex-wrap: wrap;
+      display: flex; gap: 4px; align-items: center; margin-bottom: 5px;
+      background: #c0c0c0; padding: 2px; border: 2px groove #fff;
     }
     .folder-nav-bar button {
-      font-size: 11px; padding: 2px 5px; height: 22px; cursor: pointer;
+      font-size: 11px !important; padding: 2px 6px !important; height: 22px !important;
     }
 
-    .media-container {
-      position: relative; width: 100%; aspect-ratio: 16 / 9;
-      background: #000; display: flex; align-items: center; justify-content: center;
+    .lcd-screen {
+      background: #000 !important; color: #39ff14 !important; font-family: monospace !important;
+      padding: 4px 6px; border: 2px inset #fff; display: flex;
+      justify-content: space-between; align-items: center;
+      font-size: 11px; letter-spacing: 1px; margin-bottom: 5px;
     }
-    .media-container iframe, .media-container video { width: 100%; height: 100%; border: none; }
-    .photo-stage {
-      width: 100%; min-height: 220px; max-height: 60vh;
-      display: flex; align-items: center; justify-content: center;
-      background: #1a1a1a; overflow: hidden; padding: 6px;
+    .lcd-progress-bar {
+      width: 100%; height: 8px; background: #fff; border: 2px inset #dfdfdf;
+      margin-bottom: 6px; position: relative;
     }
-    .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
+    .lcd-progress-fill {
+      height: 100%; width: 0%; background: #000080; transition: width 0.3s linear;
+    }
 
-    /* 工作列 */
+    /* 解決中間播放按鍵溢出：5 等分寬度彈性排列 */
+    .player-ctrl-row {
+      display: flex; width: 100%; gap: 4px; margin-bottom: 6px;
+    }
+    .player-ctrl-row button {
+      flex: 1; height: 26px !important; padding: 0 !important;
+      border: 2px outset #fff !important;
+    }
+    .player-ctrl-row svg {
+      width: 12px; height: 12px; fill: #000; pointer-events: none;
+    }
+
+    /* 解決五張專輯名稱文字重疊溢出：改為乾淨的 2 列網格排版 */
+    .ver-tabs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      margin-bottom: 6px;
+    }
+    .ver-tabs-grid button {
+      width: 100%; height: 24px !important; font-size: 10px !important;
+      padding: 1px 2px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      border: 2px outset #fff !important; border-radius: 0 !important;
+    }
+    .ver-tabs-grid button.active {
+      font-weight: bold; background: #000080 !important; color: #fff !important;
+      border: 2px inset #fff !important;
+    }
+
+    .track-list-box {
+      list-style: none; margin: 0; padding: 0;
+      background: #fff; border: 2px inset #dfdfdf;
+      max-height: 110px; overflow-y: auto;
+    }
+    .track-list-box li {
+      padding: 4px 6px; font-size: 11px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .track-list-box li:hover { background: #000080; color: #fff; }
+    .track-list-box li.active { background: #000080; color: #fff; font-weight: bold; }
+
+    /* 工作列 (置頂層級確保可點擊) */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--taskbar-h); min-height: 40px;
+      height: var(--taskbar-h); min-height: 38px;
       background: #c0c0c0; border-top: 2px solid #fff;
       display: flex; align-items: flex-start; justify-content: space-between;
-      padding-top: 5px;
-      padding-left: max(8px, var(--safe-left));
-      padding-right: max(14px, var(--safe-right));
-      padding-bottom: max(10px, var(--safe-bottom));
+      padding-top: 4px; padding-left: max(6px, var(--safe-left));
+      padding-right: max(12px, var(--safe-right));
+      padding-bottom: max(6px, var(--safe-bottom));
       z-index: 9999;
-      pointer-events: auto !important;
     }
     .taskbar-left { display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1; }
-    .task-item-btn { font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
     .taskbar-right { font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
 
     .start-menu {
       position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
-      width: 235px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
+      width: 235px; background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 10000; padding: 3px;
     }
     .start-menu-banner {
       background: linear-gradient(180deg, #104e8b, #1e90ff);
       color: #fff; font-weight: bold; padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
-      letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between;
+      letter-spacing: 1px;
     }
     .start-menu ul { list-style: none; margin: 0; padding: 0; }
     .start-menu li {
@@ -229,44 +277,25 @@
     }
     .start-menu li:hover { background: #000080; color: #fff; }
 
-    .playlist-box {
-      list-style: none; margin: 8px 0 0 0; padding: 0;
-      background: #fff; border: 2px inset #dfdfdf; height: 130px; overflow-y: auto;
-    }
-    .playlist-box li {
-      padding: 5px 8px; font-size: 12px; cursor: var(--star-cursor); display: flex; justify-content: space-between; align-items: center;
-    }
-    .playlist-box li:hover { background: #000080; color: #fff; }
-    .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
+    .admin-only { display: none !important; }
+    body.admin-mode .admin-only { display: inline-flex !important; }
+    #hiddenAudioEngine, #hiddenYtIframe { display: none; }
   </style>
 </head>
 <body onclick="handleGlobalClick(event)">
 
+  <!-- 頂部管理工具列 -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
-      <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
-      <button class="admin-only" onclick="openWinterCdPlayerWindow()">💿 開啟 CD 播放器</button>
-      <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 傳統專輯</button>
-      <button class="admin-only" onclick="createItem('video', null, event)">+ 音樂/影片</button>
-      <button class="admin-only" onclick="createItem('image', null, event)">+ 圖片</button>
-      <button class="admin-only" onclick="createItem('note', null, event)">+ 便利貼</button>
-      <button class="admin-only" onclick="createItem('link', null, event)">+ 外部連結</button>
-
-      <button id="topPasteBtn" class="admin-only" onclick="pasteItem(null, event)" style="background:#ffffe0; font-weight:bold;">📌 貼上</button>
-
-      <span class="admin-only selected-ops" style="display:none; gap:3px;">
-        <span style="color:#888; margin: 0 2px;">|</span>
-        <button onclick="moveSelectedItemToDialog(event)" style="background:#e0f7fa; font-weight:bold;">📦 移動到...</button>
-        <button onclick="copySelectedItem(event)">📋 複製</button>
-        <button onclick="cutSelectedItem(event)">✂️ 剪下</button>
-        <button onclick="editSelectedItem(event)">✏️ 編輯</button>
-        <button onclick="deleteSelectedItem(event)">❌ 刪除</button>
-      </span>
-
-      <button class="admin-only" onclick="changeWallpaper(event)">🎨 桌布</button>
-      <button class="admin-only" onclick="openStartMenuConfigModal(event)">⭐ 設定開始選單</button>
-      <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
+      <button class="admin-only" onclick="changeCurrentCdCover()">🎨 換當前CD封面</button>
+      <button class="admin-only" onclick="addTrackToActiveVer()">+ 新增曲目</button>
+      <button class="admin-only" onclick="editCurrentVerName()">✏️ 改專輯名</button>
+      <button class="admin-only" onclick="copyCurrentTrack()">📋 複製曲目</button>
+      <button class="admin-only" onclick="cutCurrentTrack()">✂️ 剪下曲目</button>
+      <button class="admin-only" id="topPasteBtn" onclick="pasteTrack()" style="background:#ffffe0;">📌 貼上曲目</button>
+      <button class="admin-only" onclick="deleteCurrentTrack()">❌ 刪除選中曲目</button>
+      <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState()">💾 儲存並產出備份代碼</button>
     </div>
 
     <div class="admin-scrollbar-bar" id="adminScrollbarBar">
@@ -278,320 +307,199 @@
     </div>
   </div>
 
-  <div class="desktop" id="desktopContainer"></div>
+  <div class="app-viewport">
+    
+    <!-- 3D 隨身聽正圓舞台 -->
+    <div class="cd-stage" id="cdStage">
+      <div class="walkman-base"></div>
+      <div class="walkman-tray"></div>
+      <div class="cd-disc-3d" id="disc3D" title="拖曳可立體旋轉光碟">
+        <img id="discCoverImg" class="cd-disc-art" src="https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax" alt="CD Cover">
+        <div class="cd-center-hole"></div>
+      </div>
+    </div>
 
-  <!-- 嵌入式 CD 播放器視窗 -->
-  <div id="embedded-cd-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="embeddedCdTitle">💿 WINTER CD PLAYER</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-cd-win', 'CD Player', event)" title="最小化"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-cd-win', event)" title="最大化/還原"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeEmbeddedCdWindow(event)" title="關閉"></button>
+    <!-- Win98 播放器控制面板 -->
+    <div class="window player-subwin" id="playerSubwin">
+      <div class="title-bar">
+        <div class="title-bar-text">💿 CD Player - WINTER Edition</div>
+      </div>
+      <div class="window-body">
+        
+        <div class="folder-nav-bar">
+          <button type="button" id="btnNavBack" onclick="navGoBack(event)" title="上一步">⬅ 上一步</button>
+          <button type="button" id="btnNavForward" onclick="navGoForward(event)" title="下一步">➡ 下一步</button>
+        </div>
+
+        <div class="lcd-screen">
+          <span id="lcdTrackTitle">Winter - Speed of summer</span>
+          <span id="lcdTimer">00:00</span>
+        </div>
+        <div class="lcd-progress-bar">
+          <div class="lcd-progress-fill" id="lcdProgressFill"></div>
+        </div>
+
+        <!-- 播放控制鍵：5 等分寬度彈性排列，不再溢出 -->
+        <div class="player-ctrl-row">
+          <button type="button" onclick="prevCdTrack()" title="上一首">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          </button>
+          <button type="button" id="btnPlayPause" onclick="togglePlayPause()" title="播放/暫停">
+            <svg id="playIconSvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button type="button" onclick="stopCdTrack()" title="停止">
+            <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+          </button>
+          <button type="button" onclick="nextCdTrack()" title="下一首">
+            <svg viewBox="0 0 24 24"><path d="m6 18 8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+          <button type="button" onclick="ejectCd()" title="退片">
+            <svg viewBox="0 0 24 24"><path d="M5 17h14v2H5zm7-12L5.33 15h13.34z"/></svg>
+          </button>
+        </div>
+
+        <!-- 5 版專輯切換網格：2 列清晰排版，文字完整包覆不溢出 -->
+        <div class="ver-tabs-grid" id="verTabsGrid">
+          <button type="button" class="active" onclick="switchPlaylistVer(0)">Ver 1. Summer</button>
+          <button type="button" onclick="switchPlaylistVer(1)">Ver 2. Armageddon</button>
+          <button type="button" onclick="switchPlaylistVer(2)">Ver 3. Solo & Live</button>
+          <button type="button" onclick="switchPlaylistVer(3)">Ver 4. Drama</button>
+          <button type="button" onclick="switchPlaylistVer(4)">Ver 5. Whiplash</button>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+          <span style="font-size:11px; font-weight:bold;">Tracks List:</span>
+          <span class="admin-only" style="font-size:10px; color:#555;">(點擊可選取編輯)</span>
+        </div>
+        <ul class="track-list-box" id="cdTrackListBox"></ul>
+
       </div>
     </div>
-    <div class="window-body" style="padding: 0; background: #000; overflow: hidden; height: calc(100% - 30px);">
-      <div class="embedded-player-container">
-        <iframe id="embeddedCdIframe" src="" allow="autoplay; accelerometer; gyroscope"></iframe>
-      </div>
-    </div>
+
   </div>
 
+  <!-- WINTER 開始選單跳轉 -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
-    <div class="start-menu-banner">
-      <span>⭐ WINTER01 XP</span>
-      <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal(event)">設定</button>
-    </div>
+    <div class="start-menu-banner">🪟 WINTER MENU</div>
     <ul>
-      <li onclick="openWinterCdPlayerWindow(); toggleStartMenu(event);">💿 <strong>WINTER CD PLAYER</strong></li>
-      <hr style="margin: 3px 0;">
-    </ul>
-    <ul id="startMenuList"></ul>
-    <hr style="margin: 4px 0;">
-    <ul>
+      <li onclick="goToOriginalDesktop()">🖥️ 1. 回到原始 Desktop 網頁</li>
+      <li onclick="location.reload()">💿 2. 重新整理 CD Player</li>
+      <hr style="margin:4px 0;">
       <li onclick="toggleAdmin(event); toggleStartMenu(event);">⚙️ 切換管理員模式</li>
     </ul>
   </div>
 
-  <div id="move-modal-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
-    <div class="title-bar">
-      <div class="title-bar-text" id="moveModalTitle">📦 移動項目至...</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('move-modal-win', event)"></button>
-      </div>
-    </div>
-    <div class="window-body">
-      <p style="font-size:12px; margin-top:0;">請點選要移動進去的位置：</p>
-      <div id="moveFolderOptions" style="display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
-    </div>
-  </div>
-
-  <div id="start-config-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
-    <div class="title-bar">
-      <div class="title-bar-text">⭐ 自訂開始選單項目</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('start-config-win', event)"></button>
-      </div>
-    </div>
-    <div class="window-body">
-      <p style="font-size:12px; margin-top:0;">請勾選要在 WINTER01 XP 選單中顯示的項目：</p>
-      <div id="startConfigCheckboxes" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
-      <div style="margin-top:8px; text-align:right;">
-        <button type="button" onclick="saveStartMenuConfig(event)">確定儲存</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('folder-win', '資料夾', event)" title="最小化"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('folder-win', event)" title="最大化/還原"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('folder-win', event)" title="關閉"></button>
-      </div>
-    </div>
-    <div class="window-body">
-      <div class="folder-nav-bar">
-        <button id="btnNavBack" onclick="navGoBack(event)" title="返回上一個資料夾 (上一步)">⬅ 上一步</button>
-        <button id="btnNavForward" onclick="navGoForward(event)" title="前往下一個資料夾 (下一步)">➡ 下一步</button>
-        <span class="admin-only" style="color:#888; margin: 0 4px;">|</span>
-        <button class="admin-only" onclick="createFolderWithCoverChoice(currentOpenFolderId, event)">+ 子資料夾</button>
-        <button class="admin-only" onclick="createAlbumWithCoverChoice(currentOpenFolderId, event)">+ 傳統專輯</button>
-        <button class="admin-only" onclick="createItemInsideFolder('video', event)">+ 音樂/影片</button>
-        <button class="admin-only" onclick="createItemInsideFolder('image', event)">+ 圖片</button>
-        <button class="admin-only" onclick="pasteItem(currentOpenFolderId, event)" style="background:#ffffe0; font-weight:bold;">📌 貼上到此</button>
-      </div>
-      <div id="folderInnerContent" style="display:flex; gap:10px; flex-wrap:wrap; min-height:120px; padding:8px; background:#fff; border: 2px inset #dfdfdf;"></div>
-    </div>
-  </div>
-
-  <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('album-win', '專輯播放器', event)" title="最小化"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('album-win', event)" title="最大化/還原"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeAlbumWindow(event)" title="關閉"></button>
-      </div>
-    </div>
-    <div class="window-body">
-      <div class="media-container">
-        <iframe id="albumIframe" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-      <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:12px; font-weight:bold;">曲目清單：</span>
-        <button class="admin-only" onclick="addTrackToCurrentAlbum(event)">+ 新增曲目</button>
-      </div>
-      <ul class="playlist-box" id="albumTrackItems"></ul>
-    </div>
-  </div>
-
-  <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('photo-viewer-win', '圖片檢視器', event)" title="最小化"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('photo-viewer-win', event)" title="最大化/還原"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('photo-viewer-win', event)" title="關閉"></button>
-      </div>
-    </div>
-    <div class="window-body" style="background: #222; padding: 4px;">
-      <div class="photo-stage">
-        <img id="largePhotoDisplay" src="" alt="preview">
-      </div>
-    </div>
-  </div>
-
-  <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('media-player-win', '播放器', event)" title="最小化"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('media-player-win', event)" title="最大化/還原"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeUniversalPlayer(event)" title="關閉"></button>
-      </div>
-    </div>
-    <div class="window-body" style="padding: 0; background: #000;">
-      <div class="media-container">
-        <iframe id="universalIframe" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <video id="universalVideo" controls playsinline></video>
-      </div>
-    </div>
-  </div>
-
-  <div id="link-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('link-win', event)"></button>
-      </div>
-    </div>
-    <div class="window-body" style="text-align:center;">
-      <p id="linkText" style="font-size:12px; margin: 10px 0;"></p>
-      <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
-        <button type="button" style="width:100%; padding:6px; font-weight:bold;">開啟連結 (Visit Site)</button>
-      </a>
-    </div>
-  </div>
-
   <div class="taskbar">
     <div class="taskbar-left">
-      <button type="button" onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
-        ⭐️ HOME
-      </button>
       <button type="button" onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
       </button>
-      <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
       <a href="https://www.instagram.com/winter_tst" target="_blank">Copyright © : winter_tst</a>
     </div>
   </div>
 
+  <audio id="hiddenAudioEngine"></audio>
+  <iframe id="hiddenYtIframe" allow="autoplay"></iframe>
+
   <script>
     const ADMIN_PASSWORD = "admin";
     let isAdmin = false;
-    let currentOpenFolderId = null;
-    let currentOpenAlbumId = null;
 
-    let selectedItemId = null;
-    let clipboardItem = null;
-    let isCutOperation = false;
-
-    let folderHistory = [];
-    let folderForwardStack = [];
-
-    const windowRestoreBounds = {};
-
-    const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
-    const ICON_DISC_PURE = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
-    const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
-    const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
-
-    const MASTER_CONFIG = {
-      "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
-      "startMenuVisibleIds": [
-        "winter_cd_standalone_entry",
-        "l1",
-        "folder_1789230844971",
-        "folder_1789230959703",
-        "folder_1789233534244"
-      ],
-      "items": [
+    /* 5 版完整獨立專輯配置 */
+    const CD_MASTER_CONFIG = {
+      "activeVerIndex": 0,
+      "versions": [
         {
-          "id": "winter_cd_standalone_entry",
-          "parentId": null,
-          "type": "cd_standalone",
-          "name": "Winter Playlist",
-          "iconType": "cover",
-          "icon": ICON_DISC_DRIVE,
-          "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
-          "url": "https://u11150003-arch.github.io/winter-cd-player/",
-          "pos": { "x": 14, "y": 357 }
+          "name": "Ver 1. Summer",
+          "cover": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
+          "tracks": [
+            { "title": "Winter - Speed of summer", "src": "YTeFLKMnwjg", "type": "youtube" },
+            { "title": "Winter - What you want do for love", "src": "https://drive.google.com/file/d/1jeg0LS14Swh44kU4ymm7L5hU3kP_TJxj/preview", "type": "drive" },
+            { "title": "aespa - Better Things", "src": "gfd16hP_3TQ", "type": "youtube" },
+            { "title": "aespa - Life's Too Short", "src": "z2AHnk76PDU", "type": "youtube" },
+            { "title": "Winter - Special Summer Track", "src": "YTeFLKMnwjg", "type": "youtube" }
+          ]
         },
         {
-          "id": "img1",
-          "parentId": "folder_1789230890651",
-          "type": "image",
-          "name": "手幅Serenade ver",
-          "icon": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
-          "mediaUrl": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
-          "pos": { "x": 16, "y": 168 }
+          "name": "Ver 2. Armageddon",
+          "cover": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400",
+          "tracks": [
+            { "title": "aespa - Armageddon", "src": "nFYwcndNuZY", "type": "youtube" },
+            { "title": "aespa - Supernova", "src": "phuiAIQAxZ4", "type": "youtube" },
+            { "title": "aespa - Mine", "src": "nFYwcndNuZY", "type": "youtube" },
+            { "title": "aespa - Licorice", "src": "phuiAIQAxZ4", "type": "youtube" },
+            { "title": "aespa - Live My Life", "src": "nFYwcndNuZY", "type": "youtube" }
+          ]
         },
         {
-          "id": "n1",
-          "parentId": "folder_1789230959703",
-          "type": "note",
-          "name": "生咖應援物",
-          "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
-          "content": "1. 應援小卡\n2. 明信片",
-          "pos": { "x": 16, "y": 244 }
+          "name": "Ver 3. Solo & Live",
+          "cover": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400",
+          "tracks": [
+            { "title": "Winter - Spark (Acoustic Solo)", "src": "YTeFLKMnwjg", "type": "youtube" },
+            { "title": "Winter - With You (OST)", "src": "https://drive.google.com/file/d/1jeg0LS14Swh44kU4ymm7L5hU3kP_TJxj/preview", "type": "drive" },
+            { "title": "Winter - Fly Away (Live Ver)", "src": "YTeFLKMnwjg", "type": "youtube" },
+            { "title": "Winter - Voyage", "src": "https://drive.google.com/file/d/1jeg0LS14Swh44kU4ymm7L5hU3kP_TJxj/preview", "type": "drive" },
+            { "title": "Winter - Bday Special Song", "src": "YTeFLKMnwjg", "type": "youtube" }
+          ]
         },
         {
-          "id": "l1",
-          "parentId": null,
-          "type": "link",
-          "name": "生咖預約表單",
-          "icon": W_FORM_ICON,
-          "url": "https://wintertst0101.netlify.app/",
-          "pos": { "x": 16, "y": 256 }
+          "name": "Ver 4. Drama",
+          "cover": "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400",
+          "tracks": [
+            { "title": "aespa - Drama", "src": "D8VEhcPeSlc", "type": "youtube" },
+            { "title": "aespa - Trick or Trick", "src": "D8VEhcPeSlc", "type": "youtube" },
+            { "title": "aespa - Don't Blink", "src": "D8VEhcPeSlc", "type": "youtube" },
+            { "title": "aespa - Hot Air Balloon", "src": "D8VEhcPeSlc", "type": "youtube" },
+            { "title": "aespa - YOLO", "src": "D8VEhcPeSlc", "type": "youtube" }
+          ]
         },
         {
-          "id": "1789230813079",
-          "parentId": "folder_1789230844971",
-          "type": "note",
-          "name": "Lucky Draw",
-          "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
-          "content": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n客製化頭巾-6\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
-          "pos": { "x": 120, "y": 120 }
-        },
-        {
-          "id": "folder_1789230844971",
-          "parentId": null,
-          "type": "folder",
-          "name": "Lucky Draw",
-          "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
-          "coverBadge": "",
-          "pos": { "x": 21, "y": 98 }
-        },
-        {
-          "id": "folder_1789230890651",
-          "parentId": "folder_1789230844971",
-          "type": "folder",
-          "name": "手幅-3款",
-          "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
-          "coverBadge": "",
-          "pos": { "x": 120, "y": 120 }
-        },
-        {
-          "id": "folder_1789230959703",
-          "parentId": null,
-          "type": "folder",
-          "name": "生咖應援物",
-          "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
-          "coverBadge": "",
-          "pos": { "x": 21, "y": 20 }
-        },
-        {
-          "id": "folder_1789233534244",
-          "parentId": null,
-          "type": "folder",
-          "name": "生咖資訊",
-          "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
-          "coverBadge": "",
-          "pos": { "x": 19, "y": 174 }
+          "name": "Ver 5. Whiplash",
+          "cover": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400",
+          "tracks": [
+            { "title": "aespa - Whiplash", "src": "jWQx2f-CErU", "type": "youtube" },
+            { "title": "aespa - Kill It", "src": "jWQx2f-CErU", "type": "youtube" },
+            { "title": "aespa - Flights, Not Feelings", "src": "jWQx2f-CErU", "type": "youtube" },
+            { "title": "aespa - Pink Hoodie", "src": "jWQx2f-CErU", "type": "youtube" },
+            { "title": "aespa - Just Another Girl", "src": "jWQx2f-CErU", "type": "youtube" }
+          ]
         }
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v15_clamped";
-    if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
-      localStorage.setItem("winter_version", CONFIG_VERSION);
-      localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
+    const CONFIG_STORAGE_KEY = "winter_cd_player_config_fixed_layout_v4";
+    let config = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY)) || CD_MASTER_CONFIG;
+
+    let cdState = {
+      verIndex: config.activeVerIndex || 0,
+      trackIndex: 0,
+      isPlaying: false,
+      timerInterval: null,
+      seconds: 0
+    };
+
+    let trackClipboard = null;
+    let isTrackCut = false;
+    let selectedTrackIdx = null;
+
+    let navHistory = [];
+    let navForwardStack = [];
+
+    function saveState() {
+      config.activeVerIndex = cdState.verIndex;
+      localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
     }
 
-    let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
-    let itemsData = currentConfig.items;
-
-    function openWinterCdPlayerWindow() {
-      const item = itemsData.find(i => i.id === "winter_cd_standalone_entry");
-      const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-cd-player/";
-      const iframe = document.getElementById('embeddedCdIframe');
-      if (iframe.src !== targetUrl) iframe.src = targetUrl;
-      openWindow('embedded-cd-win');
-    }
-
-    function closeEmbeddedCdWindow(e) {
-      if (e) e.stopPropagation();
-      const iframe = document.getElementById('embeddedCdIframe');
-      iframe.src = '';
-      closeWindow('embedded-cd-win', e);
+    function exportCurrentState() {
+      saveState();
+      const output = `const CD_MASTER_CONFIG = ${JSON.stringify(config, null, 2)};`;
+      navigator.clipboard.writeText(output).then(() => {
+        alert("✅ 最新進度已儲存並複製程式碼！\n\n下次更新 GitHub 時直接替換 CD_MASTER_CONFIG 即可。");
+      }).catch(() => {
+        prompt("請複製以下最新代碼以備份：", output);
+      });
     }
 
     function extractDriveId(url) {
@@ -604,178 +512,10 @@
       if (!url) return url;
       const driveId = extractDriveId(url);
       if (driveId) {
-        if (type === 'image' || type === 'icon' || type === 'wallpaper') return `https://lh3.googleusercontent.com/d/${driveId}`;
+        if (type === 'image') return `https://lh3.googleusercontent.com/d/${driveId}`;
         return `https://drive.google.com/file/d/${driveId}/preview`;
       }
       return url.trim();
-    }
-
-    function saveState() {
-      currentConfig.items = itemsData;
-      localStorage.setItem("winter_desktop_config", JSON.stringify(currentConfig));
-      renderDesktop();
-      renderStartMenu();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      updateSelectionUI();
-    }
-
-    function exportCurrentState(e) {
-      if (e) e.stopPropagation();
-      currentConfig.items = itemsData;
-      const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
-      navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製配置代碼！\n\n請至 GitHub index.html 替換 MASTER_CONFIG 區域即可永久儲存。");
-      }).catch(() => {
-        prompt("請複製代碼並貼回 index.html：", output);
-      });
-    }
-
-    function goHome(e) {
-      if (e) e.stopPropagation();
-      document.querySelectorAll('.win-modal').forEach(win => {
-        win.style.display = 'none';
-        win.classList.remove('maximized');
-      });
-      closeUniversalPlayer();
-      closeAlbumWindow();
-      closeEmbeddedCdWindow();
-      currentOpenFolderId = null;
-      currentOpenAlbumId = null;
-      folderHistory = [];
-      folderForwardStack = [];
-      updateTaskbar();
-      const menu = document.getElementById('startMenu');
-      if (menu) menu.style.display = 'none';
-    }
-
-    function handleGlobalClick(e) {
-      selectedItemId = null;
-      updateSelectionUI();
-      renderDesktop();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      const menu = document.getElementById('startMenu');
-      if (menu) menu.style.display = 'none';
-    }
-
-    function selectItem(id, e) {
-      if (e) e.stopPropagation();
-      selectedItemId = (selectedItemId === id) ? null : id;
-      updateSelectionUI();
-      renderDesktop();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-    }
-
-    function updateSelectionUI() {
-      const hasSelection = selectedItemId !== null && isAdmin;
-      document.querySelectorAll('.selected-ops').forEach(el => el.style.display = hasSelection ? 'inline-flex' : 'none');
-    }
-
-    function moveSelectedItemToDialog(e) {
-      if (e) e.stopPropagation();
-      if (!selectedItemId) return;
-
-      const item = itemsData.find(i => i.id === selectedItemId);
-      if (!item) return;
-
-      const targetFolders = itemsData.filter(i => (i.type === 'folder' || i.type === 'album') && i.id !== item.id);
-      const box = document.getElementById('moveFolderOptions');
-      box.innerHTML = '';
-
-      const desktopOpt = document.createElement('button');
-      desktopOpt.style.cssText = "text-align:left; padding:4px 8px; font-size:12px; cursor:pointer;";
-      desktopOpt.innerHTML = "🖥️ [移至最外層桌面]";
-      desktopOpt.onclick = (ev) => {
-        ev.stopPropagation();
-        item.parentId = null;
-        item.pos = { x: 120, y: 120 };
-        saveState();
-        closeWindow('move-modal-win');
-        alert(`已將「${item.name}」移至最外層桌面！`);
-      };
-      box.appendChild(desktopOpt);
-
-      targetFolders.forEach(folder => {
-        const btn = document.createElement('button');
-        btn.style.cssText = "text-align:left; padding:4px 8px; font-size:12px; cursor:pointer;";
-        btn.innerHTML = `📁 ${folder.name} (${folder.type === 'album' ? '專輯' : '資料夾'})`;
-        btn.onclick = (ev) => {
-          ev.stopPropagation();
-          item.parentId = folder.id;
-          saveState();
-          closeWindow('move-modal-win');
-          alert(`已將「${item.name}」移入「${folder.name}」！`);
-        };
-        box.appendChild(btn);
-      });
-
-      document.getElementById('moveModalTitle').innerText = `📦 移動「${item.name}」至...`;
-      openWindow('move-modal-win');
-    }
-
-    function copySelectedItem(e) {
-      if (e) e.stopPropagation();
-      if (!selectedItemId) return;
-      const item = itemsData.find(i => i.id === selectedItemId);
-      if (!item) return;
-      clipboardItem = item;
-      isCutOperation = false;
-      alert(`已複製「${item.name}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
-    }
-
-    function cutSelectedItem(e) {
-      if (e) e.stopPropagation();
-      if (!selectedItemId) return;
-      const item = itemsData.find(i => i.id === selectedItemId);
-      if (!item) return;
-      clipboardItem = item;
-      isCutOperation = true;
-      renderDesktop();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      alert(`已剪下「${item.name}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
-    }
-
-    function editSelectedItem(e) {
-      if (e) e.stopPropagation();
-      if (!selectedItemId) return;
-      editItem(selectedItemId);
-    }
-
-    function deleteSelectedItem(e) {
-      if (e) e.stopPropagation();
-      if (!selectedItemId) return;
-      if (confirm("確定刪除所選項目嗎？")) {
-        itemsData = itemsData.filter(i => i.id !== selectedItemId && i.parentId !== selectedItemId);
-        if (clipboardItem && clipboardItem.id === selectedItemId) clipboardItem = null;
-        selectedItemId = null;
-        saveState();
-      }
-    }
-
-    function pasteItem(targetParentId, e) {
-      if (e) e.stopPropagation();
-      if (!clipboardItem) {
-        alert("剪貼簿目前沒有項目！請先選取項目並點擊「複製」或「剪下」。");
-        return;
-      }
-      if (isCutOperation) {
-        if (clipboardItem.id === targetParentId) { alert("無法將項目移入自己內部！"); return; }
-        clipboardItem.parentId = targetParentId;
-        if (!targetParentId) clipboardItem.pos = { x: 120, y: 120 };
-        clipboardItem = null;
-        isCutOperation = false;
-      } else {
-        function cloneRecursive(origItem, pId) {
-          const newId = "copy_" + Date.now() + "_" + Math.floor(Math.random()*1000);
-          const cloned = { ...origItem, id: newId, parentId: pId, name: origItem.name + " (副本)" };
-          if (cloned.pos) cloned.pos = { x: cloned.pos.x + 24, y: cloned.pos.y + 24 };
-          itemsData.push(cloned);
-          const children = itemsData.filter(i => i.parentId === origItem.id);
-          children.forEach(ch => cloneRecursive(ch, newId));
-        }
-        cloneRecursive(clipboardItem, targetParentId);
-      }
-      selectedItemId = null;
-      saveState();
     }
 
     function toggleAdmin(e) {
@@ -784,7 +524,6 @@
         isAdmin = false;
         document.body.classList.remove('admin-mode');
         document.getElementById('authBtn').innerText = "🔒 管理員";
-        selectedItemId = null;
         alert("已退出管理員模式");
       } else {
         const input = prompt("請輸入管理員密碼：");
@@ -793,688 +532,331 @@
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
           setTimeout(updateScrollBarUI, 80);
-          alert("登入成功！已解鎖自訂 CD 封面照片、編輯與管理功能。");
+          alert("登入成功！已解鎖換CD封面、曲目增刪、複製剪下貼上功能。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
       }
-      renderDesktop();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      updateSelectionUI();
+      renderCdPlayerUI();
     }
 
-    function renderDesktop() {
-      const container = document.getElementById('desktopContainer');
-      container.innerHTML = '';
+    function renderCdPlayerUI() {
+      const curVer = config.versions[cdState.verIndex];
+      document.getElementById('discCoverImg').src = curVer.cover;
 
-      itemsData.filter(item => !item.parentId).forEach((item, index) => {
-        if (!item.pos) {
-          const col = Math.floor(index / 5);
-          const row = index % 5;
-          item.pos = { x: 16 + col * 84, y: 16 + row * 76 };
-        }
-        const el = createIconElement(item);
-        el.style.left = item.pos.x + "px";
-        el.style.top = item.pos.y + "px";
-        bindDragAndClick(el, item);
-        container.appendChild(el);
-      });
-    }
-
-    function createIconElement(item) {
-      const div = document.createElement('div');
-      const isSelected = selectedItemId === item.id;
-      const isCut = clipboardItem && clipboardItem.id === item.id && isCutOperation;
-      div.className = `icon-wrapper dynamic-item ${isSelected ? 'selected' : ''} ${isCut ? 'cut-mode' : ''}`;
-
-      let iconHtml = "";
-      if (item.type === 'cd_standalone' || item.type === 'album') {
-        if (item.coverBadge) {
-          iconHtml = `
-            <div class="icon-art-box">
-              <img src="${ICON_DISC_DRIVE}" class="base-img">
-              <img src="${item.coverBadge}" class="custom-cover-badge" onerror="this.style.display='none'">
-            </div>
-          `;
-        } else {
-          iconHtml = `<div class="icon-art-box"><img src="${ICON_DISC_DRIVE}" class="base-img"></div>`;
-        }
-      } else if (item.type === 'folder') {
-        if (item.coverBadge) {
-          iconHtml = `
-            <div class="icon-art-box">
-              <img src="${ICON_FOLDER_DEFAULT}" class="base-img">
-              <img src="${item.coverBadge}" class="custom-cover-badge" onerror="this.style.display='none'">
-            </div>
-          `;
-        } else {
-          iconHtml = `<div class="icon-art-box"><img src="${ICON_FOLDER_DEFAULT}" class="base-img"></div>`;
-        }
-      } else {
-        const displayIcon = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : (item.icon || ICON_FOLDER_DEFAULT);
-        iconHtml = `<img src="${displayIcon}" style="width:42px; height:42px; object-fit:contain;" onerror="this.src='${ICON_FOLDER_DEFAULT}'">`;
-      }
-
-      const checkHtml = `<input type="checkbox" class="icon-select-check" ${isSelected ? 'checked' : ''} onclick="selectItem('${item.id}', event)">`;
-      div.innerHTML = `${checkHtml}${iconHtml}<span>${item.name}</span>`;
-      return div;
-    }
-
-    /* 圖示防拖曳脫離螢幕機制 (Boundary Clamping) */
-    function bindDragAndClick(el, item) {
-      let isDragging = false;
-      let startX = 0, startY = 0, origX = 0, origY = 0;
-      let hasMoved = false;
-
-      function onPointerDown(e) {
-        if (e.target.classList.contains('icon-select-check')) return;
-        if (e.button && e.button !== 0) return;
-
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        startX = clientX;
-        startY = clientY;
-        origX = item.pos ? item.pos.x : parseInt(el.style.left) || 16;
-        origY = item.pos ? item.pos.y : parseInt(el.style.top) || 16;
-        hasMoved = false;
-
-        if (isAdmin) isDragging = true;
-
-        function onPointerMove(moveEvent) {
-          const moveX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
-          const moveY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
-          const dx = moveX - startX;
-          const dy = moveY - startY;
-
-          if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-            hasMoved = true;
-            if (isDragging && isAdmin) {
-              const desktopEl = document.getElementById('desktopContainer');
-              const maxX = desktopEl.clientWidth - el.offsetWidth;
-              const maxY = desktopEl.clientHeight - el.offsetHeight;
-              const nextX = Math.max(0, Math.min(maxX, origX + dx));
-              const nextY = Math.max(0, Math.min(maxY, origY + dy));
-              el.style.left = nextX + "px";
-              el.style.top = nextY + "px";
-            }
-          }
-        }
-
-        function onPointerUp(upEvent) {
-          window.removeEventListener('mousemove', onPointerMove);
-          window.removeEventListener('mouseup', onPointerUp);
-          window.removeEventListener('touchmove', onPointerMove);
-          window.removeEventListener('touchend', onPointerUp);
-
-          if (isDragging && hasMoved) {
-            item.pos = { x: parseInt(el.style.left), y: parseInt(el.style.top) };
-            saveState();
-          } else if (!hasMoved) {
-            if (isAdmin) {
-              selectedItemId = item.id;
-              updateSelectionUI();
-              renderDesktop();
-              if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-            }
-            handleItemClick(item);
-          }
-          isDragging = false;
-        }
-
-        window.addEventListener('mousemove', onPointerMove);
-        window.addEventListener('mouseup', onPointerUp);
-        window.addEventListener('touchmove', onPointerMove, { passive: true });
-        window.addEventListener('touchend', onPointerUp);
-      }
-
-      el.addEventListener('mousedown', onPointerDown);
-      el.addEventListener('touchstart', onPointerDown, { passive: true });
-    }
-
-    function handleItemClick(item) {
-      if (item.type === 'cd_standalone') {
-        openWinterCdPlayerWindow();
-      } else if (item.type === 'folder') {
-        openFolderWithHistory(item.id, item.name);
-      } else if (item.type === 'album') {
-        openAlbumPlayer(item);
-      } else if (item.type === 'image') {
-        openPhotoViewer(item.name, item.mediaUrl);
-      } else if (item.type === 'video') {
-        openUniversalPlayer(item.name, item.mediaUrl);
-      } else if (item.type === 'note') {
-        alert(`【${item.name}】\n\n${item.content}`);
-      } else if (item.type === 'link') {
-        document.getElementById('linkTitle').innerText = `🔗 ${item.name}`;
-        document.getElementById('linkText').innerText = `即將前往：${item.url}`;
-        document.getElementById('linkBtn').href = item.url;
-        openWindow('link-win');
-      }
-    }
-
-    function toggleStartMenu(e) {
-      if (e) e.stopPropagation();
-      const menu = document.getElementById('startMenu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function renderStartMenu() {
-      const list = document.getElementById('startMenuList');
-      if (!list) return;
-      list.innerHTML = '';
-      
-      const visibleIds = currentConfig.startMenuVisibleIds || [];
-      const showItems = itemsData.filter(i => visibleIds.includes(i.id));
-
-      showItems.forEach(item => {
-        const li = document.createElement('li');
-        const iconSrc = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : (item.icon || ICON_FOLDER_DEFAULT);
-        li.title = `開啟 ${item.name}`;
-        li.innerHTML = `<img src="${iconSrc}" width="18" height="18" style="object-fit:contain;"> <span>${item.name}</span>`;
-        li.onclick = (e) => {
-          e.stopPropagation();
-          toggleStartMenu();
-          handleItemClick(item);
-        };
-        list.appendChild(li);
-      });
-    }
-
-    function openStartMenuConfigModal(e) {
-      if (e) e.stopPropagation();
-      if (!isAdmin) {
-        alert("請先登入管理員！");
-        return;
-      }
-      const box = document.getElementById('startConfigCheckboxes');
-      box.innerHTML = '';
-      const currentIds = currentConfig.startMenuVisibleIds || [];
-
-      itemsData.forEach(item => {
-        const row = document.createElement('label');
-        row.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;";
-        const isChecked = currentIds.includes(item.id) ? 'checked' : '';
-        row.innerHTML = `<input type="checkbox" value="${item.id}" ${isChecked}> <span>${item.name}</span>`;
-        box.appendChild(row);
+      const grid = document.getElementById('verTabsGrid');
+      grid.innerHTML = '';
+      config.versions.forEach((v, idx) => {
+        const btn = document.createElement('button');
+        btn.type = "button";
+        btn.className = (idx === cdState.verIndex) ? 'active' : '';
+        btn.innerText = v.name;
+        btn.onclick = () => switchPlaylistVer(idx);
+        grid.appendChild(btn);
       });
 
-      openWindow('start-config-win');
-    }
-
-    function saveStartMenuConfig(e) {
-      if (e) e.stopPropagation();
-      const checkboxes = document.querySelectorAll('#startConfigCheckboxes input[type="checkbox"]');
-      const selected = [];
-      checkboxes.forEach(cb => {
-        if (cb.checked) selected.push(cb.value);
-      });
-      currentConfig.startMenuVisibleIds = selected;
-      saveState();
-      closeWindow('start-config-win');
-      alert("開始選單已自訂更新！");
-    }
-
-    function createFolderWithCoverChoice(parentId = null, e) {
-      if (e) e.stopPropagation();
-      const name = prompt("請輸入資料夾名稱：", "新資料夾");
-      if (!name) return;
-
-      const choice = prompt("請選擇資料夾樣式：\n1. 經典黃色資料夾\n2. 黃色資料夾＋右下角封面圖片", "1");
-      let iconType = "pure";
-      let coverBadge = "";
-
-      if (choice === "2") {
-        iconType = "cover";
-        const rawCover = prompt("請貼上正方形封面縮圖網址 (支援 Google 雲端共享連結)：", "");
-        coverBadge = rawCover ? autoFormatMediaUrl(rawCover, 'image') : "";
-      }
-
-      const newFolder = {
-        id: "folder_" + Date.now(),
-        parentId: parentId,
-        type: "folder",
-        name: name,
-        iconType: iconType,
-        icon: ICON_FOLDER_DEFAULT,
-        coverBadge: coverBadge,
-        pos: { x: 120, y: 120 }
-      };
-
-      itemsData.push(newFolder);
-      saveState();
-      alert(`資料夾「${name}」建立完成！`);
-    }
-
-    function createAlbumWithCoverChoice(parentId = null, e) {
-      if (e) e.stopPropagation();
-      const name = prompt("請輸入專輯名稱：", "My Album");
-      if (!name) return;
-
-      const choice = prompt("請選擇光碟圖示樣式：\n1. 經典純光碟\n2. 光碟機托盤＋自訂封面圖片", "2");
-      let iconType = "pure";
-      let coverBadge = "";
-
-      if (choice === "2") {
-        iconType = "cover";
-        const rawCover = prompt("請貼上正方形封面圖片網址 (支援 Google 雲端共享連結)：", "");
-        coverBadge = rawCover ? autoFormatMediaUrl(rawCover, 'image') : "";
-      }
-
-      const newAlbum = {
-        id: "album_" + Date.now(),
-        parentId: parentId,
-        type: "album",
-        name: name,
-        iconType: iconType,
-        icon: iconType === 'cover' ? ICON_DISC_DRIVE : ICON_DISC_PURE,
-        coverBadge: coverBadge,
-        tracks: [
-          { title: "Sample Track", src: "YTeFLKMnwjg", type: "youtube" }
-        ],
-        pos: { x: 120, y: 120 }
-      };
-
-      itemsData.push(newAlbum);
-      saveState();
-      alert(`傳統專輯「${name}」建立完成！`);
-    }
-
-    function openAlbumPlayer(albumItem) {
-      currentOpenAlbumId = albumItem.id;
-      document.getElementById('albumTitleBar').innerText = `💿 專輯：${albumItem.name}`;
-      renderAlbumTrackList();
-      openWindow('album-win');
-    }
-
-    function renderAlbumTrackList() {
-      const album = itemsData.find(i => i.id === currentOpenAlbumId);
-      if (!album || !album.tracks) return;
-
-      const listEl = document.getElementById('albumTrackItems');
+      const listEl = document.getElementById('cdTrackListBox');
       listEl.innerHTML = '';
-      album.tracks.forEach((track, idx) => {
+      curVer.tracks.forEach((t, idx) => {
         const li = document.createElement('li');
+        const isPlayingThis = (idx === cdState.trackIndex && cdState.isPlaying);
+        const isSelected = (idx === selectedTrackIdx);
+        li.className = isPlayingThis ? 'active' : (isSelected ? 'selected' : '');
+        if (isSelected) {
+          li.style.background = "#000080";
+          li.style.color = "#fff";
+        } else {
+          li.style.background = "";
+          li.style.color = "";
+        }
+
         li.innerHTML = `
-          <span>${idx + 1}. ${track.title}</span>
-          ${isAdmin ? `<button type="button" onclick="event.stopPropagation(); removeAlbumTrack(${idx})">✕</button>` : ''}
+          <span>${idx + 1}. ${t.title}</span>
+          ${isAdmin ? `<button type="button" style="font-size:9px; padding:1px 3px;" onclick="event.stopPropagation(); removeTrackAtIndex(${idx})">✕</button>` : ''}
         `;
-        li.onclick = (e) => { e.stopPropagation(); playAlbumTrack(track); };
+        li.onclick = () => {
+          if (isAdmin) {
+            selectedTrackIdx = (selectedTrackIdx === idx) ? null : idx;
+            renderCdPlayerUI();
+          } else {
+            recordNavHistory();
+            cdState.trackIndex = idx;
+            playCurrentTrack();
+          }
+        };
+        li.ondblclick = () => {
+          recordNavHistory();
+          cdState.trackIndex = idx;
+          playCurrentTrack();
+        };
         listEl.appendChild(li);
       });
 
-      if (album.tracks.length > 0) playAlbumTrack(album.tracks[0]);
+      const curTrack = curVer.tracks[cdState.trackIndex];
+      document.getElementById('lcdTrackTitle').innerText = curTrack ? curTrack.title : "No Track";
+      updateDiscSpinning();
+      updateNavButtons();
     }
 
-    function playAlbumTrack(track) {
-      const iframe = document.getElementById('albumIframe');
-      if (track.src.includes('drive.google.com')) {
-        iframe.src = track.src;
+    function switchPlaylistVer(vIdx) {
+      recordNavHistory();
+      stopCdTrack();
+      cdState.verIndex = vIdx;
+      cdState.trackIndex = 0;
+      selectedTrackIdx = null;
+      saveState();
+      renderCdPlayerUI();
+    }
+
+    function togglePlayPause() {
+      if (cdState.isPlaying) pauseCdTrack();
+      else playCurrentTrack();
+    }
+
+    function playCurrentTrack() {
+      const curVer = config.versions[cdState.verIndex];
+      if (!curVer || !curVer.tracks[cdState.trackIndex]) return;
+
+      const track = curVer.tracks[cdState.trackIndex];
+      const audio = document.getElementById('hiddenAudioEngine');
+      const ytIframe = document.getElementById('hiddenYtIframe');
+
+      cdState.isPlaying = true;
+      document.getElementById('playIconSvg').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+
+      if (track.type === 'youtube') {
+        audio.pause();
+        ytIframe.src = `https://www.youtube-nocookie.com/embed/${track.src}?autoplay=1&enablejsapi=1`;
       } else {
-        iframe.src = `https://www.youtube-nocookie.com/embed/${track.src}?autoplay=0&enablejsapi=1&rel=0`;
+        ytIframe.src = '';
+        audio.src = track.src;
+        audio.play().catch(()=>{});
+      }
+
+      startLcdTimer();
+      renderCdPlayerUI();
+    }
+
+    function pauseCdTrack() {
+      cdState.isPlaying = false;
+      document.getElementById('playIconSvg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('hiddenAudioEngine').pause();
+      document.getElementById('hiddenYtIframe').src = '';
+      clearInterval(cdState.timerInterval);
+      updateDiscSpinning();
+    }
+
+    function stopCdTrack() {
+      pauseCdTrack();
+      cdState.seconds = 0;
+      updateLcdDisplay(0);
+      document.getElementById('lcdProgressFill').style.width = '0%';
+    }
+
+    function prevCdTrack() {
+      recordNavHistory();
+      const curVer = config.versions[cdState.verIndex];
+      cdState.trackIndex = (cdState.trackIndex - 1 + curVer.tracks.length) % curVer.tracks.length;
+      playCurrentTrack();
+    }
+
+    function nextCdTrack() {
+      recordNavHistory();
+      const curVer = config.versions[cdState.verIndex];
+      cdState.trackIndex = (cdState.trackIndex + 1) % curVer.tracks.length;
+      playCurrentTrack();
+    }
+
+    function ejectCd() {
+      stopCdTrack();
+      alert("⏏ 光碟已退出！");
+    }
+
+    function updateDiscSpinning() {
+      const disc = document.getElementById('disc3D');
+      if (cdState.isPlaying) disc.classList.add('spinning');
+      else disc.classList.remove('spinning');
+    }
+
+    function startLcdTimer() {
+      clearInterval(cdState.timerInterval);
+      cdState.timerInterval = setInterval(() => {
+        cdState.seconds++;
+        updateLcdDisplay(cdState.seconds);
+        const percent = (cdState.seconds % 210) / 2.1;
+        document.getElementById('lcdProgressFill').style.width = `${percent}%`;
+      }, 1000);
+    }
+
+    function updateLcdDisplay(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      document.getElementById('lcdTimer').innerText = `${m}:${s}`;
+    }
+
+    function recordNavHistory() {
+      navHistory.push({ ver: cdState.verIndex, track: cdState.trackIndex });
+      navForwardStack = [];
+      updateNavButtons();
+    }
+
+    function navGoBack(e) {
+      if (e) e.stopPropagation();
+      if (navHistory.length === 0) return;
+      const prev = navHistory.pop();
+      navForwardStack.push({ ver: cdState.verIndex, track: cdState.trackIndex });
+      cdState.verIndex = prev.ver;
+      cdState.trackIndex = prev.track;
+      playCurrentTrack();
+      updateNavButtons();
+    }
+
+    function navGoForward(e) {
+      if (e) e.stopPropagation();
+      if (navForwardStack.length === 0) return;
+      const next = navForwardStack.pop();
+      navHistory.push({ ver: cdState.verIndex, track: cdState.trackIndex });
+      cdState.verIndex = next.ver;
+      cdState.trackIndex = next.track;
+      playCurrentTrack();
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      const bBtn = document.getElementById('btnNavBack');
+      const fBtn = document.getElementById('btnNavForward');
+      if (bBtn) bBtn.disabled = (navHistory.length === 0);
+      if (fBtn) fBtn.disabled = (navForwardStack.length === 0);
+    }
+
+    function changeCurrentCdCover() {
+      const curVer = config.versions[cdState.verIndex];
+      const raw = prompt("請貼上正方形 CD 光碟盤面封面網址 (支援 Google 雲端共享)：", curVer.cover);
+      if (raw) {
+        curVer.cover = autoFormatMediaUrl(raw, 'image');
+        saveState();
+        renderCdPlayerUI();
       }
     }
 
-    function addTrackToCurrentAlbum(e) {
-      if (e) e.stopPropagation();
-      const album = itemsData.find(i => i.id === currentOpenAlbumId);
-      if (!album) return;
+    function editCurrentVerName() {
+      const curVer = config.versions[cdState.verIndex];
+      const newName = prompt("重新命名此版專輯名稱：", curVer.name);
+      if (newName) {
+        curVer.name = newName;
+        saveState();
+        renderCdPlayerUI();
+      }
+    }
 
+    function addTrackToActiveVer() {
+      const curVer = config.versions[cdState.verIndex];
       const title = prompt("請輸入歌曲名稱：", "New Track");
       if (!title) return;
-      const link = prompt("請輸入 YouTube 影片連結 或 Google 雲端音訊連結：");
+      const link = prompt("請輸入 YouTube 連結 或 Google 雲端(mp4/m4a)共享連結：");
       if (!link) return;
 
       let src = link.trim();
+      let type = "youtube";
       const driveId = extractDriveId(link);
       if (driveId) {
         src = `https://drive.google.com/file/d/${driveId}/preview`;
+        type = "drive";
       } else if (link.includes("v=")) {
         src = link.split("v=")[1].substring(0, 11);
       } else if (link.includes("youtu.be/")) {
         src = link.split("youtu.be/")[1].substring(0, 11);
       }
 
-      album.tracks.push({ title, src, type: driveId ? "drive" : "youtube" });
+      curVer.tracks.push({ title, src, type });
       saveState();
-      renderAlbumTrackList();
+      renderCdPlayerUI();
     }
 
-    function removeAlbumTrack(idx) {
-      const album = itemsData.find(i => i.id === currentOpenAlbumId);
-      if (!album) return;
-      if (confirm("刪除這首歌曲？")) {
-        album.tracks.splice(idx, 1);
+    function copyCurrentTrack() {
+      if (selectedTrackIdx === null) { alert("請先在清單中點選一首歌曲！"); return; }
+      const curVer = config.versions[cdState.verIndex];
+      trackClipboard = { ...curVer.tracks[selectedTrackIdx] };
+      isTrackCut = false;
+      alert(`已複製「${trackClipboard.title}」！`);
+    }
+
+    function cutCurrentTrack() {
+      if (selectedTrackIdx === null) { alert("請先在清單中點選一首歌曲！"); return; }
+      const curVer = config.versions[cdState.verIndex];
+      trackClipboard = { ...curVer.tracks[selectedTrackIdx] };
+      isTrackCut = true;
+      curVer.tracks.splice(selectedTrackIdx, 1);
+      selectedTrackIdx = null;
+      saveState();
+      renderCdPlayerUI();
+      alert(`已剪下「${trackClipboard.title}」！請切換到目標版本點擊貼上。`);
+    }
+
+    function pasteTrack() {
+      if (!trackClipboard) { alert("剪貼簿目前沒有歌曲！"); return; }
+      const curVer = config.versions[cdState.verIndex];
+      curVer.tracks.push({ ...trackClipboard, title: isTrackCut ? trackClipboard.title : trackClipboard.title + " (副本)" });
+      if (isTrackCut) trackClipboard = null;
+      saveState();
+      renderCdPlayerUI();
+    }
+
+    function deleteCurrentTrack() {
+      if (selectedTrackIdx === null) { alert("請先在清單中點選一首歌曲！"); return; }
+      removeTrackAtIndex(selectedTrackIdx);
+    }
+
+    function removeTrackAtIndex(idx) {
+      const curVer = config.versions[cdState.verIndex];
+      if (confirm(`確定刪除歌曲「${curVer.tracks[idx].title}」？`)) {
+        curVer.tracks.splice(idx, 1);
+        if (cdState.trackIndex >= curVer.tracks.length) cdState.trackIndex = 0;
+        selectedTrackIdx = null;
         saveState();
-        renderAlbumTrackList();
+        renderCdPlayerUI();
       }
     }
 
-    let highestZ = 200;
-    const minimizedWindows = {};
-
-    function openWindow(id) {
-      const win = document.getElementById(id);
-      if (!win) return;
-      win.style.display = 'block';
-      win.style.zIndex = ++highestZ;
-
-      if (!win.classList.contains('maximized') && !windowRestoreBounds[id]) {
-        win.style.top = '50%';
-        win.style.left = '50%';
-        win.style.transform = 'translate(-50%, -50%)';
-      }
-
-      delete minimizedWindows[id];
-      updateTaskbar();
-    }
-    
-    function closeWindow(id, e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const win = document.getElementById(id);
-      if (!win) return;
-      win.style.display = 'none';
-      win.classList.remove('maximized');
-      delete windowRestoreBounds[id];
-
-      if (id === 'folder-win') {
-        currentOpenFolderId = null;
-        folderHistory = [];
-        folderForwardStack = [];
-      }
-      delete minimizedWindows[id];
-      updateTaskbar();
-    }
-    
-    function closeAlbumWindow(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const iframe = document.getElementById('albumIframe');
-      if (iframe) iframe.src = '';
-      closeWindow('album-win', e);
-      currentOpenAlbumId = null;
-    }
-
-    function minimizeWindow(id, title, e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const win = document.getElementById(id);
-      if (!win) return;
-      win.style.display = 'none';
-      minimizedWindows[id] = title;
-      updateTaskbar();
-    }
-
-    function toggleMaximize(id, e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const win = document.getElementById(id);
-      if (!win) return;
-
-      if (win.classList.contains('maximized')) {
-        win.classList.remove('maximized');
-        const prev = windowRestoreBounds[id];
-        if (prev) {
-          win.style.top = prev.top; win.style.left = prev.left;
-          win.style.width = prev.width; win.style.height = prev.height;
-          win.style.transform = prev.transform || 'none';
-        } else {
-          win.style.top = '50%'; win.style.left = '50%';
-          win.style.transform = 'translate(-50%, -50%)';
-          win.style.width = '94vw'; win.style.maxWidth = '580px'; win.style.height = 'auto';
-        }
-      } else {
-        windowRestoreBounds[id] = {
-          top: win.style.top || '50%',
-          left: win.style.left || '50%',
-          width: win.style.width || '94vw',
-          height: win.style.height || 'auto',
-          transform: win.style.transform || 'translate(-50%, -50%)'
-        };
-        win.classList.add('maximized');
-      }
-    }
-
-    function updateTaskbar() {
-      const container = document.getElementById('taskbarItems');
-      if (!container) return;
-      container.innerHTML = '';
-      for (const [winId, title] of Object.entries(minimizedWindows)) {
-        const btn = document.createElement('button');
-        btn.className = 'task-item-btn';
-        btn.innerText = `📁 ${title}`;
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          openWindow(winId);
-        };
-        container.appendChild(btn);
-      }
-    }
-
-    function dragElement(elmnt, event) {
-      if (elmnt.classList.contains('maximized')) return;
-      if (event.target.closest('.title-bar-controls')) return;
-      if (window.innerWidth < 600) return;
-
-      elmnt.style.zIndex = ++highestZ;
-
-      if (elmnt.style.transform && elmnt.style.transform.includes('translate')) {
-        const rect = elmnt.getBoundingClientRect();
-        elmnt.style.transform = 'none';
-        elmnt.style.top = rect.top + 'px';
-        elmnt.style.left = rect.left + 'px';
-      }
-
-      let pos1 = 0, pos2 = 0, pos3 = event.clientX, pos4 = event.clientY;
-      document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
-      document.onmousemove = (e) => {
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-      };
-    }
-
-    function openFolderWithHistory(folderId, folderName) {
-      if (currentOpenFolderId && currentOpenFolderId !== folderId) {
-        folderHistory.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
-        folderForwardStack = [];
-      }
-      currentOpenFolderId = folderId;
-      document.getElementById('folderTitle').innerText = `📁 ${folderName}`;
-      renderFolderContent(folderId);
-      updateNavButtons();
-      openWindow('folder-win');
-    }
-
-    function navGoBack(e) {
+    function toggleStartMenu(e) {
       if (e) e.stopPropagation();
-      if (folderHistory.length === 0) return;
-      const prev = folderHistory.pop();
-      folderForwardStack.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
-      currentOpenFolderId = prev.id;
-      document.getElementById('folderTitle').innerText = `📁 ${prev.name}`;
-      renderFolderContent(prev.id);
-      updateNavButtons();
+      const menu = document.getElementById('startMenu');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
     }
 
-    function navGoForward(e) {
-      if (e) e.stopPropagation();
-      if (folderForwardStack.length === 0) return;
-      const next = folderForwardStack.pop();
-      folderHistory.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
-      currentOpenFolderId = next.id;
-      document.getElementById('folderTitle').innerText = `📁 ${next.name}`;
-      renderFolderContent(next.id);
-      updateNavButtons();
+    function goToOriginalDesktop() {
+      window.location.href = "https://u11150003-arch.github.io/2027-winter-bday-desktop/";
     }
 
-    function updateNavButtons() {
-      const backBtn = document.getElementById('btnNavBack');
-      const fwdBtn = document.getElementById('btnNavForward');
-      if (backBtn) backBtn.disabled = folderHistory.length === 0;
-      if (fwdBtn) fwdBtn.disabled = folderForwardStack.length === 0;
+    function handleGlobalClick(e) {
+      const menu = document.getElementById('startMenu');
+      if (menu) menu.style.display = 'none';
     }
 
-    function renderFolderContent(folderId) {
-      const box = document.getElementById('folderInnerContent');
-      box.innerHTML = '';
-      const children = itemsData.filter(i => i.parentId === folderId);
+    (function init3dDiscDrag() {
+      const disc = document.getElementById('disc3D');
+      let isDragging = false, startX, startY, curX = 0, curY = 0;
 
-      if (children.length === 0) {
-        box.innerHTML = '<span style="font-size:12px; color:#888; padding:8px;">此資料夾為空</span>';
-        return;
+      function onStart(e) {
+        isDragging = true;
+        startX = (e.touches ? e.touches[0].clientX : e.clientX) - curX;
+        startY = (e.touches ? e.touches[0].clientY : e.clientY) - curY;
       }
-
-      children.forEach(item => {
-        const itemEl = createIconElement(item);
-        itemEl.style.position = 'relative';
-        itemEl.onclick = (e) => {
-          e.stopPropagation();
-          if (isAdmin) {
-            selectedItemId = item.id;
-            updateSelectionUI();
-            renderFolderContent(folderId);
-          }
-          handleItemClick(item);
-        };
-        box.appendChild(itemEl);
-      });
-    }
-
-    function createItem(type, parentId, e) {
-      if (e) e.stopPropagation();
-      addItem(type, parentId);
-    }
-    function createItemInsideFolder(type, e) {
-      if (e) e.stopPropagation();
-      if (!currentOpenFolderId) return;
-      addItem(type, currentOpenFolderId);
-    }
-
-    function addItem(type, parentId) {
-      const name = prompt("請輸入名稱：", "新項目");
-      if (!name) return;
-      let icon = "", content = "", url = "", mediaUrl = "";
-
-      if (type === 'video') {
-        const rawUrl = prompt("請貼上 YouTube 網址 或 Google 雲端影片共享連結：");
-        if (!rawUrl) return;
-        mediaUrl = autoFormatMediaUrl(rawUrl, 'video');
-        icon = ICON_DISC_PURE;
-      } else if (type === 'image') {
-        const rawUrl = prompt("請貼上圖片網址（支援 Google 雲端共享連結）：");
-        if (!rawUrl) return;
-        mediaUrl = autoFormatMediaUrl(rawUrl, 'image');
-        icon = mediaUrl;
-      } else if (type === 'note') {
-        content = prompt("請輸入便利貼內文：", "寫下備忘...");
-        icon = "https://win98icons.alexmeub.com/icons/png/notepad-5.png";
-      } else if (type === 'link') {
-        url = prompt("請輸入完整跳轉網址 (含 https://)：", "https://");
-        icon = W_FORM_ICON;
+      function onMove(e) {
+        if (!isDragging) return;
+        curX = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
+        curY = (e.touches ? e.touches[0].clientY : e.clientY) - startY;
+        disc.style.transform = `translate(${curX}px, ${curY}px) rotateY(${curX * 0.3}deg) rotateX(${-curY * 0.3}deg)`;
       }
+      function onEnd() { isDragging = false; }
 
-      itemsData.push({ id: Date.now().toString(), parentId, type, name, icon, content, url, mediaUrl, pos: { x: 120, y: 120 } });
-      saveState();
-    }
-
-    function editItem(id) {
-      const item = itemsData.find(i => i.id === id);
-      if (!item) return;
-
-      const newName = prompt("重新命名：", item.name);
-      if (newName) item.name = newName;
-
-      if (item.type === 'cd_standalone' || item.type === 'album' || item.type === 'folder') {
-        const rawBadge = prompt("更改右下角光碟/資料夾封面照片網址 (支援 Google 雲端共享連結)：", item.coverBadge || "");
-        if (rawBadge !== null) {
-          item.coverBadge = rawBadge ? autoFormatMediaUrl(rawBadge, 'image') : "";
-          item.iconType = item.coverBadge ? "cover" : "pure";
-        }
-      } else {
-        const rawIcon = prompt("更改圖示網址 (留空不改)：", item.icon || "");
-        if (rawIcon) item.icon = autoFormatMediaUrl(rawIcon, 'icon');
-      }
-
-      if (item.type === 'video') {
-        const rawMedia = prompt("更改音樂／影片連結 (YouTube 或 Google雲端)：", item.mediaUrl);
-        if (rawMedia) item.mediaUrl = autoFormatMediaUrl(rawMedia, 'video');
-      } else if (item.type === 'image') {
-        const rawMedia = prompt("更改圖片網址：", item.mediaUrl);
-        if (rawMedia) {
-          item.mediaUrl = autoFormatMediaUrl(rawMedia, 'image');
-          item.icon = item.mediaUrl;
-        }
-      } else if (item.type === 'link') {
-        const u = prompt("更改跳轉網址：", item.url);
-        if (u) item.url = u;
-      } else if (item.type === 'note') {
-        const c = prompt("更改便利貼內文：", item.content);
-        if (c !== null) item.content = c;
-      }
-
-      saveState();
-    }
-
-    function openPhotoViewer(title, url) {
-      document.getElementById('photoViewerTitle').innerText = `🖼️ ${title}`;
-      document.getElementById('largePhotoDisplay').src = url;
-      openWindow('photo-viewer-win');
-    }
-
-    function openUniversalPlayer(title, url) {
-      document.getElementById('mediaViewerTitle').innerText = `🎬 ${title}`;
-      const iframe = document.getElementById('universalIframe');
-      const video = document.getElementById('universalVideo');
-
-      if (url.includes('drive.google.com') || url.includes('youtube.com') || url.includes('youtu.be')) {
-        let finalSrc = url;
-        if (url.includes('youtube.com') || url.includes('youtu.be')) {
-          let vid = url;
-          if (url.includes("v=")) vid = url.split("v=")[1].substring(0, 11);
-          else if (url.includes("youtu.be/")) vid = url.split("youtu.be/")[1].substring(0, 11);
-          finalSrc = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&enablejsapi=1&rel=0`;
-        }
-        video.pause(); video.style.display = 'none';
-        iframe.style.display = 'block';
-        if (iframe.src !== finalSrc) iframe.src = finalSrc;
-      } else {
-        iframe.src = ''; iframe.style.display = 'none';
-        video.style.display = 'block';
-        video.src = url;
-      }
-      openWindow('media-player-win');
-    }
-
-    function closeUniversalPlayer(e) {
-      if (e) e.stopPropagation();
-      document.getElementById('universalIframe').src = '';
-      const v = document.getElementById('universalVideo');
-      v.pause(); v.src = '';
-      closeWindow('media-player-win');
-    }
-
-    function changeWallpaper(e) {
-      if (e) e.stopPropagation();
-      const rawUrl = prompt("請輸入桌布圖片網址（支援 Google 雲端共享連結）：", "");
-      if (rawUrl) {
-        const finalUrl = autoFormatMediaUrl(rawUrl, 'wallpaper');
-        document.body.style.backgroundImage = `url('${finalUrl}')`;
-        currentConfig.wallpaper = finalUrl;
-        saveState();
-      }
-    }
+      disc.addEventListener('mousedown', onStart);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onEnd);
+      disc.addEventListener('touchstart', onStart, { passive: true });
+      window.addEventListener('touchmove', onMove, { passive: true });
+      window.addEventListener('touchend', onEnd);
+    })();
 
     const viewport = document.getElementById('topActionsViewport');
     const track = document.getElementById('scrollbarTrack');
@@ -1552,12 +934,8 @@
     }
 
     window.addEventListener('resize', updateScrollBarUI);
-
-    if (currentConfig.wallpaper) {
-      document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;
-    }
-    renderDesktop();
-    renderStartMenu();
+    renderCdPlayerUI();
   </script>
 </body>
 </html>
+

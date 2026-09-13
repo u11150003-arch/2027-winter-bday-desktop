@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>2027 WINTER Bday desktop</title>
 
-  <!-- 網址分享縮圖 -->
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A special retro desktop space created for WINTER">
   <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
@@ -37,7 +36,6 @@
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部管理列容器 (訪客無灰框無滑桿) */
     .top-bar-wrapper {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
@@ -66,7 +64,6 @@
     }
     #authBtn { pointer-events: auto; align-self: flex-start; }
 
-    /* 管理員專用實體滑桿 */
     .admin-scrollbar-bar {
       display: none; height: 16px; background: #c0c0c0; border-top: 1px solid #808080;
       margin-top: 3px; align-items: center; position: relative;
@@ -89,7 +86,6 @@
     }
     .scrollbar-thumb:active { cursor: grabbing; border: 1px inset #fff; }
 
-    /* 桌面容器 */
     .desktop {
       position: absolute;
       top: 56px;
@@ -99,7 +95,6 @@
       overflow: hidden;
     }
 
-    /* 圖示結構 */
     .icon-wrapper {
       position: absolute;
       width: 76px;
@@ -124,7 +119,6 @@
     }
     body.admin-mode .icon-select-check { display: block; }
 
-    /* 雙模式封面框 (光碟機+自訂方形卡片封面) */
     .icon-art-box {
       position: relative; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;
     }
@@ -144,7 +138,6 @@
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
 
-    /* 視窗通用樣式 */
     .win-modal {
       position: fixed; display: none; z-index: 100;
       box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
@@ -162,7 +155,6 @@
       height: calc(100% - 32px); max-height: calc(100% - 32px); overflow-y: auto; padding: 6px;
     }
 
-    /* 最大化樣式 */
     .win-modal.maximized {
       top: 0 !important; left: 0 !important; transform: none !important;
       width: 100vw !important; max-width: 100vw !important;
@@ -171,15 +163,20 @@
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
-    /* 嵌入式 iframe 播放器視窗容器 */
+    /* 播放器容器 */
+    #embedded-cd-win {
+      height: 82vh;
+      max-height: calc(100vh - 100px);
+      width: 94vw;
+      max-width: 480px;
+    }
     .embedded-player-container {
-      width: 100%; height: 100%; min-height: 480px; background: #000;
+      width: 100%; height: 100%; background: #000;
     }
     .embedded-player-container iframe {
       width: 100%; height: 100%; border: none;
     }
 
-    /* 資料夾導航列 */
     .folder-nav-bar {
       display: flex; gap: 4px; align-items: center; margin-bottom: 6px; background: #dfdfdf;
       padding: 3px 5px; border: 1px solid #7f9db9; flex-wrap: wrap;
@@ -200,7 +197,6 @@
     }
     .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
 
-    /* 底部工作列 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
       height: var(--taskbar-h); min-height: 36px;
@@ -216,7 +212,6 @@
     .taskbar-right { font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
 
-    /* WINTER01 XP 開始選單 */
     .start-menu {
       position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
       width: 235px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
@@ -246,7 +241,6 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列 -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
@@ -274,7 +268,6 @@
       <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
     </div>
 
-    <!-- 管理員實體滑桿條 -->
     <div class="admin-scrollbar-bar" id="adminScrollbarBar">
       <button type="button" class="scrollbar-btn" onclick="scrollAdminBar(-100)">◀</button>
       <div class="scrollbar-track" id="scrollbarTrack" onclick="handleTrackClick(event)">
@@ -284,11 +277,10 @@
     </div>
   </div>
 
-  <!-- 桌面容器 -->
   <div class="desktop" id="desktopContainer"></div>
 
-  <!-- 嵌入式 WINTER CD PLAYER 獨立網頁視窗 (iframe 內嵌) -->
-  <div id="embedded-cd-win" class="window win-modal" style="max-width: 480px; height: 85vh;" onclick="event.stopPropagation()">
+  <!-- 嵌入式 CD 播放器視窗 -->
+  <div id="embedded-cd-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="embeddedCdTitle">💿 WINTER CD PLAYER</div>
       <div class="title-bar-controls">
@@ -304,13 +296,11 @@
     </div>
   </div>
 
-  <!-- WINTER01 XP 開始選單 -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>⭐ WINTER01 XP</span>
       <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal(event)">設定</button>
     </div>
-    <!-- 內建前往 CD Player 的快速捷徑 -->
     <ul>
       <li onclick="openWinterCdPlayerWindow(); toggleStartMenu(event);">💿 <strong>WINTER CD PLAYER</strong></li>
       <hr style="margin: 3px 0;">
@@ -322,7 +312,6 @@
     </ul>
   </div>
 
-  <!-- 移動到... 目標資料夾選擇彈窗 -->
   <div id="move-modal-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text" id="moveModalTitle">📦 移動項目至...</div>
@@ -336,7 +325,6 @@
     </div>
   </div>
 
-  <!-- 開始選單自訂彈窗 -->
   <div id="start-config-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
     <div class="title-bar">
       <div class="title-bar-text">⭐ 自訂開始選單項目</div>
@@ -353,7 +341,6 @@
     </div>
   </div>
 
-  <!-- 資料夾視窗 -->
   <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
@@ -378,7 +365,6 @@
     </div>
   </div>
 
-  <!-- 傳統專輯曲目播放器視窗 -->
   <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
@@ -400,7 +386,6 @@
     </div>
   </div>
 
-  <!-- 圖片檢視器 -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -417,7 +402,6 @@
     </div>
   </div>
 
-  <!-- 影音播放器 -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
@@ -435,7 +419,6 @@
     </div>
   </div>
 
-  <!-- 外部連結視窗 -->
   <div id="link-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
@@ -451,7 +434,6 @@
     </div>
   </div>
 
-  <!-- 底部工作列 -->
   <div class="taskbar">
     <div class="taskbar-left">
       <button type="button" onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
@@ -487,7 +469,6 @@
     const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* ========== 核心永久儲存配置 (嵌入 winter-cd-player 與自訂光碟封面) ========== */
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "startMenuVisibleIds": [
@@ -505,7 +486,6 @@
           "name": "Winter Playlist",
           "iconType": "cover",
           "icon": ICON_DISC_DRIVE,
-          // 右下角自訂方形照片封面 (金旼炡概念照)
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
           "url": "https://u11150003-arch.github.io/winter-cd-player/",
           "pos": { "x": 14, "y": 357 }
@@ -588,9 +568,8 @@
         }
       ]
     };
-    /* ================================================================= */
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v13_cd";
+    const CONFIG_VERSION = "winter_desktop_2026_09_13_v14_fix";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -599,7 +578,6 @@
     let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
     let itemsData = currentConfig.items;
 
-    // 開啟嵌入式 WINTER CD PLAYER 獨立網頁
     function openWinterCdPlayerWindow() {
       const item = itemsData.find(i => i.id === "winter_cd_standalone_entry");
       const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-cd-player/";
@@ -611,7 +589,7 @@
     function closeEmbeddedCdWindow(e) {
       if (e) e.stopPropagation();
       const iframe = document.getElementById('embeddedCdIframe');
-      iframe.src = ''; // 關閉時中斷音樂
+      iframe.src = '';
       closeWindow('embedded-cd-win', e);
     }
 
@@ -842,7 +820,6 @@
       });
     }
 
-    // 支援托盤 CD + 自訂封面照片 (如圖一比一呈現)
     function createIconElement(item) {
       const div = document.createElement('div');
       const isSelected = selectedItemId === item.id;
@@ -1165,7 +1142,6 @@
       }
     }
 
-    /* ========== 視窗縮放與關閉控制 ========== */
     let highestZ = 200;
     const minimizedWindows = {};
 
@@ -1244,9 +1220,12 @@
           win.style.width = prev.width; win.style.height = prev.height;
           win.style.transform = prev.transform || 'none';
         } else {
-          win.style.top = '50%'; win.style.left = '50%';
+          win.style.top = '50%';
+          win.style.left = '50%';
           win.style.transform = 'translate(-50%, -50%)';
-          win.style.width = '94vw'; win.style.maxWidth = '580px'; win.style.height = 'auto';
+          win.style.width = '94vw';
+          win.style.maxWidth = '580px';
+          win.style.height = 'auto';
         }
       } else {
         windowRestoreBounds[id] = {
@@ -1406,7 +1385,6 @@
       saveState();
     }
 
-    // 支援編輯純 CD 封面照片
     function editItem(id) {
       const item = itemsData.find(i => i.id === id);
       if (!item) return;
@@ -1494,7 +1472,6 @@
       }
     }
 
-    /* ========== 頂部滑桿 ========== */
     const viewport = document.getElementById('topActionsViewport');
     const track = document.getElementById('scrollbarTrack');
     const thumb = document.getElementById('scrollbarThumb');

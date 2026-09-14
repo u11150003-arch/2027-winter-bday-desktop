@@ -167,11 +167,11 @@
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
-    #embedded-cd-win {
+    #embedded-cd-win, #embedded-galaxy-win {
       height: 82vh;
       max-height: calc(100vh - var(--taskbar-h) - 30px);
       width: 95vw;
-      max-width: 480px;
+      max-width: 520px;
     }
     .embedded-player-container {
       width: 100%; height: 100%; background: #000;
@@ -219,7 +219,7 @@
 
     .start-menu {
       position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
-      width: 235px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
+      width: 260px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 10000; padding: 3px;
     }
     .start-menu-banner {
@@ -250,6 +250,7 @@
     <div class="top-actions-viewport" id="topActionsViewport">
       <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
       <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
+      <button class="admin-only" onclick="openWinterGalaxyWindow()">🪐 開啟 GALAXY 視訊</button>
       <button class="admin-only" onclick="openWinterCdPlayerWindow()">💿 開啟 CD 播放器</button>
       <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 傳統專輯</button>
       <button class="admin-only" onclick="createItem('video', null, event)">+ 音樂/影片</button>
@@ -284,6 +285,23 @@
 
   <div class="desktop" id="desktopContainer"></div>
 
+  <!-- 嵌入式 GALAXY 視訊視窗 -->
+  <div id="embedded-galaxy-win" class="window win-modal" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text">🪐 WINTER GALAXY</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-galaxy-win', 'Galaxy 視訊', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-galaxy-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeEmbeddedGalaxyWindow(event)" title="關閉"></button>
+      </div>
+    </div>
+    <div class="window-body" style="padding: 0; background: #000; overflow: hidden; height: calc(100% - 30px);">
+      <div class="embedded-player-container">
+        <iframe id="embeddedGalaxyIframe" src="" allow="autoplay; camera; microphone; accelerometer; gyroscope"></iframe>
+      </div>
+    </div>
+  </div>
+
   <!-- 嵌入式 CD 播放器視窗 -->
   <div id="embedded-cd-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
@@ -301,14 +319,17 @@
     </div>
   </div>
 
+  <!-- 開始選單 (左下角 WINTER 按鍵) -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
-      <span>⭐ WINTER01 XP</span>
+      <span>⭐ WINTER NAVIGATION</span>
       <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal(event)">設定</button>
     </div>
     <ul>
-      <li onclick="openWinterCdPlayerWindow(); toggleStartMenu(event);">💿 <strong>WINTER CD PLAYER</strong></li>
-      <hr style="margin: 3px 0;">
+      <li onclick="goHome(event); toggleStartMenu(event);">🖥️ <strong>1. 回到原始 Desktop 桌面</strong></li>
+      <li onclick="openWinterCdPlayerWindow(); toggleStartMenu(event);">💿 <strong>2. 開啟 WINTER CD PLAYER</strong></li>
+      <li onclick="openWinterGalaxyWindow(); toggleStartMenu(event);">🪐 <strong>3. 進入 WINTER GALAXY 視訊</strong></li>
+      <hr style="margin: 4px 0;">
     </ul>
     <ul id="startMenuList"></ul>
     <hr style="margin: 4px 0;">
@@ -338,7 +359,7 @@
       </div>
     </div>
     <div class="window-body">
-      <p style="font-size:12px; margin-top:0;">請勾選要在 WINTER01 XP 選單中顯示的項目：</p>
+      <p style="font-size:12px; margin-top:0;">請勾選要在選單中顯示的項目：</p>
       <div id="startConfigCheckboxes" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
       <div style="margin-top:8px; text-align:right;">
         <button type="button" onclick="saveStartMenuConfig(event)">確定儲存</button>
@@ -472,11 +493,13 @@
     const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
     const ICON_DISC_PURE = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
     const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
+    const ICON_GALAXY = "https://win98icons.alexmeub.com/icons/png/msagent-0.png";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "startMenuVisibleIds": [
+        "winter_galaxy_entry",
         "winter_cd_standalone_entry",
         "l1",
         "folder_1789230844971",
@@ -484,6 +507,17 @@
         "folder_1789233534244"
       ],
       "items": [
+        {
+          "id": "winter_galaxy_entry",
+          "parentId": null,
+          "type": "galaxy_standalone",
+          "name": "WINTER GALAXY",
+          "iconType": "pure",
+          "icon": ICON_GALAXY,
+          "coverBadge": "",
+          "url": "https://u11150003-arch.github.io/winter-galaxy/",
+          "pos": { "x": 14, "y": 280 }
+        },
         {
           "id": "winter_cd_standalone_entry",
           "parentId": null,
@@ -493,7 +527,7 @@
           "icon": ICON_DISC_DRIVE,
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
           "url": "https://u11150003-arch.github.io/winter-cd-player/",
-          "pos": { "x": 14, "y": 357 }
+          "pos": { "x": 14, "y": 360 }
         },
         {
           "id": "img1",
@@ -520,7 +554,7 @@
           "name": "生咖預約表單",
           "icon": W_FORM_ICON,
           "url": "https://wintertst0101.netlify.app/",
-          "pos": { "x": 16, "y": 256 }
+          "pos": { "x": 16, "y": 200 }
         },
         {
           "id": "1789230813079",
@@ -539,7 +573,7 @@
           "iconType": "pure",
           "icon": ICON_FOLDER_DEFAULT,
           "coverBadge": "",
-          "pos": { "x": 21, "y": 98 }
+          "pos": { "x": 21, "y": 110 }
         },
         {
           "id": "folder_1789230890651",
@@ -569,12 +603,12 @@
           "iconType": "pure",
           "icon": ICON_FOLDER_DEFAULT,
           "coverBadge": "",
-          "pos": { "x": 19, "y": 174 }
+          "pos": { "x": 110, "y": 20 }
         }
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_2026_09_13_v17_restored";
+    const CONFIG_VERSION = "winter_desktop_final_galaxy_v2026_11";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -582,6 +616,21 @@
 
     let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
     let itemsData = currentConfig.items;
+
+    function openWinterGalaxyWindow() {
+      const item = itemsData.find(i => i.id === "winter_galaxy_entry");
+      const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-galaxy/";
+      const iframe = document.getElementById('embeddedGalaxyIframe');
+      if (iframe.src !== targetUrl) iframe.src = targetUrl;
+      openWindow('embedded-galaxy-win');
+    }
+
+    function closeEmbeddedGalaxyWindow(e) {
+      if (e) e.stopPropagation();
+      const iframe = document.getElementById('embeddedGalaxyIframe');
+      iframe.src = '';
+      closeWindow('embedded-galaxy-win', e);
+    }
 
     function openWinterCdPlayerWindow() {
       const item = itemsData.find(i => i.id === "winter_cd_standalone_entry");
@@ -628,7 +677,7 @@
       currentConfig.items = itemsData;
       const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
       navigator.clipboard.writeText(output).then(() => {
-        alert("✅ 成功複製配置代碼！\n\n請至 GitHub index.html 替換 MASTER_CONFIG 區域即可永久儲存。");
+        alert("✅ 成功複製配置代碼！請至 GitHub index.html 替換 MASTER_CONFIG 區域即可永久儲存。");
       }).catch(() => {
         prompt("請複製代碼並貼回 index.html：", output);
       });
@@ -643,6 +692,7 @@
       closeUniversalPlayer();
       closeAlbumWindow();
       closeEmbeddedCdWindow();
+      closeEmbeddedGalaxyWindow();
       currentOpenFolderId = null;
       currentOpenAlbumId = null;
       folderHistory = [];
@@ -832,7 +882,9 @@
       div.className = `icon-wrapper dynamic-item ${isSelected ? 'selected' : ''} ${isCut ? 'cut-mode' : ''}`;
 
       let iconHtml = "";
-      if (item.type === 'cd_standalone' || item.type === 'album') {
+      if (item.type === 'galaxy_standalone') {
+        iconHtml = `<div class="icon-art-box"><img src="${ICON_GALAXY}" class="base-img"></div>`;
+      } else if (item.type === 'cd_standalone' || item.type === 'album') {
         if (item.coverBadge) {
           iconHtml = `
             <div class="icon-art-box">
@@ -935,7 +987,9 @@
     }
 
     function handleItemClick(item) {
-      if (item.type === 'cd_standalone') {
+      if (item.type === 'galaxy_standalone') {
+        openWinterGalaxyWindow();
+      } else if (item.type === 'cd_standalone') {
         openWinterCdPlayerWindow();
       } else if (item.type === 'folder') {
         openFolderWithHistory(item.id, item.name);
@@ -1165,7 +1219,7 @@
         win.style.top = '50%';
         win.style.left = '50%';
         win.style.transform = 'translate(-50%, -50%)';
-        if (id === 'embedded-cd-win') {
+        if (id === 'embedded-cd-win' || id === 'embedded-galaxy-win') {
           win.style.height = '82vh';
           win.style.width = '95vw';
         }
@@ -1236,9 +1290,9 @@
         } else {
           win.style.top = '50%'; win.style.left = '50%';
           win.style.transform = 'translate(-50%, -50%)';
-          win.style.width = (id === 'embedded-cd-win') ? '95vw' : '94vw';
-          win.style.maxWidth = (id === 'embedded-cd-win') ? '480px' : '580px';
-          win.style.height = (id === 'embedded-cd-win') ? '82vh' : 'auto';
+          win.style.width = '95vw';
+          win.style.maxWidth = '520px';
+          win.style.height = '82vh';
         }
       } else {
         windowRestoreBounds[id] = {

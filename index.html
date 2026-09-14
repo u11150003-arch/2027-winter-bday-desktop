@@ -101,7 +101,7 @@
 
     .icon-wrapper {
       position: absolute;
-      width: 76px;
+      width: 84px; /* 寬度加寬，確保所有項目文字舒適排版 */
       display: flex; flex-direction: column; align-items: center;
       cursor: var(--star-cursor); text-align: center;
       color: white; text-shadow: 1px 1px 2px black;
@@ -135,8 +135,10 @@
       bottom: 0; right: 0; box-shadow: 1px 1px 4px rgba(0,0,0,0.6); pointer-events: none;
     }
 
+    /* 確保所有項目的字體一致，且 WINTER GALAXY 單行呈現 */
     .icon-wrapper span {
-      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: break-all; pointer-events: none;
+      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: keep-all; white-space: nowrap; pointer-events: none;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
     }
 
     .admin-only { display: none !important; }
@@ -319,7 +321,7 @@
     </div>
   </div>
 
-  <!-- 開始選單 (左下角 WINTER 按鍵) -->
+  <!-- 開始選單 (三網頁互通) -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>⭐ WINTER NAVIGATION</span>
@@ -493,7 +495,10 @@
     const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
     const ICON_DISC_PURE = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
     const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
-    const ICON_GALAXY = "https://win98icons.alexmeub.com/icons/png/msagent-0.png";
+    
+    // 真實復古像素 Saturn 金黃光環星球圖示 (精美高畫質 SVG)
+    const ICON_GALAXY_PLANET = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><defs><radialGradient id='planetGrad' cx='35%' cy='35%' r='65%'><stop offset='0%' stop-color='%23fff3b0'/><stop offset='40%' stop-color='%23e09f3e'/><stop offset='100%' stop-color='%23540b0e'/></radialGradient></defs><ellipse cx='24' cy='24' rx='22' ry='7' fill='none' stroke='%23f48c06' stroke-width='2.5' transform='rotate(-22 24 24)' opacity='0.85'/><circle cx='24' cy='24' r='14' fill='url(%23planetGrad)'/><ellipse cx='24' cy='24' rx='22' ry='7' fill='none' stroke='%23ffba08' stroke-width='2.5' stroke-dasharray='35 50' transform='rotate(-22 24 24)'/></svg>";
+    
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
     const MASTER_CONFIG = {
@@ -513,7 +518,7 @@
           "type": "galaxy_standalone",
           "name": "WINTER GALAXY",
           "iconType": "pure",
-          "icon": ICON_GALAXY,
+          "icon": ICON_GALAXY_PLANET,
           "coverBadge": "",
           "url": "https://u11150003-arch.github.io/winter-galaxy/",
           "pos": { "x": 14, "y": 280 }
@@ -608,7 +613,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_final_galaxy_v2026_11";
+    const CONFIG_VERSION = "winter_desktop_planet_icon_fix_v2026_14";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -847,7 +852,7 @@
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
           setTimeout(updateScrollBarUI, 80);
-          alert("登入成功！已解鎖自訂 CD 封面照片、編輯與管理功能。");
+          alert("登入成功！已解鎖管理功能。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
@@ -883,7 +888,8 @@
 
       let iconHtml = "";
       if (item.type === 'galaxy_standalone') {
-        iconHtml = `<div class="icon-art-box"><img src="${ICON_GALAXY}" class="base-img"></div>`;
+        // 使用金黃色復古行星圖示
+        iconHtml = `<div class="icon-art-box"><img src="${item.icon || ICON_GALAXY_PLANET}" class="base-img"></div>`;
       } else if (item.type === 'cd_standalone' || item.type === 'album') {
         if (item.coverBadge) {
           iconHtml = `

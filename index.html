@@ -1,1 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>WINTER RANCH - Wild West Town</title>
 
+  <meta property="og:title" content="WINTER RANCH">
+  <meta property="og:description" content="Visit Winter and Ponyo in the Wild West">
+  <meta property="og:image" content="https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o">
+
+  <link rel="stylesheet" href="https://unpkg.com/98.css">
+  <style>
+    * { 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent; 
+      user-select: none;
+    }
+    
+    :root {
+      /* 西部牛仔風星形游標 */
+      --star-cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9' fill='%23d4a373' stroke='%236f4e37' stroke-width='1.5'/></svg>") 4 4, auto;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --taskbar-h: calc(38px + var(--safe-bottom));
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      background: #c29567;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
+    }
+
+    button, a, .start-menu li, .barn-chip {
+      cursor: var(--star-cursor) !important;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
+    }
+
+    /* 頂部管理列 */
+    .top-bar-wrapper {
+      position: absolute;
+      top: max(6px, env(safe-area-inset-top, 6px));
+      left: max(6px, var(--safe-left));
+      right: max(6px, var(--safe-right));
+      z-index: 100; display: flex; flex-direction: column;
+      background: transparent; border: none; pointer-events: none;
+    }
+    body.admin-mode .top-bar-wrapper {
+      background: #c0c0c0; border: 2px outset #fff; padding: 3px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.4); pointer-events: auto;
+    }
+    .top-actions-viewport {
+      display: flex; gap: 4px; overflow-x: hidden; white-space: nowrap; pointer-events: auto;
+    }
+    .top-actions-viewport button, .top-actions-viewport span {
+      flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer; height: 25px;
+    }
+    #authBtn { pointer-events: auto; align-self: flex-start; }
+
+    .admin-only { display: none !important; }
+    body.admin-mode .admin-only { display: inline-flex !important; }
+
+    /* 主舞台區 */
+    .app-container {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      bottom: var(--taskbar-h);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      background: linear-gradient(180deg, #e3a874 0%, #d48b52 40%, #a45d2d 75%, #6f3b19 100%);
+    }
+
+    .ranch-header {
+      position: absolute;
+      top: 42px; left: 0; right: 0;
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .ranch-header h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: #fff3b0;
+      text-shadow: 2px 2px 0px #6f3b19, 0 0 10px rgba(0,0,0,0.5);
+      font-family: monospace, sans-serif;
+    }
+    .ranch-header p {
+      margin: 3px 0 0;
+      font-size: 11px;
+      color: #ffe3a8;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 0px #000;
+    }
+
+    .ranch-canvas-wrap {
+      flex: 1; width: 100%; height: 100%;
+      position: relative;
+    }
+    #ranchCanvas {
+      width: 100%; height: 100%; display: block;
+    }
+
+    /* 視訊分割容器 */
+    .video-chat-container {
+      display: none;
+      position: absolute;
+      top: 40px; left: 6px; right: 6px;
+      bottom: 42px;
+      background: #000;
+      z-index: 25;
+      padding: 4px;
+      gap: 6px;
+      box-sizing: border-box;
+    }
+    .video-chat-container.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 768px) {
+      .video-chat-container.active {
+        top: 36px;
+        bottom: 38px;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+    }
+
+    .video-win {
+      position: relative;
+      background: #000;
+      border: 2px outset #fff;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .video-win-header {
+      background: linear-gradient(90deg, #8b4513, #cd853f);
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 3px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .video-win-body {
+      position: relative;
+      flex: 1; width: 100%; height: 100%;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    
+    .video-viewport-box {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #000;
+    }
+    .video-element-wrapper {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-origin: center center;
+      transition: transform 0.1s ease-out;
+    }
+    .video-element-wrapper iframe, .video-element-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border: none;
+    }
+
+    /* 關鍵：YouTube 隱形遮罩防干擾層，屏蔽所有字樣與按鍵 */
+    .yt-pointer-guard {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 5;
+      background: transparent;
+      pointer-events: auto;
+    }
+
+    .mirror-cam { transform: scaleX(-1); width: 100%; height: 100%; object-fit: cover; }
+    .cam-hint {
+      position: absolute; font-size: 11px; color: #aaa; text-align: center; padding: 8px;
+    }
+
+    /* 下方半透明西部皮質按鍵列 */
+    .barn-selector-bar {
+      position: absolute;
+      bottom: 6px; left: 0; right: 0;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 10px;
+      overflow-x: auto;
+      z-index: 30;
+      pointer-events: none;
+    }
+    .barn-chip {
+      pointer-events: auto;
+      background: rgba(84, 46, 21, 0.8) !important;
+      backdrop-filter: blur(4px);
+      border: 1.5px solid #d4a373 !important;
+      color: #fff3b0 !important;
+      border-radius: 14px !important;
+      padding: 3px 12px !important;
+      font-size: 11px !important;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .barn-chip:hover {
+      background: #a45d2d !important;
+      color: #fff !important;
+      border-color: #ffe3a8 !important;
+    }
+    .barn-chip.active {
+      background: #6f3b19 !important;
+      border-color: #ffd700 !important;
+      color: #ffff80 !important;
+    }
+
+    /* 視訊畫面微調面板 */
+    .adjust-modal {
+      display: none; position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 330px; z-index: 9999;
+      box-shadow: 3px 3px 14px rgba(0,0,0,0.75);
+      background: #c0c0c0; border: 2px outset #fff;
+    }
+    .adjust-modal .slider-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 7px; font-size: 11px;
+    }
+    .adjust-modal input[type="range"] { width: 135px; }
+    .adjust-modal input[type="number"] { width: 75px; font-size: 11px; padding: 2px; }
+
+    /* 工作列 */
+    .taskbar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--taskbar-h); min-height: 38px;
+      background: #c0c0c0; border-top: 2px solid #fff;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding-top: 4px;
+      padding-left: max(8px, var(--safe-left));
+      padding-right: max(14px, var(--safe-right));
+      padding-bottom: max(6px, var(--safe-bottom));
+      z-index: 2500;
+    }
+    .taskbar-left { display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1; }
+    .task-item-btn { font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
+    .taskbar-right { font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0; height: 26px; }
+    .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
+
+    /* 開始選單 */
+    .start-menu {
+      position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
+      width: 260px; background: #c0c0c0; border: 2px outset #fff;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 3000; padding: 3px;
+    }
+    .start-menu-banner {
+      background: linear-gradient(180deg, #8b4513, #cd853f);
+      color: #fff; font-weight: bold; padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+    .start-menu ul { list-style: none; margin: 0; padding: 0; }
+    .start-menu li {
+      padding: 7px 10px; font-size: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .start-menu li:hover { background: #8b4513; color: #fff; }
+    .start-menu a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px; width: 100%; }
+  </style>
+</head>
+<body onclick="handleGlobalClick(event)">
+
+  <div class="top-bar-wrapper" id="topBarWrapper">
+    <div class="top-actions-viewport" id="topActionsViewport">
+      <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
+      <button class="admin-only" style="background:#fff2b2; font-weight:bold;" onclick="openAdjustModal()">🔍 調視訊畫面/秒數</button>
+      <button class="admin-only" onclick="editCurrentBarnPrompt()">✏️ 編輯當前馬廄</button>
+      <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportRanchState()">💾 永久儲存代碼</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <div class="ranch-header" id="ranchHeader">
+      <h2>WINTER RANCH</h2>
+      <p>CHOOSE A BARN TO ENTER VIDEO CALL</p>
+    </div>
+
+    <!-- 西部小鎮荒野舞台 Canvas -->
+    <div class="ranch-canvas-wrap" id="ranchCanvasWrap">
+      <canvas id="ranchCanvas"></canvas>
+    </div>
+
+    <!-- 視訊通話分割容器 -->
+    <div class="video-chat-container" id="videoChatContainer">
+      <div class="video-win">
+        <div class="video-win-header">
+          <span id="winterVideoTitle">🤠 WINTER</span>
+          <span style="font-size:10px; color:#a2ffb3;">LIVE REC ●</span>
+        </div>
+        <div class="video-win-body">
+          <div class="video-viewport-box">
+            <div class="video-element-wrapper" id="winterVideoWrapper">
+              <iframe id="winterVideoIframe" style="width:100%; height:100%; border:none;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+              <video id="winterVideoDirect" style="width:100%; height:100%; display:none;" autoplay playsinline controls loop></video>
+              <!-- 遮罩層：屏蔽 YouTube 所有標題、頻道資訊與暫停按鈕字樣 -->
+              <div class="yt-pointer-guard"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-win">
+        <div class="video-win-header">
+          <span>👤 YOU (LOCAL CAMERA)</span>
+          <button type="button" style="font-size:9px; padding:0 4px;" onclick="initUserWebcam()">重啟鏡頭</button>
+        </div>
+        <div class="video-win-body">
+          <div class="cam-hint" id="camHint">正在連線鏡頭...<br>若跳出詢問請點選「允許」</div>
+          <video id="userCamVideo" class="mirror-cam" autoplay playsinline muted></video>
+        </div>
+      </div>
+    </div>
+
+    <div class="barn-selector-bar" id="barnSelectorBar"></div>
+  </div>
+
+  <!-- 視訊微調面板 -->
+  <div class="window adjust-modal" id="adjustModal" onclick="event.stopPropagation()">
+    <div class="title-bar">
+      <div class="title-bar-text" id="adjustModalTitle">🔍 調視訊畫面與段落秒數</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closeAdjustModal()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="slider-row">
+        <span>畫面縮放 (Scale):</span>
+        <input type="range" id="adjustScale" min="50" max="250" value="100" oninput="applyLiveAdjust()">
+        <span id="adjustScaleVal">100%</span>
+      </div>
+      <div class="slider-row">
+        <span>水平位置 (X):</span>
+        <input type="range" id="adjustPosX" min="0" max="100" value="50" oninput="applyLiveAdjust()">
+        <span id="adjustPosXVal">50%</span>
+      </div>
+      <div class="slider-row">
+        <span>垂直位置 (Y):</span>
+        <input type="range" id="adjustPosY" min="0" max="100" value="50" oninput="applyLiveAdjust()">
+        <span id="adjustPosYVal">50%</span>
+      </div>
+      <div class="slider-row">
+        <span>起始秒數 (Start Sec):</span>
+        <input type="number" id="adjustStartTime" min="0" value="0" oninput="applyLiveAdjust()">
+      </div>
+      <div class="slider-row">
+        <span>結束秒數 (End Sec, 0為無限制):</span>
+        <input type="number" id="adjustEndTime" min="0" value="0" oninput="applyLiveAdjust()">
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:10px;">
+        <button type="button" onclick="resetLiveAdjust()">重置預設</button>
+        <button type="button" style="font-weight:bold; background:#8b4513; color:#fff;" onclick="saveAndCloseAdjust()">完成並儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 開始選單 (三網頁互通) -->
+  <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
+    <div class="start-menu-banner">🤠 WINTER RANCH</div>
+    <ul>
+      <li>
+        <a href="https://u11150003-arch.github.io/2027-winter-bday-desktop/">
+          🖥️ <strong>1. 回到原始 Desktop 網頁</strong>
+        </a>
+      </li>
+      <li>
+        <a href="https://u11150003-arch.github.io/winter-cd-player/">
+          💿 <strong>2. 前往 WINTER CD PLAYER</strong>
+        </a>
+      </li>
+      <li onclick="returnToRanchMap(); toggleStartMenu(event);">
+        🐎 <strong>3. 返回西部小鎮荒野全景</strong>
+      </li>
+      <hr style="margin:4px 0;">
+      <li onclick="toggleAdmin(event); toggleStartMenu(event);">⚙️ 切換管理員模式</li>
+    </ul>
+  </div>
+
+  <!-- 工作列 -->
+  <div class="taskbar">
+    <div class="taskbar-left">
+      <button type="button" onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
+        🤠 WINTER
+      </button>
+      <button type="button" onclick="returnToRanchMap()" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
+        🐎 RANCH
+      </button>
+    </div>
+    <div class="taskbar-right">
+      <a href="https://www.instagram.com/winter_tst" target="_blank">Copyright © : winter_tst</a>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = "admin";
+    let isAdmin = false;
+
+    // 三棟西部馬廄建築資料庫 (完整整合最新影片與比例設定)
+    const RANCH_MASTER_CONFIG = {
+      "dogImage": "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o",
+      "barns": [
+        {
+          "id": "barn_0101",
+          "name": "WINTER0101",
+          "title": "Saloon #0101",
+          "xRatio": 0.2, // 位於畫面左側
+          "videoUrl": "https://youtu.be/dVhNMMejAtA?si=3hNsInSYm_CyfAcF",
+          "adjust": { "scale": 146, "x": 50, "y": 50, "start": 0, "end": 0 }
+        },
+        {
+          "id": "barn_1117",
+          "name": "WINTER1117",
+          "title": "Stable #1117",
+          "xRatio": 0.5, // 位於畫面中央
+          "videoUrl": "https://youtu.be/Nxybqp22WNI?si=BnwmB_4uMEmIqO1a",
+          "adjust": { "scale": 146, "x": 44, "y": 50, "start": 0, "end": 0 }
+        },
+        {
+          "id": "barn_0618",
+          "name": "PONYO0618",
+          "title": "Ranch Barn #0618",
+          "xRatio": 0.8, // 位於畫面右側
+          "videoUrl": "https://youtu.be/nOA1qS4AaiQ?si=aNod6kn17hyqYDTK",
+          "adjust": { "scale": 190, "x": 50, "y": 50, "start": 0, "end": 0 }
+        }
+      ]
+    };
+
+    const CONFIG_KEY = "winter_ranch_config_v2026_init_v1";
+    let saved = localStorage.getItem(CONFIG_KEY);
+    let ranchConfig = saved ? JSON.parse(saved) : RANCH_MASTER_CONFIG;
+    let barnsData = ranchConfig.barns;
+
+    let activeBarnIndex = 0;
+    let userCameraStream = null;
+    let ranchAnimFrame = null;
+    let animTimer = 0;
+
+    // 動畫狀態：小狗與小馬即時座標
+    let dogPos = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    let horsePos = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    let isMovingToBarn = false;
+    let isZoomingDog = false;
+    let zoomDogScale = 1;
+    let targetBarn = null;
+    let loopTimer = null;
+
+    let dogImg = new Image();
+    dogImg.crossOrigin = "anonymous";
+    dogImg.src = ranchConfig.dogImage || RANCH_MASTER_CONFIG.dogImage;
+
+    function extractDriveId(url) {
+      if (!url) return null;
+      const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      return match ? match[1] : null;
+    }
+
+    function extractYoutubeId(url) {
+      if (!url) return null;
+      if (url.includes("shorts/")) return url.split("shorts/")[1].split("?")[0].split("&")[0].substring(0, 11);
+      if (url.includes("v=")) return url.split("v=")[1].substring(0, 11);
+      if (url.includes("youtu.be/")) return url.split("youtu.be/")[1].substring(0, 11);
+      if (url.length === 11 && !url.includes("/") && !url.includes(".")) return url.trim();
+      return null;
+    }
+
+    function saveRanchState() {
+      ranchConfig.barns = barnsData;
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(ranchConfig));
+      renderSelectorChips();
+    }
+
+    function exportRanchState() {
+      saveRanchState();
+      const code = `const RANCH_MASTER_CONFIG = ${JSON.stringify(ranchConfig, null, 2)};`;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("✅ 成功複製配置代碼！貼回 index.html 即可永久儲存。");
+      }).catch(() => {
+        prompt("請複製以下配置代碼：", code);
+      });
+    }
+
+    function toggleAdmin(e) {
+      if (e) e.stopPropagation();
+      if (isAdmin) {
+        isAdmin = false;
+        document.body.classList.remove('admin-mode');
+        document.getElementById('authBtn').innerText = "🔒 管理員";
+        closeAdjustModal();
+        alert("已退出管理員模式");
+      } else {
+        const input = prompt("請輸入管理員密碼：");
+        if (input === ADMIN_PASSWORD) {
+          isAdmin = true;
+          document.body.classList.add('admin-mode');
+          document.getElementById('authBtn').innerText = "🔓 退出管理";
+          alert("登入成功！已解鎖管理與微調功能。");
+        } else if (input !== null) {
+          alert("密碼錯誤！");
+        }
+      }
+    }
+
+    function renderSelectorChips() {
+      const bar = document.getElementById('barnSelectorBar');
+      if (!bar) return;
+      bar.innerHTML = '';
+
+      barnsData.forEach((b, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `barn-chip ${idx === activeBarnIndex ? 'active' : ''}`;
+        btn.innerHTML = `🏠 ${b.name}`;
+        btn.onclick = () => selectBarnAndMove(idx);
+        bar.appendChild(btn);
+      });
+    }
+
+    function returnToRanchMap() {
+      isMovingToBarn = false;
+      isZoomingDog = false;
+      zoomDogScale = 1;
+      targetBarn = null;
+      document.getElementById('videoChatContainer').classList.remove('active');
+      document.getElementById('ranchCanvasWrap').style.display = 'flex';
+      document.getElementById('ranchHeader').style.display = 'block';
+      closeAdjustModal();
+      stopWinterVideo();
+      stopUserWebcam();
+      renderSelectorChips();
+    }
+
+    // 點擊馬廄：小狗與小馬先跑步位移，再觸發 Zoom-in 進入視訊
+    function selectBarnAndMove(idx) {
+      activeBarnIndex = idx;
+      renderSelectorChips();
+      targetBarn = barnsData[idx];
+
+      const canvas = document.getElementById('ranchCanvas');
+      const w = canvas.width;
+      const h = canvas.height;
+      const barnX = w * targetBarn.xRatio;
+      const groundY = h * 0.72;
+
+      // 設定位移目標（馬廄門口）
+      dogPos.targetX = barnX - 25;
+      dogPos.targetY = groundY;
+      horsePos.targetX = barnX + 25;
+      horsePos.targetY = groundY;
+      isMovingToBarn = true;
+
+      // 位移動畫後觸發小狗特寫 Zoom in
+      setTimeout(() => {
+        isZoomingDog = true;
+        zoomDogScale = 1;
+        setTimeout(() => {
+          enterVideoChat(targetBarn);
+        }, 600);
+      }, 700);
+    }
+
+    function enterVideoChat(barn) {
+      document.getElementById('ranchCanvasWrap').style.display = 'none';
+      document.getElementById('ranchHeader').style.display = 'none';
+      const container = document.getElementById('videoChatContainer');
+      container.classList.add('active');
+
+      document.getElementById('winterVideoTitle').innerText = `🤠 WINTER [${barn.name}]`;
+      applyVideoTransform(barn);
+      playWinterVideo(barn);
+      initUserWebcam();
+    }
+
+    function applyVideoTransform(barn) {
+      const wrapper = document.getElementById('winterVideoWrapper');
+      if (!wrapper) return;
+      const adj = barn.adjust || { scale: 100, x: 50, y: 50, start: 0, end: 0 };
+      const scaleVal = (adj.scale || 100) / 100;
+      const transX = (adj.x - 50);
+      const transY = (adj.y - 50);
+      wrapper.style.transform = `scale(${scaleVal}) translate(${transX}%, ${transY}%)`;
+    }
+
+    // 播放視訊 (注入徹底消除控制項、秒數與帳號參數，純淨 Facetime 感)
+    function playWinterVideo(barn) {
+      const url = barn.videoUrl;
+      const iframe = document.getElementById('winterVideoIframe');
+      const directVideo = document.getElementById('winterVideoDirect');
+      const adj = barn.adjust || { scale: 100, x: 50, y: 50, start: 0, end: 0 };
+      const startSec = parseInt(adj.start, 10) || 0;
+      const endSec = parseInt(adj.end, 10) || 0;
+
+      if (loopTimer) clearInterval(loopTimer);
+      if (!url) return;
+
+      const driveId = extractDriveId(url);
+      const ytId = extractYoutubeId(url);
+
+      if (ytId) {
+        directVideo.pause(); directVideo.src = ''; directVideo.style.display = 'none';
+        iframe.style.display = 'block';
+
+        // 注入去除所有進度條與大播放鍵參數
+        let params = `autoplay=1&mute=0&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&vq=hd1080&playsinline=1`;
+        if (startSec > 0) params += `&start=${startSec}`;
+        if (endSec > startSec) params += `&end=${endSec}`;
+
+        iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?${params}`;
+
+        if (endSec > startSec) {
+          const duration = (endSec - startSec) * 1000;
+          loopTimer = setInterval(() => {
+            iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?${params}`;
+          }, duration);
+        }
+      } else if (driveId) {
+        directVideo.pause(); directVideo.src = ''; directVideo.style.display = 'none';
+        iframe.style.display = 'block';
+        iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
+      } else {
+        iframe.src = ''; iframe.style.display = 'none';
+        directVideo.style.display = 'block';
+        directVideo.loop = (endSec <= startSec);
+        directVideo.src = url;
+        directVideo.load();
+
+        directVideo.onloadedmetadata = () => {
+          if (startSec > 0 && startSec < directVideo.duration) directVideo.currentTime = startSec;
+          directVideo.play().catch(() => { directVideo.muted = true; directVideo.play(); });
+        };
+
+        directVideo.ontimeupdate = () => {
+          if (endSec > startSec && endSec <= directVideo.duration && directVideo.currentTime >= endSec) {
+            directVideo.currentTime = startSec;
+            directVideo.play();
+          }
+        };
+
+        directVideo.onended = () => {
+          directVideo.currentTime = (startSec < directVideo.duration) ? startSec : 0;
+          directVideo.play();
+        };
+      }
+    }
+
+    function stopWinterVideo() {
+      if (loopTimer) clearInterval(loopTimer);
+      const iframe = document.getElementById('winterVideoIframe');
+      const directVideo = document.getElementById('winterVideoDirect');
+      if (iframe) iframe.src = '';
+      if (directVideo) { directVideo.pause(); directVideo.src = ''; directVideo.style.display = 'none'; }
+    }
+
+    function openAdjustModal() {
+      const barn = barnsData[activeBarnIndex];
+      if (!barn) return;
+      const adj = barn.adjust = barn.adjust || { scale: 100, x: 50, y: 50, start: 0, end: 0 };
+
+      document.getElementById('adjustModalTitle').innerText = `🔍 調視訊 (${barn.name})`;
+      document.getElementById('adjustScale').value = adj.scale;
+      document.getElementById('adjustScaleVal').innerText = adj.scale + '%';
+      document.getElementById('adjustPosX').value = adj.x;
+      document.getElementById('adjustPosXVal').innerText = adj.x + '%';
+      document.getElementById('adjustPosY').value = adj.y;
+      document.getElementById('adjustPosYVal').innerText = adj.y + '%';
+      document.getElementById('adjustStartTime').value = adj.start || 0;
+      document.getElementById('adjustEndTime').value = adj.end || 0;
+
+      document.getElementById('adjustModal').style.display = 'block';
+    }
+
+    function closeAdjustModal() {
+      document.getElementById('adjustModal').style.display = 'none';
+    }
+
+    function applyLiveAdjust() {
+      const barn = barnsData[activeBarnIndex];
+      if (!barn) return;
+
+      const scale = parseInt(document.getElementById('adjustScale').value, 10);
+      const x = parseInt(document.getElementById('adjustPosX').value, 10);
+      const y = parseInt(document.getElementById('adjustPosY').value, 10);
+      const start = parseInt(document.getElementById('adjustStartTime').value, 10) || 0;
+      const end = parseInt(document.getElementById('adjustEndTime').value, 10) || 0;
+
+      document.getElementById('adjustScaleVal').innerText = scale + '%';
+      document.getElementById('adjustPosXVal').innerText = x + '%';
+      document.getElementById('adjustPosYVal').innerText = y + '%';
+
+      barn.adjust = { scale, x, y, start, end };
+      applyVideoTransform(barn);
+    }
+
+    function resetLiveAdjust() {
+      document.getElementById('adjustScale').value = 100;
+      document.getElementById('adjustPosX').value = 50;
+      document.getElementById('adjustPosY').value = 50;
+      document.getElementById('adjustStartTime').value = 0;
+      document.getElementById('adjustEndTime').value = 0;
+      applyLiveAdjust();
+    }
+
+    function saveAndCloseAdjust() {
+      saveRanchState();
+      closeAdjustModal();
+      alert("✅ 視訊位置、縮放、起始與結束秒數已儲存！");
+      playWinterVideo(barnsData[activeBarnIndex]);
+    }
+
+    async function initUserWebcam() {
+      const hint = document.getElementById('camHint');
+      const video = document.getElementById('userCamVideo');
+      stopUserWebcam();
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          hint.style.display = 'block';
+          hint.innerText = "正在連線鏡頭 (僅於本機運作)...";
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
+            audio: false
+          });
+          userCameraStream = stream;
+          video.srcObject = stream;
+          hint.style.display = 'none';
+        } catch (err) {
+          hint.style.display = 'block';
+          hint.innerText = "相機未授權或無相機設備\n已維持純 WINTER 視訊模式";
+        }
+      } else {
+        hint.style.display = 'block';
+        hint.innerText = "當前環境不支援調用相機設備";
+      }
+    }
+
+    function stopUserWebcam() {
+      if (userCameraStream) {
+        userCameraStream.getTracks().forEach(t => t.stop());
+        userCameraStream = null;
+      }
+      const v = document.getElementById('userCamVideo');
+      if (v) v.srcObject = null;
+    }
+
+    function editCurrentBarnPrompt() {
+      const b = barnsData[activeBarnIndex];
+      if (!b) return;
+
+      const newName = prompt("重新命名馬廄名稱：", b.name);
+      if (newName) b.name = newName.trim();
+
+      const url = prompt("更改當前馬廄的影片網址 (支援 YouTube / Shorts / 雲端 / MP4)：", b.videoUrl);
+      if (url) {
+        b.videoUrl = url.trim();
+        b.adjust.start = 0;
+        b.adjust.end = 0;
+      }
+
+      saveRanchState();
+      if (document.getElementById('videoChatContainer').classList.contains('active')) {
+        playWinterVideo(b);
+      }
+    }
+
+    // ==============================================================
+    // HTML5 Canvas 西部牛仔像素荒野系統 (小狗、小馬、三棟馬廄與滾草)
+    // ==============================================================
+    function initRanchSystem() {
+      const canvas = document.getElementById('ranchCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        const wrap = document.getElementById('ranchCanvasWrap');
+        if (!wrap) return;
+        canvas.width = wrap.clientWidth;
+        canvas.height = wrap.clientHeight;
+
+        // 初始化小狗與小馬在中央荒野
+        if (!isMovingToBarn) {
+          dogPos.x = dogPos.targetX = canvas.width * 0.46;
+          dogPos.y = dogPos.targetY = canvas.height * 0.72;
+          horsePos.x = horsePos.targetX = canvas.width * 0.54;
+          horsePos.y = horsePos.targetY = canvas.height * 0.73;
+        }
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // 點擊判定：直接在畫布上點擊三棟馬廄
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const groundY = canvas.height * 0.72;
+
+        barnsData.forEach((b, idx) => {
+          const bx = canvas.width * b.xRatio;
+          const bw = canvas.width < 768 ? 90 : 130;
+          const bh = bw * 0.9;
+          const by = groundY - bh;
+
+          if (mx >= bx - bw/2 && mx <= bx + bw/2 && my >= by && my <= groundY + 20) {
+            selectBarnAndMove(idx);
+          }
+        });
+      });
+
+      // 繪製像素風格西部馬廄 (Barn)
+      function drawWesternBarn(x, y, width, title, isSelected) {
+        const h = width * 0.88;
+        ctx.save();
+        ctx.translate(x, y);
+
+        // 主屋身（復古紅棕木板）
+        ctx.fillStyle = isSelected ? '#a8422b' : '#85321f';
+        ctx.fillRect(-width/2, -h, width, h);
+
+        // 屋身木板橫條紋
+        ctx.strokeStyle = '#5a1d10';
+        ctx.lineWidth = 1.5;
+        for (let py = -h + 12; py < 0; py += 12) {
+          ctx.beginPath();
+          ctx.moveTo(-width/2, py);
+          ctx.lineTo(width/2, py);
+          ctx.stroke();
+        }
+
+        // 西部山形斜屋頂
+        ctx.fillStyle = '#4a150c';
+        ctx.beginPath();
+        ctx.moveTo(-width/2 - 8, -h);
+        ctx.lineTo(0, -h - width * 0.38);
+        ctx.lineTo(width/2 + 8, -h);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 閣樓白色十字叉窗
+        const winSize = width * 0.22;
+        ctx.fillStyle = '#220804';
+        ctx.fillRect(-winSize/2, -h - width * 0.22, winSize, winSize);
+        ctx.strokeStyle = '#fff3b0';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-winSize/2, -h - width * 0.22, winSize, winSize);
+        ctx.beginPath();
+        ctx.moveTo(-winSize/2, -h - width * 0.22);
+        ctx.lineTo(winSize/2, -h - width * 0.22 + winSize);
+        ctx.moveTo(winSize/2, -h - width * 0.22);
+        ctx.lineTo(-winSize/2, -h - width * 0.22 + winSize);
+        ctx.stroke();
+
+        // 正門 (木門)
+        const doorW = width * 0.34;
+        const doorH = h * 0.55;
+        ctx.fillStyle = '#1c0502';
+        ctx.fillRect(-doorW/2, -doorH, doorW, doorH);
+
+        // 馬廄招牌木牌
+        ctx.fillStyle = '#d4a373';
+        ctx.fillRect(-width * 0.42, -h + 4, width * 0.84, 18);
+        ctx.strokeStyle = '#5a3d28';
+        ctx.strokeRect(-width * 0.42, -h + 4, width * 0.84, 18);
+
+        ctx.fillStyle = '#3a1f0d';
+        ctx.font = 'bold 9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(title, 0, -h + 16);
+
+        ctx.restore();
+      }
+
+      // 繪製像素小馬
+      function drawPixelHorse(x, y, walkTick) {
+        ctx.save();
+        ctx.translate(x, y);
+
+        const bob = Math.sin(walkTick) * 2;
+        // 馬身
+        ctx.fillStyle = '#8b5a2b';
+        ctx.fillRect(-18, -26 + bob, 28, 16);
+        // 馬頸與馬頭
+        ctx.fillRect(8, -36 + bob, 10, 16);
+        ctx.fillRect(12, -42 + bob, 14, 10);
+        // 馬鬃毛與尾巴
+        ctx.fillStyle = '#3a1f0d';
+        ctx.fillRect(6, -40 + bob, 4, 14);
+        ctx.fillRect(-22, -24 + bob, 4, 12);
+        // 四肢馬腿 (微動)
+        ctx.fillStyle = '#6f3b19';
+        const leg1 = Math.sin(walkTick) * 4;
+        const leg2 = -Math.sin(walkTick) * 4;
+        ctx.fillRect(-14, -10, 4, 10 + leg1);
+        ctx.fillRect(-8, -10, 4, 10 + leg2);
+        ctx.fillRect(2, -10, 4, 10 + leg2);
+        ctx.fillRect(8, -10, 4, 10 + leg1);
+
+        ctx.restore();
+      }
+
+      function draw() {
+        const w = canvas.width;
+        const h = canvas.height;
+        const isMobile = w < 768;
+        const groundY = h * 0.72;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // 遠景：西部紅岩峽谷群 (Canyon)
+        ctx.fillStyle = '#9c522b';
+        ctx.beginPath();
+        ctx.moveTo(0, groundY - 60);
+        ctx.lineTo(w * 0.15, groundY - 110);
+        ctx.lineTo(w * 0.3, groundY - 70);
+        ctx.lineTo(w * 0.5, groundY - 125);
+        ctx.lineTo(w * 0.7, groundY - 65);
+        ctx.lineTo(w * 0.85, groundY - 115);
+        ctx.lineTo(w, groundY - 75);
+        ctx.lineTo(w, groundY);
+        ctx.lineTo(0, groundY);
+        ctx.closePath();
+        ctx.fill();
+
+        // 荒野泥土地表
+        ctx.fillStyle = '#7a3e1d';
+        ctx.fillRect(0, groundY, w, h - groundY);
+        ctx.fillStyle = '#5c2d13';
+        ctx.fillRect(0, groundY, w, 4);
+
+        // 繪製背景裝飾仙人掌
+        ctx.fillStyle = '#2d5a27';
+        [-30, w * 0.35, w * 0.65, w + 10].forEach(cx => {
+          ctx.fillRect(cx, groundY - 45, 6, 45);
+          ctx.fillRect(cx - 10, groundY - 32, 10, 5);
+          ctx.fillRect(cx - 10, groundY - 40, 5, 12);
+          ctx.fillRect(cx + 6, groundY - 26, 10, 5);
+          ctx.fillRect(cx + 11, groundY - 34, 5, 12);
+        });
+
+        // 繪製三棟馬廄
+        const barnW = isMobile ? 88 : 130;
+        barnsData.forEach((b, idx) => {
+          const bx = w * b.xRatio;
+          drawWesternBarn(bx, groundY, barnW, b.name, idx === activeBarnIndex);
+        });
+
+        // 漫步或位移插值計算 (小狗與小馬平滑跑步)
+        const walkSpeed = 0.05;
+        dogPos.x += (dogPos.targetX - dogPos.x) * walkSpeed;
+        dogPos.y += (dogPos.targetY - dogPos.y) * walkSpeed;
+        horsePos.x += (horsePos.targetX - horsePos.x) * walkSpeed;
+        horsePos.y += (horsePos.targetY - horsePos.y) * walkSpeed;
+
+        // 若在自由模式下，稍微隨機慢步
+        if (!isMovingToBarn) {
+          dogPos.targetX = w * 0.46 + Math.sin(animTimer * 0.02) * 25;
+          horsePos.targetX = w * 0.54 + Math.cos(animTimer * 0.018) * 30;
+        }
+
+        // 繪製小馬
+        drawPixelHorse(horsePos.x, horsePos.y, animTimer * 0.2);
+
+        // 繪製原圖小狗 (戴牛仔帽波妞)
+        ctx.save();
+        ctx.translate(dogPos.x, dogPos.y);
+
+        if (isZoomingDog) {
+          zoomDogScale += 0.1;
+          ctx.scale(zoomDogScale, zoomDogScale);
+        }
+
+        const dogW = isMobile ? 65 : 88;
+        const dogH = dogW * 1.12;
+
+        if (dogImg.complete && dogImg.naturalWidth !== 0) {
+          // 繪製原圖小狗（帶有陰影，立足於荒野上）
+          ctx.fillStyle = 'rgba(0,0,0,0.3)';
+          ctx.beginPath();
+          ctx.ellipse(0, -2, dogW * 0.35, 6, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.drawImage(dogImg, -dogW/2, -dogH, dogW, dogH);
+        }
+
+        ctx.restore();
+
+        animTimer++;
+        ranchAnimFrame = requestAnimationFrame(draw);
+      }
+
+      ranchAnimFrame = requestAnimationFrame(draw);
+    }
+
+    function toggleStartMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('startMenu');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function handleGlobalClick(e) {
+      const menu = document.getElementById('startMenu');
+      if (menu) menu.style.display = 'none';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initRanchSystem();
+      renderSelectorChips();
+    });
+  </script>
+</body>
+</html>

@@ -3,23 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>WINTER RANCH - Wild West Town</title>
+  <title>2027 WINTER Bday desktop</title>
 
-  <meta property="og:title" content="WINTER RANCH">
-  <meta property="og:description" content="Visit Winter and Ponyo in the Wild West">
-  <meta property="og:image" content="https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o">
+  <meta property="og:title" content="2027 WINTER Bday desktop">
+  <meta property="og:description" content="A special retro desktop space created for WINTER">
+  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
 
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
-    * { 
-      box-sizing: border-box; 
-      -webkit-tap-highlight-color: transparent; 
-      user-select: none;
-    }
+    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
     
     :root {
-      /* 西部牛仔風星形游標 */
-      --star-cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9' fill='%23d4a373' stroke='%236f4e37' stroke-width='1.5'/></svg>") 4 4, auto;
+      --star-cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9' fill='%23FFD700' stroke='%23B8860B' stroke-width='1.5'/></svg>") 4 4, auto;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
@@ -27,31 +24,43 @@
     }
 
     html, body {
-      margin: 0; padding: 0;
-      width: 100vw; height: 100vh;
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
-      background: #c29567;
-      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
+      background-color: #000;
+      background-image: url('https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
     }
-
-    button, a, .start-menu li, .barn-chip {
+    
+    .icon-wrapper, .top-bar-wrapper button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button {
       cursor: var(--star-cursor) !important;
-      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
     }
 
-    /* 頂部管理列 */
     .top-bar-wrapper {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
       left: max(6px, var(--safe-left));
       right: max(6px, var(--safe-right));
-      z-index: 100; display: flex; flex-direction: column;
-      background: transparent; border: none; pointer-events: none;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+      border: none;
+      pointer-events: none;
     }
     body.admin-mode .top-bar-wrapper {
-      background: #c0c0c0; border: 2px outset #fff; padding: 3px;
-      box-shadow: 1px 1px 4px rgba(0,0,0,0.4); pointer-events: auto;
+      background: #c0c0c0;
+      border: 2px outset #fff;
+      padding: 3px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+      pointer-events: auto;
     }
+
     .top-actions-viewport {
       display: flex; gap: 4px; overflow-x: hidden; white-space: nowrap; pointer-events: auto;
     }
@@ -60,202 +69,142 @@
     }
     #authBtn { pointer-events: auto; align-self: flex-start; }
 
+    .admin-scrollbar-bar {
+      display: none; height: 16px; background: #c0c0c0; border-top: 1px solid #808080;
+      margin-top: 3px; align-items: center; position: relative;
+    }
+    body.admin-mode .admin-scrollbar-bar { display: flex; }
+    .scrollbar-btn {
+      width: 16px; height: 16px; padding: 0; font-size: 8px; font-weight: bold;
+      border: 1px outset #fff; background: #c0c0c0; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; cursor: pointer;
+    }
+    .scrollbar-btn:active { border: 1px inset #fff; }
+    .scrollbar-track {
+      flex: 1; height: 100%;
+      background: repeating-conic-gradient(#c0c0c0 0% 25%, #ffffff 0% 50%) 50% / 2px 2px;
+      position: relative; cursor: pointer;
+    }
+    .scrollbar-thumb {
+      position: absolute; top: 0; left: 0; width: 40px; height: 100%;
+      background: #c0c0c0; border: 1px outset #fff; cursor: grab;
+    }
+
+    .desktop {
+      position: absolute;
+      top: 50px;
+      left: max(0px, var(--safe-left));
+      right: max(0px, var(--safe-right));
+      bottom: var(--taskbar-h);
+      overflow: hidden;
+    }
+
+    .icon-wrapper {
+      position: absolute;
+      width: 84px;
+      display: flex; flex-direction: column; align-items: center;
+      cursor: var(--star-cursor); text-align: center;
+      color: white; text-shadow: 1px 1px 2px black;
+      padding: 3px; border-radius: 2px; touch-action: none;
+    }
+    .icon-wrapper.selected {
+      background: rgba(0, 0, 128, 0.45); outline: 1px dotted #ffff00;
+    }
+    .icon-wrapper.selected span {
+      background: #000080; color: #fff;
+    }
+    .icon-wrapper.cut-mode {
+      opacity: 0.45; filter: grayscale(80%);
+    }
+
+    .icon-select-check {
+      display: none; position: absolute; top: -2px; left: 2px; width: 14px; height: 14px;
+      cursor: var(--star-cursor); z-index: 20;
+    }
+    body.admin-mode .icon-select-check { display: block; }
+
+    .icon-art-box {
+      position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+    }
+    .icon-art-box .base-img {
+      width: 44px; height: 44px; object-fit: contain; pointer-events: none;
+    }
+    /* 專屬小狗大圖示：移除過多邊距，自然飽滿放大 */
+    .icon-art-box .dog-galaxy-icon {
+      width: 48px; height: 48px; object-fit: contain; transform: scale(1.15); pointer-events: none;
+    }
+    .icon-art-box .custom-cover-badge {
+      position: absolute; width: 23px; height: 23px; object-fit: cover;
+      border: 1.5px solid #fff; border-radius: 3px;
+      bottom: 0; right: 0; box-shadow: 1px 1px 4px rgba(0,0,0,0.6); pointer-events: none;
+    }
+
+    .icon-wrapper span {
+      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: keep-all; white-space: nowrap; pointer-events: none;
+      font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
+    }
+
     .admin-only { display: none !important; }
     body.admin-mode .admin-only { display: inline-flex !important; }
 
-    /* 主舞台區 */
-    .app-container {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      bottom: var(--taskbar-h);
-      display: flex; flex-direction: column;
-      overflow: hidden;
-      background: linear-gradient(180deg, #e3a874 0%, #d48b52 40%, #a45d2d 75%, #6f3b19 100%);
+    .win-modal {
+      position: fixed; display: none; z-index: 100;
+      box-shadow: 2px 2px 14px rgba(0,0,0,0.6);
+      width: 95vw; max-width: 580px; min-width: 280px; min-height: 200px;
+      resize: both; overflow: hidden;
+    }
+    .win-modal .title-bar { cursor: move; position: relative; }
+    .win-modal .title-bar-controls {
+      position: relative; z-index: 1000; display: flex; gap: 2px; pointer-events: auto !important;
+    }
+    .win-modal .title-bar-controls button {
+      cursor: var(--star-cursor) !important; pointer-events: auto !important;
+    }
+    .win-modal .window-body {
+      height: calc(100% - 32px); max-height: calc(100% - 32px); overflow-y: auto; padding: 6px;
     }
 
-    .ranch-header {
-      position: absolute;
-      top: 42px; left: 0; right: 0;
-      text-align: center;
-      z-index: 10;
-      pointer-events: none;
+    .win-modal.maximized {
+      top: 0 !important; left: 0 !important; transform: none !important;
+      width: 100vw !important; max-width: 100vw !important;
+      height: calc(100vh - var(--taskbar-h)) !important;
+      z-index: 1500 !important; resize: none !important;
     }
-    .ranch-header h2 {
-      margin: 0;
-      font-size: 22px;
-      letter-spacing: 3px;
-      color: #fff3b0;
-      text-shadow: 2px 2px 0px #6f3b19, 0 0 10px rgba(0,0,0,0.5);
-      font-family: monospace, sans-serif;
+    .win-modal.maximized .title-bar { cursor: default; }
+
+    #embedded-cd-win, #embedded-galaxy-win {
+      height: 82vh;
+      max-height: calc(100vh - var(--taskbar-h) - 30px);
+      width: 95vw;
+      max-width: 520px;
     }
-    .ranch-header p {
-      margin: 3px 0 0;
-      font-size: 11px;
-      color: #ffe3a8;
-      letter-spacing: 1px;
-      text-shadow: 1px 1px 0px #000;
+    .embedded-player-container {
+      width: 100%; height: 100%; background: #000;
+    }
+    .embedded-player-container iframe {
+      width: 100%; height: 100%; border: none;
     }
 
-    .ranch-canvas-wrap {
-      flex: 1; width: 100%; height: 100%;
-      position: relative;
+    .folder-nav-bar {
+      display: flex; gap: 4px; align-items: center; margin-bottom: 6px; background: #dfdfdf;
+      padding: 3px 5px; border: 1px solid #7f9db9; flex-wrap: wrap;
     }
-    #ranchCanvas {
-      width: 100%; height: 100%; display: block;
-    }
-
-    /* 視訊分割容器 */
-    .video-chat-container {
-      display: none;
-      position: absolute;
-      top: 40px; left: 6px; right: 6px;
-      bottom: 42px;
-      background: #000;
-      z-index: 25;
-      padding: 4px;
-      gap: 6px;
-      box-sizing: border-box;
-    }
-    .video-chat-container.active {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 768px) {
-      .video-chat-container.active {
-        top: 36px;
-        bottom: 38px;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-      }
+    .folder-nav-bar button {
+      font-size: 11px; padding: 2px 5px; height: 22px; cursor: pointer;
     }
 
-    .video-win {
-      position: relative;
-      background: #000;
-      border: 2px outset #fff;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-height: 0;
+    .media-container {
+      position: relative; width: 100%; aspect-ratio: 16 / 9;
+      background: #000; display: flex; align-items: center; justify-content: center;
     }
-    .video-win-header {
-      background: linear-gradient(90deg, #8b4513, #cd853f);
-      color: #fff;
-      font-size: 11px;
-      font-weight: bold;
-      padding: 3px 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-    }
-    .video-win-body {
-      position: relative;
-      flex: 1; width: 100%; height: 100%;
-      background: #000;
+    .media-container iframe, .media-container video { width: 100%; height: 100%; border: none; }
+    .photo-stage {
+      width: 100%; min-height: 220px; max-height: 60vh;
       display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
+      background: #1a1a1a; overflow: hidden; padding: 6px;
     }
-    
-    .video-viewport-box {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background: #000;
-    }
-    .video-element-wrapper {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-origin: center center;
-      transition: transform 0.1s ease-out;
-    }
-    .video-element-wrapper iframe, .video-element-wrapper video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      border: none;
-    }
+    .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
 
-    /* 關鍵：YouTube 隱形遮罩防干擾層，屏蔽所有字樣與按鍵 */
-    .yt-pointer-guard {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 5;
-      background: transparent;
-      pointer-events: auto;
-    }
-
-    .mirror-cam { transform: scaleX(-1); width: 100%; height: 100%; object-fit: cover; }
-    .cam-hint {
-      position: absolute; font-size: 11px; color: #aaa; text-align: center; padding: 8px;
-    }
-
-    /* 下方半透明西部皮質按鍵列 */
-    .barn-selector-bar {
-      position: absolute;
-      bottom: 6px; left: 0; right: 0;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 0 10px;
-      overflow-x: auto;
-      z-index: 30;
-      pointer-events: none;
-    }
-    .barn-chip {
-      pointer-events: auto;
-      background: rgba(84, 46, 21, 0.8) !important;
-      backdrop-filter: blur(4px);
-      border: 1.5px solid #d4a373 !important;
-      color: #fff3b0 !important;
-      border-radius: 14px !important;
-      padding: 3px 12px !important;
-      font-size: 11px !important;
-      font-weight: bold;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-    .barn-chip:hover {
-      background: #a45d2d !important;
-      color: #fff !important;
-      border-color: #ffe3a8 !important;
-    }
-    .barn-chip.active {
-      background: #6f3b19 !important;
-      border-color: #ffd700 !important;
-      color: #ffff80 !important;
-    }
-
-    /* 視訊畫面微調面板 */
-    .adjust-modal {
-      display: none; position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 330px; z-index: 9999;
-      box-shadow: 3px 3px 14px rgba(0,0,0,0.75);
-      background: #c0c0c0; border: 2px outset #fff;
-    }
-    .adjust-modal .slider-row {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 7px; font-size: 11px;
-    }
-    .adjust-modal input[type="range"] { width: 135px; }
-    .adjust-modal input[type="number"] { width: 75px; font-size: 11px; padding: 2px; }
-
-    /* 工作列 */
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
       height: var(--taskbar-h); min-height: 38px;
@@ -265,30 +214,39 @@
       padding-left: max(8px, var(--safe-left));
       padding-right: max(14px, var(--safe-right));
       padding-bottom: max(6px, var(--safe-bottom));
-      z-index: 2500;
+      z-index: 9999;
+      pointer-events: auto !important;
     }
     .taskbar-left { display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1; }
     .task-item-btn { font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
     .taskbar-right { font-size: 11px; display: flex; align-items: center; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
 
-    /* 開始選單 */
     .start-menu {
       position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
-      width: 260px; background: #c0c0c0; border: 2px outset #fff;
-      box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 3000; padding: 3px;
+      width: 260px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 10000; padding: 3px;
     }
     .start-menu-banner {
-      background: linear-gradient(180deg, #8b4513, #cd853f);
+      background: linear-gradient(180deg, #104e8b, #1e90ff);
       color: #fff; font-weight: bold; padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
-      letter-spacing: 1px;
+      letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between;
     }
     .start-menu ul { list-style: none; margin: 0; padding: 0; }
     .start-menu li {
-      padding: 7px 10px; font-size: 12px; display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; font-size: 12px; cursor: var(--star-cursor); display: flex; align-items: center; gap: 8px;
     }
-    .start-menu li:hover { background: #8b4513; color: #fff; }
-    .start-menu a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px; width: 100%; }
+    .start-menu li:hover { background: #000080; color: #fff; }
+
+    .playlist-box {
+      list-style: none; margin: 8px 0 0 0; padding: 0;
+      background: #fff; border: 2px inset #dfdfdf; height: 130px; overflow-y: auto;
+    }
+    .playlist-box li {
+      padding: 5px 8px; font-size: 12px; cursor: var(--star-cursor); display: flex; justify-content: space-between; align-items: center;
+    }
+    .playlist-box li:hover { background: #000080; color: #fff; }
+    .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
   </style>
 </head>
 <body onclick="handleGlobalClick(event)">
@@ -296,127 +254,226 @@
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
-      <button class="admin-only" style="background:#fff2b2; font-weight:bold;" onclick="openAdjustModal()">🔍 調視訊畫面/秒數</button>
-      <button class="admin-only" onclick="editCurrentBarnPrompt()">✏️ 編輯當前馬廄</button>
-      <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportRanchState()">💾 永久儲存代碼</button>
+      <button class="admin-only" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
+      <button class="admin-only" onclick="openWinterGalaxyWindow()">🪐 開啟 GALAXY 視訊</button>
+      <button class="admin-only" onclick="openWinterCdPlayerWindow()">💿 開啟 CD 播放器</button>
+      <button class="admin-only" onclick="createAlbumWithCoverChoice(null, event)">+ 傳統專輯</button>
+      <button class="admin-only" onclick="createItem('video', null, event)">+ 音樂/影片</button>
+      <button class="admin-only" onclick="createItem('image', null, event)">+ 圖片</button>
+      <button class="admin-only" onclick="createItem('note', null, event)">+ 便利貼</button>
+      <button class="admin-only" onclick="createItem('link', null, event)">+ 外部連結</button>
+
+      <button id="topPasteBtn" class="admin-only" onclick="pasteItem(null, event)" style="background:#ffffe0; font-weight:bold;">📌 貼上</button>
+
+      <span class="admin-only selected-ops" style="display:none; gap:3px;">
+        <span style="color:#888; margin: 0 2px;">|</span>
+        <button onclick="moveSelectedItemToDialog(event)" style="background:#e0f7fa; font-weight:bold;">📦 移動到...</button>
+        <button onclick="copySelectedItem(event)">📋 複製</button>
+        <button onclick="cutSelectedItem(event)">✂️ 剪下</button>
+        <button onclick="editSelectedItem(event)">✏️ 編輯</button>
+        <button onclick="deleteSelectedItem(event)">❌ 刪除</button>
+      </span>
+
+      <button class="admin-only" onclick="changeWallpaper(event)">🎨 桌布</button>
+      <button class="admin-only" onclick="openStartMenuConfigModal(event)">⭐ 設定開始選單</button>
+      <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
+    </div>
+
+    <div class="admin-scrollbar-bar" id="adminScrollbarBar">
+      <button type="button" class="scrollbar-btn" onclick="scrollAdminBar(-100)">◀</button>
+      <div class="scrollbar-track" id="scrollbarTrack" onclick="handleTrackClick(event)">
+        <div class="scrollbar-thumb" id="scrollbarThumb"></div>
+      </div>
+      <button type="button" class="scrollbar-btn" onclick="scrollAdminBar(100)">▶</button>
     </div>
   </div>
 
-  <div class="app-container">
-    <div class="ranch-header" id="ranchHeader">
-      <h2>WINTER RANCH</h2>
-      <p>CHOOSE A BARN TO ENTER VIDEO CALL</p>
-    </div>
+  <div class="desktop" id="desktopContainer"></div>
 
-    <!-- 西部小鎮荒野舞台 Canvas -->
-    <div class="ranch-canvas-wrap" id="ranchCanvasWrap">
-      <canvas id="ranchCanvas"></canvas>
-    </div>
-
-    <!-- 視訊通話分割容器 -->
-    <div class="video-chat-container" id="videoChatContainer">
-      <div class="video-win">
-        <div class="video-win-header">
-          <span id="winterVideoTitle">🤠 WINTER</span>
-          <span style="font-size:10px; color:#a2ffb3;">LIVE REC ●</span>
-        </div>
-        <div class="video-win-body">
-          <div class="video-viewport-box">
-            <div class="video-element-wrapper" id="winterVideoWrapper">
-              <iframe id="winterVideoIframe" style="width:100%; height:100%; border:none;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-              <video id="winterVideoDirect" style="width:100%; height:100%; display:none;" autoplay playsinline controls loop></video>
-              <!-- 遮罩層：屏蔽 YouTube 所有標題、頻道資訊與暫停按鈕字樣 -->
-              <div class="yt-pointer-guard"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="video-win">
-        <div class="video-win-header">
-          <span>👤 YOU (LOCAL CAMERA)</span>
-          <button type="button" style="font-size:9px; padding:0 4px;" onclick="initUserWebcam()">重啟鏡頭</button>
-        </div>
-        <div class="video-win-body">
-          <div class="cam-hint" id="camHint">正在連線鏡頭...<br>若跳出詢問請點選「允許」</div>
-          <video id="userCamVideo" class="mirror-cam" autoplay playsinline muted></video>
-        </div>
-      </div>
-    </div>
-
-    <div class="barn-selector-bar" id="barnSelectorBar"></div>
-  </div>
-
-  <!-- 視訊微調面板 -->
-  <div class="window adjust-modal" id="adjustModal" onclick="event.stopPropagation()">
-    <div class="title-bar">
-      <div class="title-bar-text" id="adjustModalTitle">🔍 調視訊畫面與段落秒數</div>
+  <!-- 嵌入式 GALAXY 視訊視窗 -->
+  <div id="embedded-galaxy-win" class="window win-modal" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text">🪐 WINTER GALAXY</div>
       <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closeAdjustModal()"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-galaxy-win', 'Galaxy 視訊', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-galaxy-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeEmbeddedGalaxyWindow(event)" title="關閉"></button>
       </div>
     </div>
-    <div class="window-body">
-      <div class="slider-row">
-        <span>畫面縮放 (Scale):</span>
-        <input type="range" id="adjustScale" min="50" max="250" value="100" oninput="applyLiveAdjust()">
-        <span id="adjustScaleVal">100%</span>
+    <div class="window-body" style="padding: 0; background: #000; overflow: hidden; height: calc(100% - 30px);">
+      <div class="embedded-player-container">
+        <iframe id="embeddedGalaxyIframe" src="" allow="autoplay; camera; microphone; accelerometer; gyroscope"></iframe>
       </div>
-      <div class="slider-row">
-        <span>水平位置 (X):</span>
-        <input type="range" id="adjustPosX" min="0" max="100" value="50" oninput="applyLiveAdjust()">
-        <span id="adjustPosXVal">50%</span>
+    </div>
+  </div>
+
+  <!-- 嵌入式 CD 播放器視窗 -->
+  <div id="embedded-cd-win" class="window win-modal" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="embeddedCdTitle">💿 WINTER CD PLAYER</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-cd-win', 'CD Player', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-cd-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeEmbeddedCdWindow(event)" title="關閉"></button>
       </div>
-      <div class="slider-row">
-        <span>垂直位置 (Y):</span>
-        <input type="range" id="adjustPosY" min="0" max="100" value="50" oninput="applyLiveAdjust()">
-        <span id="adjustPosYVal">50%</span>
-      </div>
-      <div class="slider-row">
-        <span>起始秒數 (Start Sec):</span>
-        <input type="number" id="adjustStartTime" min="0" value="0" oninput="applyLiveAdjust()">
-      </div>
-      <div class="slider-row">
-        <span>結束秒數 (End Sec, 0為無限制):</span>
-        <input type="number" id="adjustEndTime" min="0" value="0" oninput="applyLiveAdjust()">
-      </div>
-      <div style="display:flex; justify-content:space-between; margin-top:10px;">
-        <button type="button" onclick="resetLiveAdjust()">重置預設</button>
-        <button type="button" style="font-weight:bold; background:#8b4513; color:#fff;" onclick="saveAndCloseAdjust()">完成並儲存</button>
+    </div>
+    <div class="window-body" style="padding: 0; background: #000; overflow: hidden; height: calc(100% - 30px);">
+      <div class="embedded-player-container">
+        <iframe id="embeddedCdIframe" src="" allow="autoplay; accelerometer; gyroscope"></iframe>
       </div>
     </div>
   </div>
 
   <!-- 開始選單 (三網頁互通) -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
-    <div class="start-menu-banner">🤠 WINTER RANCH</div>
+    <div class="start-menu-banner">
+      <span>⭐ WINTER NAVIGATION</span>
+      <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal(event)">設定</button>
+    </div>
     <ul>
-      <li>
-        <a href="https://u11150003-arch.github.io/2027-winter-bday-desktop/">
-          🖥️ <strong>1. 回到原始 Desktop 網頁</strong>
-        </a>
-      </li>
-      <li>
-        <a href="https://u11150003-arch.github.io/winter-cd-player/">
-          💿 <strong>2. 前往 WINTER CD PLAYER</strong>
-        </a>
-      </li>
-      <li onclick="returnToRanchMap(); toggleStartMenu(event);">
-        🐎 <strong>3. 返回西部小鎮荒野全景</strong>
-      </li>
-      <hr style="margin:4px 0;">
+      <li onclick="goHome(event); toggleStartMenu(event);">🖥️ <strong>1. 回到原始 Desktop 桌面</strong></li>
+      <li onclick="openWinterCdPlayerWindow(); toggleStartMenu(event);">💿 <strong>2. 開啟 WINTER CD PLAYER</strong></li>
+      <li onclick="openWinterGalaxyWindow(); toggleStartMenu(event);">🪐 <strong>3. 進入 WINTER GALAXY 視訊</strong></li>
+      <hr style="margin: 4px 0;">
+    </ul>
+    <ul id="startMenuList"></ul>
+    <hr style="margin: 4px 0;">
+    <ul>
       <li onclick="toggleAdmin(event); toggleStartMenu(event);">⚙️ 切換管理員模式</li>
     </ul>
   </div>
 
-  <!-- 工作列 -->
+  <div id="move-modal-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
+    <div class="title-bar">
+      <div class="title-bar-text" id="moveModalTitle">📦 移動項目至...</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('move-modal-win', event)"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p style="font-size:12px; margin-top:0;">請點選要移動進去的位置：</p>
+      <div id="moveFolderOptions" style="display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
+    </div>
+  </div>
+
+  <div id="start-config-win" class="window win-modal" style="max-width: 320px; z-index: 4000 !important;" onclick="event.stopPropagation()">
+    <div class="title-bar">
+      <div class="title-bar-text">⭐ 自訂開始選單項目</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('start-config-win', event)"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p style="font-size:12px; margin-top:0;">請勾選要在選單中顯示的項目：</p>
+      <div id="startConfigCheckboxes" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; padding:4px; border:1px inset #fff; background:#fff;"></div>
+      <div style="margin-top:8px; text-align:right;">
+        <button type="button" onclick="saveStartMenuConfig(event)">確定儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="folder-win" class="window win-modal" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="folderTitle">📁 資料夾</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('folder-win', '資料夾', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('folder-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('folder-win', event)" title="關閉"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="folder-nav-bar">
+        <button id="btnNavBack" onclick="navGoBack(event)" title="返回上一個資料夾 (上一步)">⬅ 上一步</button>
+        <button id="btnNavForward" onclick="navGoForward(event)" title="前往下一個資料夾 (下一步)">➡ 下一步</button>
+        <span class="admin-only" style="color:#888; margin: 0 4px;">|</span>
+        <button class="admin-only" onclick="createFolderWithCoverChoice(currentOpenFolderId, event)">+ 子資料夾</button>
+        <button class="admin-only" onclick="createAlbumWithCoverChoice(currentOpenFolderId, event)">+ 傳統專輯</button>
+        <button class="admin-only" onclick="createItemInsideFolder('video', event)">+ 音樂/影片</button>
+        <button class="admin-only" onclick="createItemInsideFolder('image', event)">+ 圖片</button>
+        <button class="admin-only" onclick="pasteItem(currentOpenFolderId, event)" style="background:#ffffe0; font-weight:bold;">📌 貼上到此</button>
+      </div>
+      <div id="folderInnerContent" style="display:flex; gap:10px; flex-wrap:wrap; min-height:120px; padding:8px; background:#fff; border: 2px inset #dfdfdf;"></div>
+    </div>
+  </div>
+
+  <div id="album-win" class="window win-modal" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="albumTitleBar">💿 專輯曲目列表</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('album-win', '專輯播放器', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('album-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeAlbumWindow(event)" title="關閉"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="media-container">
+        <iframe id="albumIframe" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; font-weight:bold;">曲目清單：</span>
+        <button class="admin-only" onclick="addTrackToCurrentAlbum(event)">+ 新增曲目</button>
+      </div>
+      <ul class="playlist-box" id="albumTrackItems"></ul>
+    </div>
+  </div>
+
+  <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('photo-viewer-win', '圖片檢視器', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('photo-viewer-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('photo-viewer-win', event)" title="關閉"></button>
+      </div>
+    </div>
+    <div class="window-body" style="background: #222; padding: 4px;">
+      <div class="photo-stage">
+        <img id="largePhotoDisplay" src="" alt="preview">
+      </div>
+    </div>
+  </div>
+
+  <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('media-player-win', '播放器', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('media-player-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeUniversalPlayer(event)" title="關閉"></button>
+      </div>
+    </div>
+    <div class="window-body" style="padding: 0; background: #000;">
+      <div class="media-container">
+        <iframe id="universalIframe" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <video id="universalVideo" controls playsinline></video>
+      </div>
+    </div>
+  </div>
+
+  <div id="link-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('link-win', event)"></button>
+      </div>
+    </div>
+    <div class="window-body" style="text-align:center;">
+      <p id="linkText" style="font-size:12px; margin: 10px 0;"></p>
+      <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
+        <button type="button" style="width:100%; padding:6px; font-weight:bold;">開啟連結 (Visit Site)</button>
+      </a>
+    </div>
+  </div>
+
   <div class="taskbar">
     <div class="taskbar-left">
+      <button type="button" onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
+        ⭐️ HOME
+      </button>
       <button type="button" onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
-        🤠 WINTER
+        <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
       </button>
-      <button type="button" onclick="returnToRanchMap()" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
-        🐎 RANCH
-      </button>
+      <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
       <a href="https://www.instagram.com/winter_tst" target="_blank">Copyright © : winter_tst</a>
@@ -426,60 +483,178 @@
   <script>
     const ADMIN_PASSWORD = "admin";
     let isAdmin = false;
+    let currentOpenFolderId = null;
+    let currentOpenAlbumId = null;
 
-    // 三棟西部馬廄建築資料庫 (完整整合最新影片與比例設定)
-    const RANCH_MASTER_CONFIG = {
-      "dogImage": "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o",
-      "barns": [
+    let selectedItemId = null;
+    let clipboardItem = null;
+    let isCutOperation = false;
+
+    let folderHistory = [];
+    let folderForwardStack = [];
+
+    const windowRestoreBounds = {};
+
+    const ICON_FOLDER_DEFAULT = "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png";
+    const ICON_DISC_PURE = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
+    const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
+    
+    // 小狗原圖直鏈 (完整保留透明去背原貌)
+    const ICON_GALAXY_DOG = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
+    
+    const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
+
+    const MASTER_CONFIG = {
+      "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
+      "startMenuVisibleIds": [
+        "winter_galaxy_entry",
+        "winter_cd_standalone_entry",
+        "l1",
+        "folder_1789230844971",
+        "folder_1789230959703",
+        "folder_1789233534244"
+      ],
+      "items": [
         {
-          "id": "barn_0101",
-          "name": "WINTER0101",
-          "title": "Saloon #0101",
-          "xRatio": 0.2, // 位於畫面左側
-          "videoUrl": "https://youtu.be/dVhNMMejAtA?si=3hNsInSYm_CyfAcF",
-          "adjust": { "scale": 146, "x": 50, "y": 50, "start": 0, "end": 0 }
+          "id": "winter_galaxy_entry",
+          "parentId": null,
+          "type": "galaxy_standalone",
+          "name": "WINTER GALAXY",
+          "iconType": "pure",
+          "icon": ICON_GALAXY_DOG,
+          "coverBadge": "",
+          "url": "https://u11150003-arch.github.io/winter-galaxy/",
+          "pos": { "x": 14, "y": 280 }
         },
         {
-          "id": "barn_1117",
-          "name": "WINTER1117",
-          "title": "Stable #1117",
-          "xRatio": 0.5, // 位於畫面中央
-          "videoUrl": "https://youtu.be/Nxybqp22WNI?si=BnwmB_4uMEmIqO1a",
-          "adjust": { "scale": 146, "x": 44, "y": 50, "start": 0, "end": 0 }
+          "id": "winter_cd_standalone_entry",
+          "parentId": null,
+          "type": "cd_standalone",
+          "name": "Winter Playlist",
+          "iconType": "cover",
+          "icon": ICON_DISC_DRIVE,
+          "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
+          "url": "https://u11150003-arch.github.io/winter-cd-player/",
+          "pos": { "x": 14, "y": 360 }
         },
         {
-          "id": "barn_0618",
-          "name": "PONYO0618",
-          "title": "Ranch Barn #0618",
-          "xRatio": 0.8, // 位於畫面右側
-          "videoUrl": "https://youtu.be/nOA1qS4AaiQ?si=aNod6kn17hyqYDTK",
-          "adjust": { "scale": 190, "x": 50, "y": 50, "start": 0, "end": 0 }
+          "id": "img1",
+          "parentId": "folder_1789230890651",
+          "type": "image",
+          "name": "手幅Serenade ver",
+          "icon": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
+          "mediaUrl": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
+          "pos": { "x": 16, "y": 168 }
+        },
+        {
+          "id": "n1",
+          "parentId": "folder_1789230959703",
+          "type": "note",
+          "name": "生咖應援物",
+          "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
+          "content": "1. 應援小卡\n2. 明信片",
+          "pos": { "x": 16, "y": 244 }
+        },
+        {
+          "id": "l1",
+          "parentId": null,
+          "type": "link",
+          "name": "生咖預約表單",
+          "icon": W_FORM_ICON,
+          "url": "https://wintertst0101.netlify.app/",
+          "pos": { "x": 16, "y": 200 }
+        },
+        {
+          "id": "1789230813079",
+          "parentId": "folder_1789230844971",
+          "type": "note",
+          "name": "Lucky Draw",
+          "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
+          "content": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n客製化頭巾-6\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
+          "pos": { "x": 120, "y": 120 }
+        },
+        {
+          "id": "folder_1789230844971",
+          "parentId": null,
+          "type": "folder",
+          "name": "Lucky Draw",
+          "iconType": "pure",
+          "icon": ICON_FOLDER_DEFAULT,
+          "coverBadge": "",
+          "pos": { "x": 21, "y": 110 }
+        },
+        {
+          "id": "folder_1789230890651",
+          "parentId": "folder_1789230844971",
+          "type": "folder",
+          "name": "手幅-3款",
+          "iconType": "pure",
+          "icon": ICON_FOLDER_DEFAULT,
+          "coverBadge": "",
+          "pos": { "x": 120, "y": 120 }
+        },
+        {
+          "id": "folder_1789230959703",
+          "parentId": null,
+          "type": "folder",
+          "name": "生咖應援物",
+          "iconType": "pure",
+          "icon": ICON_FOLDER_DEFAULT,
+          "coverBadge": "",
+          "pos": { "x": 21, "y": 20 }
+        },
+        {
+          "id": "folder_1789233534244",
+          "parentId": null,
+          "type": "folder",
+          "name": "生咖資訊",
+          "iconType": "pure",
+          "icon": ICON_FOLDER_DEFAULT,
+          "coverBadge": "",
+          "pos": { "x": 110, "y": 20 }
         }
       ]
     };
 
-    const CONFIG_KEY = "winter_ranch_config_v2026_init_v1";
-    let saved = localStorage.getItem(CONFIG_KEY);
-    let ranchConfig = saved ? JSON.parse(saved) : RANCH_MASTER_CONFIG;
-    let barnsData = ranchConfig.barns;
+    // 升級版本 Key，強制覆蓋舊快取，載入小狗大圖示
+    const CONFIG_VERSION = "winter_desktop_dog_icon_scaled_v2026_16";
+    if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
+      localStorage.setItem("winter_version", CONFIG_VERSION);
+      localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
+    }
 
-    let activeBarnIndex = 0;
-    let userCameraStream = null;
-    let ranchAnimFrame = null;
-    let animTimer = 0;
+    let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
+    let itemsData = currentConfig.items;
 
-    // 動畫狀態：小狗與小馬即時座標
-    let dogPos = { x: 0, y: 0, targetX: 0, targetY: 0 };
-    let horsePos = { x: 0, y: 0, targetX: 0, targetY: 0 };
-    let isMovingToBarn = false;
-    let isZoomingDog = false;
-    let zoomDogScale = 1;
-    let targetBarn = null;
-    let loopTimer = null;
+    function openWinterGalaxyWindow() {
+      const item = itemsData.find(i => i.id === "winter_galaxy_entry");
+      const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-galaxy/";
+      const iframe = document.getElementById('embeddedGalaxyIframe');
+      if (iframe.src !== targetUrl) iframe.src = targetUrl;
+      openWindow('embedded-galaxy-win');
+    }
 
-    let dogImg = new Image();
-    dogImg.crossOrigin = "anonymous";
-    dogImg.src = ranchConfig.dogImage || RANCH_MASTER_CONFIG.dogImage;
+    function closeEmbeddedGalaxyWindow(e) {
+      if (e) e.stopPropagation();
+      const iframe = document.getElementById('embeddedGalaxyIframe');
+      iframe.src = '';
+      closeWindow('embedded-galaxy-win', e);
+    }
+
+    function openWinterCdPlayerWindow() {
+      const item = itemsData.find(i => i.id === "winter_cd_standalone_entry");
+      const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-cd-player/";
+      const iframe = document.getElementById('embeddedCdIframe');
+      if (iframe.src !== targetUrl) iframe.src = targetUrl;
+      openWindow('embedded-cd-win');
+    }
+
+    function closeEmbeddedCdWindow(e) {
+      if (e) e.stopPropagation();
+      const iframe = document.getElementById('embeddedCdIframe');
+      iframe.src = '';
+      closeWindow('embedded-cd-win', e);
+    }
 
     function extractDriveId(url) {
       if (!url) return null;
@@ -487,29 +662,183 @@
       return match ? match[1] : null;
     }
 
-    function extractYoutubeId(url) {
-      if (!url) return null;
-      if (url.includes("shorts/")) return url.split("shorts/")[1].split("?")[0].split("&")[0].substring(0, 11);
-      if (url.includes("v=")) return url.split("v=")[1].substring(0, 11);
-      if (url.includes("youtu.be/")) return url.split("youtu.be/")[1].substring(0, 11);
-      if (url.length === 11 && !url.includes("/") && !url.includes(".")) return url.trim();
-      return null;
+    function autoFormatMediaUrl(url, type) {
+      if (!url) return url;
+      const driveId = extractDriveId(url);
+      if (driveId) {
+        if (type === 'image' || type === 'icon' || type === 'wallpaper') return `https://lh3.googleusercontent.com/d/${driveId}`;
+        return `https://drive.google.com/file/d/${driveId}/preview`;
+      }
+      return url.trim();
     }
 
-    function saveRanchState() {
-      ranchConfig.barns = barnsData;
-      localStorage.setItem(CONFIG_KEY, JSON.stringify(ranchConfig));
-      renderSelectorChips();
+    function saveState() {
+      currentConfig.items = itemsData;
+      localStorage.setItem("winter_desktop_config", JSON.stringify(currentConfig));
+      renderDesktop();
+      renderStartMenu();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+      updateSelectionUI();
     }
 
-    function exportRanchState() {
-      saveRanchState();
-      const code = `const RANCH_MASTER_CONFIG = ${JSON.stringify(ranchConfig, null, 2)};`;
-      navigator.clipboard.writeText(code).then(() => {
-        alert("✅ 成功複製配置代碼！貼回 index.html 即可永久儲存。");
+    function exportCurrentState(e) {
+      if (e) e.stopPropagation();
+      currentConfig.items = itemsData;
+      const output = `const MASTER_CONFIG = ${JSON.stringify(currentConfig, null, 2)};`;
+      navigator.clipboard.writeText(output).then(() => {
+        alert("✅ 成功複製配置代碼！請至 GitHub index.html 替換 MASTER_CONFIG 區域即可永久儲存。");
       }).catch(() => {
-        prompt("請複製以下配置代碼：", code);
+        prompt("請複製代碼並貼回 index.html：", output);
       });
+    }
+
+    function goHome(e) {
+      if (e) e.stopPropagation();
+      document.querySelectorAll('.win-modal').forEach(win => {
+        win.style.display = 'none';
+        win.classList.remove('maximized');
+      });
+      closeUniversalPlayer();
+      closeAlbumWindow();
+      closeEmbeddedCdWindow();
+      closeEmbeddedGalaxyWindow();
+      currentOpenFolderId = null;
+      currentOpenAlbumId = null;
+      folderHistory = [];
+      folderForwardStack = [];
+      updateTaskbar();
+      const menu = document.getElementById('startMenu');
+      if (menu) menu.style.display = 'none';
+    }
+
+    function handleGlobalClick(e) {
+      selectedItemId = null;
+      updateSelectionUI();
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+      const menu = document.getElementById('startMenu');
+      if (menu) menu.style.display = 'none';
+    }
+
+    function selectItem(id, e) {
+      if (e) e.stopPropagation();
+      selectedItemId = (selectedItemId === id) ? null : id;
+      updateSelectionUI();
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+    }
+
+    function updateSelectionUI() {
+      const hasSelection = selectedItemId !== null && isAdmin;
+      document.querySelectorAll('.selected-ops').forEach(el => el.style.display = hasSelection ? 'inline-flex' : 'none');
+    }
+
+    function moveSelectedItemToDialog(e) {
+      if (e) e.stopPropagation();
+      if (!selectedItemId) return;
+
+      const item = itemsData.find(i => i.id === selectedItemId);
+      if (!item) return;
+
+      const targetFolders = itemsData.filter(i => (i.type === 'folder' || i.type === 'album') && i.id !== item.id);
+      const box = document.getElementById('moveFolderOptions');
+      box.innerHTML = '';
+
+      const desktopOpt = document.createElement('button');
+      desktopOpt.style.cssText = "text-align:left; padding:4px 8px; font-size:12px; cursor:pointer;";
+      desktopOpt.innerHTML = "🖥️ [移至最外層桌面]";
+      desktopOpt.onclick = (ev) => {
+        ev.stopPropagation();
+        item.parentId = null;
+        item.pos = { x: 120, y: 120 };
+        saveState();
+        closeWindow('move-modal-win');
+        alert(`已將「${item.name}」移至最外層桌面！`);
+      };
+      box.appendChild(desktopOpt);
+
+      targetFolders.forEach(folder => {
+        const btn = document.createElement('button');
+        btn.style.cssText = "text-align:left; padding:4px 8px; font-size:12px; cursor:pointer;";
+        btn.innerHTML = `📁 ${folder.name} (${folder.type === 'album' ? '專輯' : '資料夾'})`;
+        btn.onclick = (ev) => {
+          ev.stopPropagation();
+          item.parentId = folder.id;
+          saveState();
+          closeWindow('move-modal-win');
+          alert(`已將「${item.name}」移入「${folder.name}」！`);
+        };
+        box.appendChild(btn);
+      });
+
+      document.getElementById('moveModalTitle').innerText = `📦 移動「${item.name}」至...`;
+      openWindow('move-modal-win');
+    }
+
+    function copySelectedItem(e) {
+      if (e) e.stopPropagation();
+      if (!selectedItemId) return;
+      const item = itemsData.find(i => i.id === selectedItemId);
+      if (!item) return;
+      clipboardItem = item;
+      isCutOperation = false;
+      alert(`已複製「${item.name}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
+    }
+
+    function cutSelectedItem(e) {
+      if (e) e.stopPropagation();
+      if (!selectedItemId) return;
+      const item = itemsData.find(i => i.id === selectedItemId);
+      if (!item) return;
+      clipboardItem = item;
+      isCutOperation = true;
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+      alert(`已剪下「${item.name}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
+    }
+
+    function editSelectedItem(e) {
+      if (e) e.stopPropagation();
+      if (!selectedItemId) return;
+      editItem(selectedItemId);
+    }
+
+    function deleteSelectedItem(e) {
+      if (e) e.stopPropagation();
+      if (!selectedItemId) return;
+      if (confirm("確定刪除所選項目嗎？")) {
+        itemsData = itemsData.filter(i => i.id !== selectedItemId && i.parentId !== selectedItemId);
+        if (clipboardItem && clipboardItem.id === selectedItemId) clipboardItem = null;
+        selectedItemId = null;
+        saveState();
+      }
+    }
+
+    function pasteItem(targetParentId, e) {
+      if (e) e.stopPropagation();
+      if (!clipboardItem) {
+        alert("剪貼簿目前沒有項目！請先選取項目並點擊「複製」或「剪下」。");
+        return;
+      }
+      if (isCutOperation) {
+        if (clipboardItem.id === targetParentId) { alert("無法將項目移入自己內部！"); return; }
+        clipboardItem.parentId = targetParentId;
+        if (!targetParentId) clipboardItem.pos = { x: 120, y: 120 };
+        clipboardItem = null;
+        isCutOperation = false;
+      } else {
+        function cloneRecursive(origItem, pId) {
+          const newId = "copy_" + Date.now() + "_" + Math.floor(Math.random()*1000);
+          const cloned = { ...origItem, id: newId, parentId: pId, name: origItem.name + " (副本)" };
+          if (cloned.pos) cloned.pos = { x: cloned.pos.x + 24, y: cloned.pos.y + 24 };
+          itemsData.push(cloned);
+          const children = itemsData.filter(i => i.parentId === origItem.id);
+          children.forEach(ch => cloneRecursive(ch, newId));
+        }
+        cloneRecursive(clipboardItem, targetParentId);
+      }
+      selectedItemId = null;
+      saveState();
     }
 
     function toggleAdmin(e) {
@@ -518,7 +847,7 @@
         isAdmin = false;
         document.body.classList.remove('admin-mode');
         document.getElementById('authBtn').innerText = "🔒 管理員";
-        closeAdjustModal();
+        selectedItemId = null;
         alert("已退出管理員模式");
       } else {
         const input = prompt("請輸入管理員密碼：");
@@ -526,518 +855,782 @@
           isAdmin = true;
           document.body.classList.add('admin-mode');
           document.getElementById('authBtn').innerText = "🔓 退出管理";
-          alert("登入成功！已解鎖管理與微調功能。");
+          setTimeout(updateScrollBarUI, 80);
+          alert("登入成功！已解鎖管理功能。");
         } else if (input !== null) {
           alert("密碼錯誤！");
         }
       }
+      renderDesktop();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+      updateSelectionUI();
     }
 
-    function renderSelectorChips() {
-      const bar = document.getElementById('barnSelectorBar');
-      if (!bar) return;
-      bar.innerHTML = '';
+    function renderDesktop() {
+      const container = document.getElementById('desktopContainer');
+      container.innerHTML = '';
 
-      barnsData.forEach((b, idx) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `barn-chip ${idx === activeBarnIndex ? 'active' : ''}`;
-        btn.innerHTML = `🏠 ${b.name}`;
-        btn.onclick = () => selectBarnAndMove(idx);
-        bar.appendChild(btn);
+      itemsData.filter(item => !item.parentId).forEach((item, index) => {
+        if (!item.pos) {
+          const col = Math.floor(index / 5);
+          const row = index % 5;
+          item.pos = { x: 16 + col * 84, y: 16 + row * 76 };
+        }
+        const el = createIconElement(item);
+        el.style.left = item.pos.x + "px";
+        el.style.top = item.pos.y + "px";
+        bindDragAndClick(el, item);
+        container.appendChild(el);
       });
     }
 
-    function returnToRanchMap() {
-      isMovingToBarn = false;
-      isZoomingDog = false;
-      zoomDogScale = 1;
-      targetBarn = null;
-      document.getElementById('videoChatContainer').classList.remove('active');
-      document.getElementById('ranchCanvasWrap').style.display = 'flex';
-      document.getElementById('ranchHeader').style.display = 'block';
-      closeAdjustModal();
-      stopWinterVideo();
-      stopUserWebcam();
-      renderSelectorChips();
-    }
+    function createIconElement(item) {
+      const div = document.createElement('div');
+      const isSelected = selectedItemId === item.id;
+      const isCut = clipboardItem && clipboardItem.id === item.id && isCutOperation;
+      div.className = `icon-wrapper dynamic-item ${isSelected ? 'selected' : ''} ${isCut ? 'cut-mode' : ''}`;
 
-    // 點擊馬廄：小狗與小馬先跑步位移，再觸發 Zoom-in 進入視訊
-    function selectBarnAndMove(idx) {
-      activeBarnIndex = idx;
-      renderSelectorChips();
-      targetBarn = barnsData[idx];
-
-      const canvas = document.getElementById('ranchCanvas');
-      const w = canvas.width;
-      const h = canvas.height;
-      const barnX = w * targetBarn.xRatio;
-      const groundY = h * 0.72;
-
-      // 設定位移目標（馬廄門口）
-      dogPos.targetX = barnX - 25;
-      dogPos.targetY = groundY;
-      horsePos.targetX = barnX + 25;
-      horsePos.targetY = groundY;
-      isMovingToBarn = true;
-
-      // 位移動畫後觸發小狗特寫 Zoom in
-      setTimeout(() => {
-        isZoomingDog = true;
-        zoomDogScale = 1;
-        setTimeout(() => {
-          enterVideoChat(targetBarn);
-        }, 600);
-      }, 700);
-    }
-
-    function enterVideoChat(barn) {
-      document.getElementById('ranchCanvasWrap').style.display = 'none';
-      document.getElementById('ranchHeader').style.display = 'none';
-      const container = document.getElementById('videoChatContainer');
-      container.classList.add('active');
-
-      document.getElementById('winterVideoTitle').innerText = `🤠 WINTER [${barn.name}]`;
-      applyVideoTransform(barn);
-      playWinterVideo(barn);
-      initUserWebcam();
-    }
-
-    function applyVideoTransform(barn) {
-      const wrapper = document.getElementById('winterVideoWrapper');
-      if (!wrapper) return;
-      const adj = barn.adjust || { scale: 100, x: 50, y: 50, start: 0, end: 0 };
-      const scaleVal = (adj.scale || 100) / 100;
-      const transX = (adj.x - 50);
-      const transY = (adj.y - 50);
-      wrapper.style.transform = `scale(${scaleVal}) translate(${transX}%, ${transY}%)`;
-    }
-
-    // 播放視訊 (注入徹底消除控制項、秒數與帳號參數，純淨 Facetime 感)
-    function playWinterVideo(barn) {
-      const url = barn.videoUrl;
-      const iframe = document.getElementById('winterVideoIframe');
-      const directVideo = document.getElementById('winterVideoDirect');
-      const adj = barn.adjust || { scale: 100, x: 50, y: 50, start: 0, end: 0 };
-      const startSec = parseInt(adj.start, 10) || 0;
-      const endSec = parseInt(adj.end, 10) || 0;
-
-      if (loopTimer) clearInterval(loopTimer);
-      if (!url) return;
-
-      const driveId = extractDriveId(url);
-      const ytId = extractYoutubeId(url);
-
-      if (ytId) {
-        directVideo.pause(); directVideo.src = ''; directVideo.style.display = 'none';
-        iframe.style.display = 'block';
-
-        // 注入去除所有進度條與大播放鍵參數
-        let params = `autoplay=1&mute=0&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&vq=hd1080&playsinline=1`;
-        if (startSec > 0) params += `&start=${startSec}`;
-        if (endSec > startSec) params += `&end=${endSec}`;
-
-        iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?${params}`;
-
-        if (endSec > startSec) {
-          const duration = (endSec - startSec) * 1000;
-          loopTimer = setInterval(() => {
-            iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?${params}`;
-          }, duration);
+      let iconHtml = "";
+      if (item.type === 'galaxy_standalone') {
+        // 小狗原圖專屬圖示 (放大飽滿呈現，不失真且與其他圖示大小相符)
+        iconHtml = `<div class="icon-art-box"><img src="${item.icon || ICON_GALAXY_DOG}" class="dog-galaxy-icon"></div>`;
+      } else if (item.type === 'cd_standalone' || item.type === 'album') {
+        if (item.coverBadge) {
+          iconHtml = `
+            <div class="icon-art-box">
+              <img src="${ICON_DISC_DRIVE}" class="base-img">
+              <img src="${item.coverBadge}" class="custom-cover-badge" onerror="this.style.display='none'">
+            </div>
+          `;
+        } else {
+          iconHtml = `<div class="icon-art-box"><img src="${ICON_DISC_DRIVE}" class="base-img"></div>`;
         }
-      } else if (driveId) {
-        directVideo.pause(); directVideo.src = ''; directVideo.style.display = 'none';
-        iframe.style.display = 'block';
-        iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
-      } else {
-        iframe.src = ''; iframe.style.display = 'none';
-        directVideo.style.display = 'block';
-        directVideo.loop = (endSec <= startSec);
-        directVideo.src = url;
-        directVideo.load();
-
-        directVideo.onloadedmetadata = () => {
-          if (startSec > 0 && startSec < directVideo.duration) directVideo.currentTime = startSec;
-          directVideo.play().catch(() => { directVideo.muted = true; directVideo.play(); });
-        };
-
-        directVideo.ontimeupdate = () => {
-          if (endSec > startSec && endSec <= directVideo.duration && directVideo.currentTime >= endSec) {
-            directVideo.currentTime = startSec;
-            directVideo.play();
-          }
-        };
-
-        directVideo.onended = () => {
-          directVideo.currentTime = (startSec < directVideo.duration) ? startSec : 0;
-          directVideo.play();
-        };
-      }
-    }
-
-    function stopWinterVideo() {
-      if (loopTimer) clearInterval(loopTimer);
-      const iframe = document.getElementById('winterVideoIframe');
-      const directVideo = document.getElementById('winterVideoDirect');
-      if (iframe) iframe.src = '';
-      if (directVideo) { directVideo.pause(); directVideo.src = ''; directVideo.style.display = 'none'; }
-    }
-
-    function openAdjustModal() {
-      const barn = barnsData[activeBarnIndex];
-      if (!barn) return;
-      const adj = barn.adjust = barn.adjust || { scale: 100, x: 50, y: 50, start: 0, end: 0 };
-
-      document.getElementById('adjustModalTitle').innerText = `🔍 調視訊 (${barn.name})`;
-      document.getElementById('adjustScale').value = adj.scale;
-      document.getElementById('adjustScaleVal').innerText = adj.scale + '%';
-      document.getElementById('adjustPosX').value = adj.x;
-      document.getElementById('adjustPosXVal').innerText = adj.x + '%';
-      document.getElementById('adjustPosY').value = adj.y;
-      document.getElementById('adjustPosYVal').innerText = adj.y + '%';
-      document.getElementById('adjustStartTime').value = adj.start || 0;
-      document.getElementById('adjustEndTime').value = adj.end || 0;
-
-      document.getElementById('adjustModal').style.display = 'block';
-    }
-
-    function closeAdjustModal() {
-      document.getElementById('adjustModal').style.display = 'none';
-    }
-
-    function applyLiveAdjust() {
-      const barn = barnsData[activeBarnIndex];
-      if (!barn) return;
-
-      const scale = parseInt(document.getElementById('adjustScale').value, 10);
-      const x = parseInt(document.getElementById('adjustPosX').value, 10);
-      const y = parseInt(document.getElementById('adjustPosY').value, 10);
-      const start = parseInt(document.getElementById('adjustStartTime').value, 10) || 0;
-      const end = parseInt(document.getElementById('adjustEndTime').value, 10) || 0;
-
-      document.getElementById('adjustScaleVal').innerText = scale + '%';
-      document.getElementById('adjustPosXVal').innerText = x + '%';
-      document.getElementById('adjustPosYVal').innerText = y + '%';
-
-      barn.adjust = { scale, x, y, start, end };
-      applyVideoTransform(barn);
-    }
-
-    function resetLiveAdjust() {
-      document.getElementById('adjustScale').value = 100;
-      document.getElementById('adjustPosX').value = 50;
-      document.getElementById('adjustPosY').value = 50;
-      document.getElementById('adjustStartTime').value = 0;
-      document.getElementById('adjustEndTime').value = 0;
-      applyLiveAdjust();
-    }
-
-    function saveAndCloseAdjust() {
-      saveRanchState();
-      closeAdjustModal();
-      alert("✅ 視訊位置、縮放、起始與結束秒數已儲存！");
-      playWinterVideo(barnsData[activeBarnIndex]);
-    }
-
-    async function initUserWebcam() {
-      const hint = document.getElementById('camHint');
-      const video = document.getElementById('userCamVideo');
-      stopUserWebcam();
-
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        try {
-          hint.style.display = 'block';
-          hint.innerText = "正在連線鏡頭 (僅於本機運作)...";
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
-            audio: false
-          });
-          userCameraStream = stream;
-          video.srcObject = stream;
-          hint.style.display = 'none';
-        } catch (err) {
-          hint.style.display = 'block';
-          hint.innerText = "相機未授權或無相機設備\n已維持純 WINTER 視訊模式";
+      } else if (item.type === 'folder') {
+        if (item.coverBadge) {
+          iconHtml = `
+            <div class="icon-art-box">
+              <img src="${ICON_FOLDER_DEFAULT}" class="base-img">
+              <img src="${item.coverBadge}" class="custom-cover-badge" onerror="this.style.display='none'">
+            </div>
+          `;
+        } else {
+          iconHtml = `<div class="icon-art-box"><img src="${ICON_FOLDER_DEFAULT}" class="base-img"></div>`;
         }
       } else {
-        hint.style.display = 'block';
-        hint.innerText = "當前環境不支援調用相機設備";
+        const displayIcon = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : (item.icon || ICON_FOLDER_DEFAULT);
+        iconHtml = `<img src="${displayIcon}" style="width:42px; height:42px; object-fit:contain;" onerror="this.src='${ICON_FOLDER_DEFAULT}'">`;
       }
+
+      const checkHtml = `<input type="checkbox" class="icon-select-check" ${isSelected ? 'checked' : ''} onclick="selectItem('${item.id}', event)">`;
+      div.innerHTML = `${checkHtml}${iconHtml}<span>${item.name}</span>`;
+      return div;
     }
 
-    function stopUserWebcam() {
-      if (userCameraStream) {
-        userCameraStream.getTracks().forEach(t => t.stop());
-        userCameraStream = null;
-      }
-      const v = document.getElementById('userCamVideo');
-      if (v) v.srcObject = null;
-    }
+    function bindDragAndClick(el, item) {
+      let isDragging = false;
+      let startX = 0, startY = 0, origX = 0, origY = 0;
+      let hasMoved = false;
 
-    function editCurrentBarnPrompt() {
-      const b = barnsData[activeBarnIndex];
-      if (!b) return;
+      function onPointerDown(e) {
+        if (e.target.classList.contains('icon-select-check')) return;
+        if (e.button && e.button !== 0) return;
 
-      const newName = prompt("重新命名馬廄名稱：", b.name);
-      if (newName) b.name = newName.trim();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        startX = clientX;
+        startY = clientY;
+        origX = item.pos ? item.pos.x : parseInt(el.style.left) || 16;
+        origY = item.pos ? item.pos.y : parseInt(el.style.top) || 16;
+        hasMoved = false;
 
-      const url = prompt("更改當前馬廄的影片網址 (支援 YouTube / Shorts / 雲端 / MP4)：", b.videoUrl);
-      if (url) {
-        b.videoUrl = url.trim();
-        b.adjust.start = 0;
-        b.adjust.end = 0;
-      }
+        if (isAdmin) isDragging = true;
 
-      saveRanchState();
-      if (document.getElementById('videoChatContainer').classList.contains('active')) {
-        playWinterVideo(b);
-      }
-    }
+        function onPointerMove(moveEvent) {
+          const moveX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+          const moveY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
+          const dx = moveX - startX;
+          const dy = moveY - startY;
 
-    // ==============================================================
-    // HTML5 Canvas 西部牛仔像素荒野系統 (小狗、小馬、三棟馬廄與滾草)
-    // ==============================================================
-    function initRanchSystem() {
-      const canvas = document.getElementById('ranchCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-
-      function resize() {
-        const wrap = document.getElementById('ranchCanvasWrap');
-        if (!wrap) return;
-        canvas.width = wrap.clientWidth;
-        canvas.height = wrap.clientHeight;
-
-        // 初始化小狗與小馬在中央荒野
-        if (!isMovingToBarn) {
-          dogPos.x = dogPos.targetX = canvas.width * 0.46;
-          dogPos.y = dogPos.targetY = canvas.height * 0.72;
-          horsePos.x = horsePos.targetX = canvas.width * 0.54;
-          horsePos.y = horsePos.targetY = canvas.height * 0.73;
-        }
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      // 點擊判定：直接在畫布上點擊三棟馬廄
-      canvas.addEventListener('click', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-        const groundY = canvas.height * 0.72;
-
-        barnsData.forEach((b, idx) => {
-          const bx = canvas.width * b.xRatio;
-          const bw = canvas.width < 768 ? 90 : 130;
-          const bh = bw * 0.9;
-          const by = groundY - bh;
-
-          if (mx >= bx - bw/2 && mx <= bx + bw/2 && my >= by && my <= groundY + 20) {
-            selectBarnAndMove(idx);
+          if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+            hasMoved = true;
+            if (isDragging && isAdmin) {
+              const desktopEl = document.getElementById('desktopContainer');
+              const maxX = desktopEl.clientWidth - el.offsetWidth;
+              const maxY = desktopEl.clientHeight - el.offsetHeight;
+              const nextX = Math.max(0, Math.min(maxX, origX + dx));
+              const nextY = Math.max(0, Math.min(maxY, origY + dy));
+              el.style.left = nextX + "px";
+              el.style.top = nextY + "px";
+            }
           }
-        });
-      });
-
-      // 繪製像素風格西部馬廄 (Barn)
-      function drawWesternBarn(x, y, width, title, isSelected) {
-        const h = width * 0.88;
-        ctx.save();
-        ctx.translate(x, y);
-
-        // 主屋身（復古紅棕木板）
-        ctx.fillStyle = isSelected ? '#a8422b' : '#85321f';
-        ctx.fillRect(-width/2, -h, width, h);
-
-        // 屋身木板橫條紋
-        ctx.strokeStyle = '#5a1d10';
-        ctx.lineWidth = 1.5;
-        for (let py = -h + 12; py < 0; py += 12) {
-          ctx.beginPath();
-          ctx.moveTo(-width/2, py);
-          ctx.lineTo(width/2, py);
-          ctx.stroke();
         }
 
-        // 西部山形斜屋頂
-        ctx.fillStyle = '#4a150c';
-        ctx.beginPath();
-        ctx.moveTo(-width/2 - 8, -h);
-        ctx.lineTo(0, -h - width * 0.38);
-        ctx.lineTo(width/2 + 8, -h);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        function onPointerUp(upEvent) {
+          window.removeEventListener('mousemove', onPointerMove);
+          window.removeEventListener('mouseup', onPointerUp);
+          window.removeEventListener('touchmove', onPointerMove);
+          window.removeEventListener('touchend', onPointerUp);
 
-        // 閣樓白色十字叉窗
-        const winSize = width * 0.22;
-        ctx.fillStyle = '#220804';
-        ctx.fillRect(-winSize/2, -h - width * 0.22, winSize, winSize);
-        ctx.strokeStyle = '#fff3b0';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(-winSize/2, -h - width * 0.22, winSize, winSize);
-        ctx.beginPath();
-        ctx.moveTo(-winSize/2, -h - width * 0.22);
-        ctx.lineTo(winSize/2, -h - width * 0.22 + winSize);
-        ctx.moveTo(winSize/2, -h - width * 0.22);
-        ctx.lineTo(-winSize/2, -h - width * 0.22 + winSize);
-        ctx.stroke();
+          if (isDragging && hasMoved) {
+            item.pos = { x: parseInt(el.style.left), y: parseInt(el.style.top) };
+            saveState();
+          } else if (!hasMoved) {
+            if (isAdmin) {
+              selectedItemId = item.id;
+              updateSelectionUI();
+              renderDesktop();
+              if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
+            }
+            handleItemClick(item);
+          }
+          isDragging = false;
+        }
 
-        // 正門 (木門)
-        const doorW = width * 0.34;
-        const doorH = h * 0.55;
-        ctx.fillStyle = '#1c0502';
-        ctx.fillRect(-doorW/2, -doorH, doorW, doorH);
-
-        // 馬廄招牌木牌
-        ctx.fillStyle = '#d4a373';
-        ctx.fillRect(-width * 0.42, -h + 4, width * 0.84, 18);
-        ctx.strokeStyle = '#5a3d28';
-        ctx.strokeRect(-width * 0.42, -h + 4, width * 0.84, 18);
-
-        ctx.fillStyle = '#3a1f0d';
-        ctx.font = 'bold 9px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(title, 0, -h + 16);
-
-        ctx.restore();
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+        window.addEventListener('touchmove', onPointerMove, { passive: true });
+        window.addEventListener('touchend', onPointerUp);
       }
 
-      // 繪製像素小馬
-      function drawPixelHorse(x, y, walkTick) {
-        ctx.save();
-        ctx.translate(x, y);
+      el.addEventListener('mousedown', onPointerDown);
+      el.addEventListener('touchstart', onPointerDown, { passive: true });
+    }
 
-        const bob = Math.sin(walkTick) * 2;
-        // 馬身
-        ctx.fillStyle = '#8b5a2b';
-        ctx.fillRect(-18, -26 + bob, 28, 16);
-        // 馬頸與馬頭
-        ctx.fillRect(8, -36 + bob, 10, 16);
-        ctx.fillRect(12, -42 + bob, 14, 10);
-        // 馬鬃毛與尾巴
-        ctx.fillStyle = '#3a1f0d';
-        ctx.fillRect(6, -40 + bob, 4, 14);
-        ctx.fillRect(-22, -24 + bob, 4, 12);
-        // 四肢馬腿 (微動)
-        ctx.fillStyle = '#6f3b19';
-        const leg1 = Math.sin(walkTick) * 4;
-        const leg2 = -Math.sin(walkTick) * 4;
-        ctx.fillRect(-14, -10, 4, 10 + leg1);
-        ctx.fillRect(-8, -10, 4, 10 + leg2);
-        ctx.fillRect(2, -10, 4, 10 + leg2);
-        ctx.fillRect(8, -10, 4, 10 + leg1);
-
-        ctx.restore();
+    function handleItemClick(item) {
+      if (item.type === 'galaxy_standalone') {
+        openWinterGalaxyWindow();
+      } else if (item.type === 'cd_standalone') {
+        openWinterCdPlayerWindow();
+      } else if (item.type === 'folder') {
+        openFolderWithHistory(item.id, item.name);
+      } else if (item.type === 'album') {
+        openAlbumPlayer(item);
+      } else if (item.type === 'image') {
+        openPhotoViewer(item.name, item.mediaUrl);
+      } else if (item.type === 'video') {
+        openUniversalPlayer(item.name, item.mediaUrl);
+      } else if (item.type === 'note') {
+        alert(`【${item.name}】\n\n${item.content}`);
+      } else if (item.type === 'link') {
+        document.getElementById('linkTitle').innerText = `🔗 ${item.name}`;
+        document.getElementById('linkText').innerText = `即將前往：${item.url}`;
+        document.getElementById('linkBtn').href = item.url;
+        openWindow('link-win');
       }
-
-      function draw() {
-        const w = canvas.width;
-        const h = canvas.height;
-        const isMobile = w < 768;
-        const groundY = h * 0.72;
-
-        ctx.clearRect(0, 0, w, h);
-
-        // 遠景：西部紅岩峽谷群 (Canyon)
-        ctx.fillStyle = '#9c522b';
-        ctx.beginPath();
-        ctx.moveTo(0, groundY - 60);
-        ctx.lineTo(w * 0.15, groundY - 110);
-        ctx.lineTo(w * 0.3, groundY - 70);
-        ctx.lineTo(w * 0.5, groundY - 125);
-        ctx.lineTo(w * 0.7, groundY - 65);
-        ctx.lineTo(w * 0.85, groundY - 115);
-        ctx.lineTo(w, groundY - 75);
-        ctx.lineTo(w, groundY);
-        ctx.lineTo(0, groundY);
-        ctx.closePath();
-        ctx.fill();
-
-        // 荒野泥土地表
-        ctx.fillStyle = '#7a3e1d';
-        ctx.fillRect(0, groundY, w, h - groundY);
-        ctx.fillStyle = '#5c2d13';
-        ctx.fillRect(0, groundY, w, 4);
-
-        // 繪製背景裝飾仙人掌
-        ctx.fillStyle = '#2d5a27';
-        [-30, w * 0.35, w * 0.65, w + 10].forEach(cx => {
-          ctx.fillRect(cx, groundY - 45, 6, 45);
-          ctx.fillRect(cx - 10, groundY - 32, 10, 5);
-          ctx.fillRect(cx - 10, groundY - 40, 5, 12);
-          ctx.fillRect(cx + 6, groundY - 26, 10, 5);
-          ctx.fillRect(cx + 11, groundY - 34, 5, 12);
-        });
-
-        // 繪製三棟馬廄
-        const barnW = isMobile ? 88 : 130;
-        barnsData.forEach((b, idx) => {
-          const bx = w * b.xRatio;
-          drawWesternBarn(bx, groundY, barnW, b.name, idx === activeBarnIndex);
-        });
-
-        // 漫步或位移插值計算 (小狗與小馬平滑跑步)
-        const walkSpeed = 0.05;
-        dogPos.x += (dogPos.targetX - dogPos.x) * walkSpeed;
-        dogPos.y += (dogPos.targetY - dogPos.y) * walkSpeed;
-        horsePos.x += (horsePos.targetX - horsePos.x) * walkSpeed;
-        horsePos.y += (horsePos.targetY - horsePos.y) * walkSpeed;
-
-        // 若在自由模式下，稍微隨機慢步
-        if (!isMovingToBarn) {
-          dogPos.targetX = w * 0.46 + Math.sin(animTimer * 0.02) * 25;
-          horsePos.targetX = w * 0.54 + Math.cos(animTimer * 0.018) * 30;
-        }
-
-        // 繪製小馬
-        drawPixelHorse(horsePos.x, horsePos.y, animTimer * 0.2);
-
-        // 繪製原圖小狗 (戴牛仔帽波妞)
-        ctx.save();
-        ctx.translate(dogPos.x, dogPos.y);
-
-        if (isZoomingDog) {
-          zoomDogScale += 0.1;
-          ctx.scale(zoomDogScale, zoomDogScale);
-        }
-
-        const dogW = isMobile ? 65 : 88;
-        const dogH = dogW * 1.12;
-
-        if (dogImg.complete && dogImg.naturalWidth !== 0) {
-          // 繪製原圖小狗（帶有陰影，立足於荒野上）
-          ctx.fillStyle = 'rgba(0,0,0,0.3)';
-          ctx.beginPath();
-          ctx.ellipse(0, -2, dogW * 0.35, 6, 0, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.drawImage(dogImg, -dogW/2, -dogH, dogW, dogH);
-        }
-
-        ctx.restore();
-
-        animTimer++;
-        ranchAnimFrame = requestAnimationFrame(draw);
-      }
-
-      ranchAnimFrame = requestAnimationFrame(draw);
     }
 
     function toggleStartMenu(e) {
       if (e) e.stopPropagation();
       const menu = document.getElementById('startMenu');
-      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
-    function handleGlobalClick(e) {
-      const menu = document.getElementById('startMenu');
-      if (menu) menu.style.display = 'none';
+    function renderStartMenu() {
+      const list = document.getElementById('startMenuList');
+      if (!list) return;
+      list.innerHTML = '';
+      
+      const visibleIds = currentConfig.startMenuVisibleIds || [];
+      const showItems = itemsData.filter(i => visibleIds.includes(i.id));
+
+      showItems.forEach(item => {
+        const li = document.createElement('li');
+        const iconSrc = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : (item.icon || ICON_FOLDER_DEFAULT);
+        li.title = `開啟 ${item.name}`;
+        li.innerHTML = `<img src="${iconSrc}" width="18" height="18" style="object-fit:contain;"> <span>${item.name}</span>`;
+        li.onclick = (e) => {
+          e.stopPropagation();
+          toggleStartMenu();
+          handleItemClick(item);
+        };
+        list.appendChild(li);
+      });
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      initRanchSystem();
-      renderSelectorChips();
-    });
+    function openStartMenuConfigModal(e) {
+      if (e) e.stopPropagation();
+      if (!isAdmin) {
+        alert("請先登入管理員！");
+        return;
+      }
+      const box = document.getElementById('startConfigCheckboxes');
+      box.innerHTML = '';
+      const currentIds = currentConfig.startMenuVisibleIds || [];
+
+      itemsData.forEach(item => {
+        const row = document.createElement('label');
+        row.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;";
+        const isChecked = currentIds.includes(item.id) ? 'checked' : '';
+        row.innerHTML = `<input type="checkbox" value="${item.id}" ${isChecked}> <span>${item.name}</span>`;
+        box.appendChild(row);
+      });
+
+      openWindow('start-config-win');
+    }
+
+    function saveStartMenuConfig(e) {
+      if (e) e.stopPropagation();
+      const checkboxes = document.querySelectorAll('#startConfigCheckboxes input[type="checkbox"]');
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) selected.push(cb.value);
+      });
+      currentConfig.startMenuVisibleIds = selected;
+      saveState();
+      closeWindow('start-config-win');
+      alert("開始選單已自訂更新！");
+    }
+
+    function createFolderWithCoverChoice(parentId = null, e) {
+      if (e) e.stopPropagation();
+      const name = prompt("請輸入資料夾名稱：", "新資料夾");
+      if (!name) return;
+
+      const choice = prompt("請選擇資料夾樣式：\n1. 經典黃色資料夾\n2. 黃色資料夾＋右下角封面圖片", "1");
+      let iconType = "pure";
+      let coverBadge = "";
+
+      if (choice === "2") {
+        iconType = "cover";
+        const rawCover = prompt("請貼上正方形封面縮圖網址 (支援 Google 雲端共享連結)：", "");
+        coverBadge = rawCover ? autoFormatMediaUrl(rawCover, 'image') : "";
+      }
+
+      const newFolder = {
+        id: "folder_" + Date.now(),
+        parentId: parentId,
+        type: "folder",
+        name: name,
+        iconType: iconType,
+        icon: ICON_FOLDER_DEFAULT,
+        coverBadge: coverBadge,
+        pos: { x: 120, y: 120 }
+      };
+
+      itemsData.push(newFolder);
+      saveState();
+      alert(`資料夾「${name}」建立完成！`);
+    }
+
+    function createAlbumWithCoverChoice(parentId = null, e) {
+      if (e) e.stopPropagation();
+      const name = prompt("請輸入專輯名稱：", "My Album");
+      if (!name) return;
+
+      const choice = prompt("請選擇光碟圖示樣式：\n1. 經典純光碟\n2. 光碟機托盤＋自訂封面圖片", "2");
+      let iconType = "pure";
+      let coverBadge = "";
+
+      if (choice === "2") {
+        iconType = "cover";
+        const rawCover = prompt("請貼上正方形封面圖片網址 (支援 Google 雲端共享連結)：", "");
+        coverBadge = rawCover ? autoFormatMediaUrl(rawCover, 'image') : "";
+      }
+
+      const newAlbum = {
+        id: "album_" + Date.now(),
+        parentId: parentId,
+        type: "album",
+        name: name,
+        iconType: iconType,
+        icon: iconType === 'cover' ? ICON_DISC_DRIVE : ICON_DISC_PURE,
+        coverBadge: coverBadge,
+        tracks: [
+          { title: "Sample Track", src: "YTeFLKMnwjg", type: "youtube" }
+        ],
+        pos: { x: 120, y: 120 }
+      };
+
+      itemsData.push(newAlbum);
+      saveState();
+      alert(`傳統專輯「${name}」建立完成！`);
+    }
+
+    function openAlbumPlayer(albumItem) {
+      currentOpenAlbumId = albumItem.id;
+      document.getElementById('albumTitleBar').innerText = `💿 專輯：${albumItem.name}`;
+      renderAlbumTrackList();
+      openWindow('album-win');
+    }
+
+    function renderAlbumTrackList() {
+      const album = itemsData.find(i => i.id === currentOpenAlbumId);
+      if (!album || !album.tracks) return;
+
+      const listEl = document.getElementById('albumTrackItems');
+      listEl.innerHTML = '';
+      album.tracks.forEach((track, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${idx + 1}. ${track.title}</span>
+          ${isAdmin ? `<button type="button" onclick="event.stopPropagation(); removeAlbumTrack(${idx})">✕</button>` : ''}
+        `;
+        li.onclick = (e) => { e.stopPropagation(); playAlbumTrack(track); };
+        listEl.appendChild(li);
+      });
+
+      if (album.tracks.length > 0) playAlbumTrack(album.tracks[0]);
+    }
+
+    function playAlbumTrack(track) {
+      const iframe = document.getElementById('albumIframe');
+      if (track.src.includes('drive.google.com')) {
+        iframe.src = track.src;
+      } else {
+        iframe.src = `https://www.youtube-nocookie.com/embed/${track.src}?autoplay=0&enablejsapi=1&rel=0`;
+      }
+    }
+
+    function addTrackToCurrentAlbum(e) {
+      if (e) e.stopPropagation();
+      const album = itemsData.find(i => i.id === currentOpenAlbumId);
+      if (!album) return;
+
+      const title = prompt("請輸入歌曲名稱：", "New Track");
+      if (!title) return;
+      const link = prompt("請輸入 YouTube 影片連結 或 Google 雲端音訊連結：");
+      if (!link) return;
+
+      let src = link.trim();
+      const driveId = extractDriveId(link);
+      if (driveId) {
+        src = `https://drive.google.com/file/d/${driveId}/preview`;
+      } else if (link.includes("v=")) {
+        src = link.split("v=")[1].substring(0, 11);
+      } else if (link.includes("youtu.be/")) {
+        src = link.split("youtu.be/")[1].substring(0, 11);
+      }
+
+      album.tracks.push({ title, src, type: driveId ? "drive" : "youtube" });
+      saveState();
+      renderAlbumTrackList();
+    }
+
+    function removeAlbumTrack(idx) {
+      const album = itemsData.find(i => i.id === currentOpenAlbumId);
+      if (!album) return;
+      if (confirm("刪除這首歌曲？")) {
+        album.tracks.splice(idx, 1);
+        saveState();
+        renderAlbumTrackList();
+      }
+    }
+
+    let highestZ = 200;
+    const minimizedWindows = {};
+
+    function openWindow(id) {
+      const win = document.getElementById(id);
+      if (!win) return;
+      win.style.display = 'block';
+      win.style.zIndex = ++highestZ;
+
+      if (!win.classList.contains('maximized') && !windowRestoreBounds[id]) {
+        win.style.top = '50%';
+        win.style.left = '50%';
+        win.style.transform = 'translate(-50%, -50%)';
+        if (id === 'embedded-cd-win' || id === 'embedded-galaxy-win') {
+          win.style.height = '82vh';
+          win.style.width = '95vw';
+        }
+      }
+
+      delete minimizedWindows[id];
+      updateTaskbar();
+    }
+    
+    function closeWindow(id, e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const win = document.getElementById(id);
+      if (!win) return;
+      win.style.display = 'none';
+      win.classList.remove('maximized');
+      delete windowRestoreBounds[id];
+
+      if (id === 'folder-win') {
+        currentOpenFolderId = null;
+        folderHistory = [];
+        folderForwardStack = [];
+      }
+      delete minimizedWindows[id];
+      updateTaskbar();
+    }
+    
+    function closeAlbumWindow(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const iframe = document.getElementById('albumIframe');
+      if (iframe) iframe.src = '';
+      closeWindow('album-win', e);
+      currentOpenAlbumId = null;
+    }
+
+    function minimizeWindow(id, title, e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const win = document.getElementById(id);
+      if (!win) return;
+      win.style.display = 'none';
+      minimizedWindows[id] = title;
+      updateTaskbar();
+    }
+
+    function toggleMaximize(id, e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const win = document.getElementById(id);
+      if (!win) return;
+
+      if (win.classList.contains('maximized')) {
+        win.classList.remove('maximized');
+        const prev = windowRestoreBounds[id];
+        if (prev) {
+          win.style.top = prev.top; win.style.left = prev.left;
+          win.style.width = prev.width; win.style.height = prev.height;
+          win.style.transform = prev.transform || 'none';
+        } else {
+          win.style.top = '50%'; win.style.left = '50%';
+          win.style.transform = 'translate(-50%, -50%)';
+          win.style.width = '95vw';
+          win.style.maxWidth = '520px';
+          win.style.height = '82vh';
+        }
+      } else {
+        windowRestoreBounds[id] = {
+          top: win.style.top || '50%',
+          left: win.style.left || '50%',
+          width: win.style.width,
+          height: win.style.height,
+          transform: win.style.transform || 'translate(-50%, -50%)'
+        };
+        win.classList.add('maximized');
+      }
+    }
+
+    function updateTaskbar() {
+      const container = document.getElementById('taskbarItems');
+      if (!container) return;
+      container.innerHTML = '';
+      for (const [winId, title] of Object.entries(minimizedWindows)) {
+        const btn = document.createElement('button');
+        btn.className = 'task-item-btn';
+        btn.innerText = `📁 ${title}`;
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          openWindow(winId);
+        };
+        container.appendChild(btn);
+      }
+    }
+
+    function dragElement(elmnt, event) {
+      if (elmnt.classList.contains('maximized')) return;
+      if (event.target.closest('.title-bar-controls')) return;
+      if (window.innerWidth < 600) return;
+
+      elmnt.style.zIndex = ++highestZ;
+
+      if (elmnt.style.transform && elmnt.style.transform.includes('translate')) {
+        const rect = elmnt.getBoundingClientRect();
+        elmnt.style.transform = 'none';
+        elmnt.style.top = rect.top + 'px';
+        elmnt.style.left = rect.left + 'px';
+      }
+
+      let pos1 = 0, pos2 = 0, pos3 = event.clientX, pos4 = event.clientY;
+      document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
+      document.onmousemove = (e) => {
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      };
+    }
+
+    function openFolderWithHistory(folderId, folderName) {
+      if (currentOpenFolderId && currentOpenFolderId !== folderId) {
+        folderHistory.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
+        folderForwardStack = [];
+      }
+      currentOpenFolderId = folderId;
+      document.getElementById('folderTitle').innerText = `📁 ${folderName}`;
+      renderFolderContent(folderId);
+      updateNavButtons();
+      openWindow('folder-win');
+    }
+
+    function navGoBack(e) {
+      if (e) e.stopPropagation();
+      if (folderHistory.length === 0) return;
+      const prev = folderHistory.pop();
+      folderForwardStack.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
+      currentOpenFolderId = prev.id;
+      document.getElementById('folderTitle').innerText = `📁 ${prev.name}`;
+      renderFolderContent(prev.id);
+      updateNavButtons();
+    }
+
+    function navGoForward(e) {
+      if (e) e.stopPropagation();
+      if (folderForwardStack.length === 0) return;
+      const next = folderForwardStack.pop();
+      folderHistory.push({ id: currentOpenFolderId, name: document.getElementById('folderTitle').innerText.replace('📁 ', '') });
+      currentOpenFolderId = next.id;
+      document.getElementById('folderTitle').innerText = `📁 ${next.name}`;
+      renderFolderContent(next.id);
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      const backBtn = document.getElementById('btnNavBack');
+      const fwdBtn = document.getElementById('btnNavForward');
+      if (backBtn) backBtn.disabled = folderHistory.length === 0;
+      if (fwdBtn) fwdBtn.disabled = folderForwardStack.length === 0;
+    }
+
+    function renderFolderContent(folderId) {
+      const box = document.getElementById('folderInnerContent');
+      box.innerHTML = '';
+      const children = itemsData.filter(i => i.parentId === folderId);
+
+      if (children.length === 0) {
+        box.innerHTML = '<span style="font-size:12px; color:#888; padding:8px;">此資料夾為空</span>';
+        return;
+      }
+
+      children.forEach(item => {
+        const itemEl = createIconElement(item);
+        itemEl.style.position = 'relative';
+        itemEl.onclick = (e) => {
+          e.stopPropagation();
+          if (isAdmin) {
+            selectedItemId = item.id;
+            updateSelectionUI();
+            renderFolderContent(folderId);
+          }
+          handleItemClick(item);
+        };
+        box.appendChild(itemEl);
+      });
+    }
+
+    function createItem(type, parentId, e) {
+      if (e) e.stopPropagation();
+      addItem(type, parentId);
+    }
+    function createItemInsideFolder(type, e) {
+      if (e) e.stopPropagation();
+      if (!currentOpenFolderId) return;
+      addItem(type, currentOpenFolderId);
+    }
+
+    function addItem(type, parentId) {
+      const name = prompt("請輸入名稱：", "新項目");
+      if (!name) return;
+      let icon = "", content = "", url = "", mediaUrl = "";
+
+      if (type === 'video') {
+        const rawUrl = prompt("請貼上 YouTube 網址 或 Google 雲端影片共享連結：");
+        if (!rawUrl) return;
+        mediaUrl = autoFormatMediaUrl(rawUrl, 'video');
+        icon = ICON_DISC_PURE;
+      } else if (type === 'image') {
+        const rawUrl = prompt("請貼上圖片網址（支援 Google 雲端共享連結）：");
+        if (!rawUrl) return;
+        mediaUrl = autoFormatMediaUrl(rawUrl, 'image');
+        icon = mediaUrl;
+      } else if (type === 'note') {
+        content = prompt("請輸入便利貼內文：", "寫下備忘...");
+        icon = "https://win98icons.alexmeub.com/icons/png/notepad-5.png";
+      } else if (type === 'link') {
+        url = prompt("請輸入完整跳轉網址 (含 https://)：", "https://");
+        icon = W_FORM_ICON;
+      }
+
+      itemsData.push({ id: Date.now().toString(), parentId, type, name, icon, content, url, mediaUrl, pos: { x: 120, y: 120 } });
+      saveState();
+    }
+
+    function editItem(id) {
+      const item = itemsData.find(i => i.id === id);
+      if (!item) return;
+
+      const newName = prompt("重新命名：", item.name);
+      if (newName) item.name = newName;
+
+      if (item.type === 'cd_standalone' || item.type === 'album' || item.type === 'folder') {
+        const rawBadge = prompt("更改右下角光碟/資料夾封面照片網址 (支援 Google 雲端共享連結)：", item.coverBadge || "");
+        if (rawBadge !== null) {
+          item.coverBadge = rawBadge ? autoFormatMediaUrl(rawBadge, 'image') : "";
+          item.iconType = item.coverBadge ? "cover" : "pure";
+        }
+      } else {
+        const rawIcon = prompt("更改圖示網址 (留空不改)：", item.icon || "");
+        if (rawIcon) item.icon = autoFormatMediaUrl(rawIcon, 'icon');
+      }
+
+      if (item.type === 'video') {
+        const rawMedia = prompt("更改音樂／影片連結 (YouTube 或 Google雲端)：", item.mediaUrl);
+        if (rawMedia) item.mediaUrl = autoFormatMediaUrl(rawMedia, 'video');
+      } else if (item.type === 'image') {
+        const rawMedia = prompt("更改圖片網址：", item.mediaUrl);
+        if (rawMedia) {
+          item.mediaUrl = autoFormatMediaUrl(rawMedia, 'image');
+          item.icon = item.mediaUrl;
+        }
+      } else if (item.type === 'link') {
+        const u = prompt("更改跳轉網址：", item.url);
+        if (u) item.url = u;
+      } else if (item.type === 'note') {
+        const c = prompt("更改便利貼內文：", item.content);
+        if (c !== null) item.content = c;
+      }
+
+      saveState();
+    }
+
+    function openPhotoViewer(title, url) {
+      document.getElementById('photoViewerTitle').innerText = `🖼️ ${title}`;
+      document.getElementById('largePhotoDisplay').src = url;
+      openWindow('photo-viewer-win');
+    }
+
+    function openUniversalPlayer(title, url) {
+      document.getElementById('mediaViewerTitle').innerText = `🎬 ${title}`;
+      const iframe = document.getElementById('universalIframe');
+      const video = document.getElementById('universalVideo');
+
+      if (url.includes('drive.google.com') || url.includes('youtube.com') || url.includes('youtu.be')) {
+        let finalSrc = url;
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+          let vid = url;
+          if (url.includes("v=")) vid = url.split("v=")[1].substring(0, 11);
+          else if (url.includes("youtu.be/")) vid = url.split("youtu.be/")[1].substring(0, 11);
+          finalSrc = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&enablejsapi=1&rel=0`;
+        }
+        video.pause(); video.style.display = 'none';
+        iframe.style.display = 'block';
+        if (iframe.src !== finalSrc) iframe.src = finalSrc;
+      } else {
+        iframe.src = ''; iframe.style.display = 'none';
+        video.style.display = 'block';
+        video.src = url;
+      }
+      openWindow('media-player-win');
+    }
+
+    function closeUniversalPlayer(e) {
+      if (e) e.stopPropagation();
+      document.getElementById('universalIframe').src = '';
+      const v = document.getElementById('universalVideo');
+      v.pause(); v.src = '';
+      closeWindow('media-player-win');
+    }
+
+    function changeWallpaper(e) {
+      if (e) e.stopPropagation();
+      const rawUrl = prompt("請輸入桌布圖片網址（支援 Google 雲端共享連結）：", "");
+      if (rawUrl) {
+        const finalUrl = autoFormatMediaUrl(rawUrl, 'wallpaper');
+        document.body.style.backgroundImage = `url('${finalUrl}')`;
+        currentConfig.wallpaper = finalUrl;
+        saveState();
+      }
+    }
+
+    const viewport = document.getElementById('topActionsViewport');
+    const track = document.getElementById('scrollbarTrack');
+    const thumb = document.getElementById('scrollbarThumb');
+
+    function updateScrollBarUI() {
+      if (!isAdmin || !viewport || !track || !thumb) return;
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      if (maxScroll <= 0) {
+        thumb.style.width = '100%'; thumb.style.left = '0px'; return;
+      }
+      const trackWidth = track.clientWidth;
+      const thumbWidth = Math.max(30, (viewport.clientWidth / viewport.scrollWidth) * trackWidth);
+      thumb.style.width = thumbWidth + 'px';
+      const scrollRatio = viewport.scrollLeft / maxScroll;
+      thumb.style.left = (scrollRatio * (trackWidth - thumbWidth)) + 'px';
+    }
+
+    function scrollAdminBar(amount) {
+      if (!viewport) return;
+      viewport.scrollLeft += amount;
+      updateScrollBarUI();
+    }
+
+    function handleTrackClick(e) {
+      if (e.target === thumb) return;
+      const rect = track.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const thumbWidth = thumb.offsetWidth;
+      const trackWidth = track.clientWidth;
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      const newScrollLeft = ((clickX - thumbWidth / 2) / (trackWidth - thumbWidth)) * maxScroll;
+      viewport.scrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
+      updateScrollBarUI();
+    }
+
+    if (thumb) {
+      let isDraggingThumb = false, thumbStartX = 0, thumbStartLeft = 0;
+      thumb.addEventListener('mousedown', (e) => {
+        isDraggingThumb = true;
+        thumbStartX = e.clientX;
+        thumbStartLeft = parseFloat(thumb.style.left) || 0;
+        document.body.style.userSelect = 'none';
+
+        function onMouseMove(moveEvent) {
+          if (!isDraggingThumb) return;
+          const dx = moveEvent.clientX - thumbStartX;
+          const trackWidth = track.clientWidth;
+          const thumbWidth = thumb.offsetWidth;
+          const maxThumbLeft = trackWidth - thumbWidth;
+          const newThumbLeft = Math.max(0, Math.min(maxThumbLeft, thumbStartLeft + dx));
+          thumb.style.left = newThumbLeft + 'px';
+          viewport.scrollLeft = (newThumbLeft / maxThumbLeft) * (viewport.scrollWidth - viewport.clientWidth);
+        }
+        function onMouseUp() {
+          isDraggingThumb = false;
+          document.body.style.userSelect = '';
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
+    if (viewport) {
+      viewport.addEventListener('wheel', (e) => {
+        if (!isAdmin) return;
+        if (e.deltaY !== 0) {
+          viewport.scrollLeft += e.deltaY;
+          updateScrollBarUI();
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
+
+    window.addEventListener('resize', updateScrollBarUI);
+
+    if (currentConfig.wallpaper) {
+      document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;
+    }
+    renderDesktop();
+    renderStartMenu();
   </script>
 </body>
 </html>

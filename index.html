@@ -101,7 +101,7 @@
 
     .icon-wrapper {
       position: absolute;
-      width: 84px; /* 寬度加寬，確保所有項目文字舒適排版 */
+      width: 84px;
       display: flex; flex-direction: column; align-items: center;
       cursor: var(--star-cursor); text-align: center;
       color: white; text-shadow: 1px 1px 2px black;
@@ -124,10 +124,14 @@
     body.admin-mode .icon-select-check { display: block; }
 
     .icon-art-box {
-      position: relative; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;
+      position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
     }
     .icon-art-box .base-img {
       width: 44px; height: 44px; object-fit: contain; pointer-events: none;
+    }
+    /* 專屬小狗大圖示：移除過多邊距，自然飽滿放大 */
+    .icon-art-box .dog-galaxy-icon {
+      width: 48px; height: 48px; object-fit: contain; transform: scale(1.15); pointer-events: none;
     }
     .icon-art-box .custom-cover-badge {
       position: absolute; width: 23px; height: 23px; object-fit: cover;
@@ -135,7 +139,6 @@
       bottom: 0; right: 0; box-shadow: 1px 1px 4px rgba(0,0,0,0.6); pointer-events: none;
     }
 
-    /* 確保所有項目的字體一致，且 WINTER GALAXY 單行呈現 */
     .icon-wrapper span {
       font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: keep-all; white-space: nowrap; pointer-events: none;
       font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
@@ -496,8 +499,8 @@
     const ICON_DISC_PURE = "https://win98icons.alexmeub.com/icons/png/cd_audio_cd_a-4.png";
     const ICON_DISC_DRIVE = "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png";
     
-    // 真實復古像素 Saturn 金黃光環星球圖示 (精美高畫質 SVG)
-    const ICON_GALAXY_PLANET = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><defs><radialGradient id='planetGrad' cx='35%' cy='35%' r='65%'><stop offset='0%' stop-color='%23fff3b0'/><stop offset='40%' stop-color='%23e09f3e'/><stop offset='100%' stop-color='%23540b0e'/></radialGradient></defs><ellipse cx='24' cy='24' rx='22' ry='7' fill='none' stroke='%23f48c06' stroke-width='2.5' transform='rotate(-22 24 24)' opacity='0.85'/><circle cx='24' cy='24' r='14' fill='url(%23planetGrad)'/><ellipse cx='24' cy='24' rx='22' ry='7' fill='none' stroke='%23ffba08' stroke-width='2.5' stroke-dasharray='35 50' transform='rotate(-22 24 24)'/></svg>";
+    // 小狗原圖直鏈 (完整保留透明去背原貌)
+    const ICON_GALAXY_DOG = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
@@ -518,7 +521,7 @@
           "type": "galaxy_standalone",
           "name": "WINTER GALAXY",
           "iconType": "pure",
-          "icon": ICON_GALAXY_PLANET,
+          "icon": ICON_GALAXY_DOG,
           "coverBadge": "",
           "url": "https://u11150003-arch.github.io/winter-galaxy/",
           "pos": { "x": 14, "y": 280 }
@@ -613,7 +616,8 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_planet_icon_fix_v2026_14";
+    // 升級版本 Key，強制覆蓋舊快取，載入小狗大圖示
+    const CONFIG_VERSION = "winter_desktop_dog_icon_scaled_v2026_16";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -888,8 +892,8 @@
 
       let iconHtml = "";
       if (item.type === 'galaxy_standalone') {
-        // 使用金黃色復古行星圖示
-        iconHtml = `<div class="icon-art-box"><img src="${item.icon || ICON_GALAXY_PLANET}" class="base-img"></div>`;
+        // 小狗原圖專屬圖示 (放大飽滿呈現，不失真且與其他圖示大小相符)
+        iconHtml = `<div class="icon-art-box"><img src="${item.icon || ICON_GALAXY_DOG}" class="dog-galaxy-icon"></div>`;
       } else if (item.type === 'cd_standalone' || item.type === 'album') {
         if (item.coverBadge) {
           iconHtml = `

@@ -200,9 +200,18 @@
     .photo-stage {
       width: 100%; min-height: 220px; max-height: 60vh;
       display: flex; align-items: center; justify-content: center;
-      background: #1a1a1a; overflow: hidden; padding: 6px;
+      background: #1a1a1a; overflow: hidden; padding: 6px; position: relative;
     }
     .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
+
+    /* 下載功能工具列 */
+    .download-action-bar {
+      display: flex; justify-content: flex-end; align-items: center; gap: 6px;
+      margin-top: 6px; padding: 4px; background: #c0c0c0; border: 1px outset #fff;
+    }
+    .download-action-bar button {
+      font-weight: bold; font-size: 11px; padding: 3px 8px;
+    }
 
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -246,6 +255,17 @@
     }
     .playlist-box li:hover { background: #000080; color: #fff; }
     .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
+
+    /* 彈出型訊息通知視窗 */
+    #notification-modal-win {
+      position: fixed;
+      display: none;
+      width: 330px;
+      max-width: 90vw;
+      z-index: 8000;
+      box-shadow: 3px 3px 14px rgba(0,0,0,0.7);
+      background: #c0c0c0;
+    }
   </style>
 </head>
 <body onclick="handleGlobalClick(event)">
@@ -274,6 +294,7 @@
       </span>
 
       <button class="admin-only" onclick="changeWallpaper(event)">🎨 桌布</button>
+      <button class="admin-only" onclick="openNotificationConfigModal(event)" style="background:#fff3e0; font-weight:bold;">✉️ 設定通知</button>
       <button class="admin-only" onclick="openStartMenuConfigModal(event)">⭐ 設定開始選單</button>
       <button class="admin-only" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
     </div>
@@ -288,6 +309,62 @@
   </div>
 
   <div class="desktop" id="desktopContainer"></div>
+
+  <!-- 彈出型訊息通知視窗 (✉️ Notification Banner) -->
+  <div id="notification-modal-win" class="window win-modal" onclick="event.stopPropagation()">
+    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
+      <div class="title-bar-text" id="notifTitleDisplay">✉️ 來自 WINTER 的新訊息</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('notification-modal-win', '新訊息通知', event)" title="最小化"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('notification-modal-win', event)" title="最大化/還原"></button>
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeNotificationWindow(event)" title="關閉"></button>
+      </div>
+    </div>
+    <div class="window-body" style="padding: 12px; font-size: 12px; line-height: 1.6;">
+      <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:12px;">
+        <img src="https://win98icons.alexmeub.com/icons/png/envelope_closed-0.png" width="32" height="32" style="flex-shrink:0;">
+        <div id="notifContentDisplay" style="white-space: pre-wrap; word-break: break-word; flex:1;"></div>
+      </div>
+      <div style="text-align:right; border-top:1px solid #dfdfdf; padding-top:8px;">
+        <button type="button" onclick="closeNotificationWindow(event)" style="font-weight:bold; padding:2px 14px;">我知道了 (OK)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 管理員：通知彈窗設定視窗 -->
+  <div id="notif-config-win" class="window win-modal" style="max-width: 360px; z-index: 4000 !important;" onclick="event.stopPropagation()">
+    <div class="title-bar">
+      <div class="title-bar-text">✉️ 訊息通知設定</div>
+      <div class="title-bar-controls">
+        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('notif-config-win', event)"></button>
+      </div>
+    </div>
+    <div class="window-body" style="font-size:12px;">
+      <label style="display:flex; align-items:center; gap:6px; margin-bottom:8px; font-weight:bold;">
+        <input type="checkbox" id="cfgNotifEnabled"> 啟用彈出通知功能
+      </label>
+      <div style="margin-bottom:6px;">
+        <span>跳出延遲時間 (秒)：</span>
+        <input type="number" id="cfgNotifDelay" min="0" max="60" style="width:70px; padding:2px;">
+      </div>
+      <div style="margin-bottom:8px;">
+        <span>自動關閉時間 (秒，設 0 代表不自動關閉)：</span>
+        <input type="number" id="cfgNotifDuration" min="0" max="120" style="width:70px; padding:2px;">
+      </div>
+      <div style="margin-bottom:6px;">
+        <span>通知標題：</span>
+        <input type="text" id="cfgNotifTitle" style="width:100%; padding:2px;">
+      </div>
+      <div style="margin-bottom:8px;">
+        <span>通知文字內容：</span>
+        <textarea id="cfgNotifContent" rows="5" style="width:100%; resize:vertical; padding:3px; font-family:inherit;"></textarea>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:8px;">
+        <button type="button" onclick="testNotificationPopup()">⚡ 立即測試彈出</button>
+        <button type="button" style="font-weight:bold; background:#000080; color:#fff;" onclick="saveNotificationConfig()">儲存設定</button>
+      </div>
+    </div>
+  </div>
 
   <!-- 嵌入式 WILDWEST 視訊視窗 -->
   <div id="embedded-wildwest-win" class="window win-modal" onclick="event.stopPropagation()">
@@ -416,6 +493,7 @@
     </div>
   </div>
 
+  <!-- 照片檢視器 (新增下載原檔功能) -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -429,9 +507,13 @@
       <div class="photo-stage">
         <img id="largePhotoDisplay" src="" alt="preview">
       </div>
+      <div class="download-action-bar">
+        <button type="button" id="btnDownloadPhoto" onclick="downloadCurrentPhoto()">💾 下載照片 (Download Image)</button>
+      </div>
     </div>
   </div>
 
+  <!-- 多媒體播放器 (新增下載音訊/影片功能) -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
@@ -445,6 +527,9 @@
       <div class="media-container">
         <iframe id="universalIframe" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <video id="universalVideo" controls playsinline></video>
+      </div>
+      <div class="download-action-bar" id="mediaDownloadBar" style="background:#c0c0c0; border:none;">
+        <button type="button" id="btnDownloadMedia" onclick="downloadCurrentMedia()">💾 下載檔案 (Download Media)</button>
       </div>
     </div>
   </div>
@@ -500,8 +585,16 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
+    // 全局資料設定 (新增通知欄相關設定)
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
+      "notification": {
+        "enabled": true,
+        "delay": 2, // 進入後 2 秒彈出
+        "duration": 0, // 0 代表不自動關閉，直到使用者按關閉
+        "title": "✉️ 來自 WINTER 的新訊息",
+        "content": "親愛的朋友，歡迎來到專屬於金旼炡 (WINTER) 的復古空間！✨\n\n桌面已更新 WILDWEST 視訊與 CD 隨身聽，資料夾內的照片與影片皆可直接點選下載保存喔！"
+      },
       "startMenuVisibleIds": [
         "winter_wildwest_entry",
         "winter_cd_standalone_entry",
@@ -612,15 +705,20 @@
       ]
     };
 
-    // 升級版本 Key，強制覆蓋舊快取
-    const CONFIG_VERSION = "winter_desktop_clean_wildwest_v2026_19";
+    // 升級版本 Key，載入新通知設定
+    const CONFIG_VERSION = "winter_desktop_download_notif_v2026_21";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
     }
 
     let currentConfig = JSON.parse(localStorage.getItem("winter_desktop_config")) || MASTER_CONFIG;
+    if (!currentConfig.notification) currentConfig.notification = MASTER_CONFIG.notification;
     let itemsData = currentConfig.items;
+
+    let activeViewingPhoto = { title: "", url: "" };
+    let activeViewingMedia = { title: "", url: "" };
+    let notifAutoCloseTimer = null;
 
     // 開啟 WILDWEST 視窗
     function openWinterWildwestWindow() {
@@ -1497,16 +1595,44 @@
       saveState();
     }
 
+    /* 照片檢視與下載系統 */
     function openPhotoViewer(title, url) {
+      activeViewingPhoto = { title, url };
       document.getElementById('photoViewerTitle').innerText = `🖼️ ${title}`;
       document.getElementById('largePhotoDisplay').src = url;
       openWindow('photo-viewer-win');
     }
 
+    function triggerFileDownload(downloadUrl, filename) {
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = filename || 'download';
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function downloadCurrentPhoto() {
+      if (!activeViewingPhoto.url) return;
+      const url = activeViewingPhoto.url;
+      const driveId = extractDriveId(url);
+      if (driveId) {
+        // Google Drive 圖片直接下載串流
+        const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
+        triggerFileDownload(directDownloadUrl, `${activeViewingPhoto.title || 'photo'}.jpg`);
+      } else {
+        triggerFileDownload(url, `${activeViewingPhoto.title || 'photo'}.jpg`);
+      }
+    }
+
+    /* 影片/音訊播放器與下載系統 */
     function openUniversalPlayer(title, url) {
+      activeViewingMedia = { title, url };
       document.getElementById('mediaViewerTitle').innerText = `🎬 ${title}`;
       const iframe = document.getElementById('universalIframe');
       const video = document.getElementById('universalVideo');
+      const dlBtn = document.getElementById('btnDownloadMedia');
 
       if (url.includes('drive.google.com') || url.includes('youtube.com') || url.includes('youtu.be')) {
         let finalSrc = url;
@@ -1515,6 +1641,10 @@
           if (url.includes("v=")) vid = url.split("v=")[1].substring(0, 11);
           else if (url.includes("youtu.be/")) vid = url.split("youtu.be/")[1].substring(0, 11);
           finalSrc = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&enablejsapi=1&rel=0`;
+          // YouTube 無法直接下載純檔案，調整按鈕狀態
+          dlBtn.innerText = "📺 在 YouTube 開啟原始頁面";
+        } else {
+          dlBtn.innerText = "💾 下載影片/音訊 (Download Media)";
         }
         video.pause(); video.style.display = 'none';
         iframe.style.display = 'block';
@@ -1523,8 +1653,24 @@
         iframe.src = ''; iframe.style.display = 'none';
         video.style.display = 'block';
         video.src = url;
+        dlBtn.innerText = "💾 下載影片/音訊 (Download Media)";
       }
       openWindow('media-player-win');
+    }
+
+    function downloadCurrentMedia() {
+      if (!activeViewingMedia.url) return;
+      const url = activeViewingMedia.url;
+      const driveId = extractDriveId(url);
+
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        window.open(url, '_blank');
+      } else if (driveId) {
+        const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
+        triggerFileDownload(directDownloadUrl, `${activeViewingMedia.title || 'media'}.mp4`);
+      } else {
+        triggerFileDownload(url, `${activeViewingMedia.title || 'media'}.mp4`);
+      }
     }
 
     function closeUniversalPlayer(e) {
@@ -1533,6 +1679,87 @@
       const v = document.getElementById('universalVideo');
       v.pause(); v.src = '';
       closeWindow('media-player-win');
+    }
+
+    /* 彈出通知欄核心管理系統 */
+    function checkAndTriggerNotification() {
+      const cfg = currentConfig.notification;
+      if (!cfg || !cfg.enabled) return;
+
+      const delayMs = (parseInt(cfg.delay, 10) || 2) * 1000;
+      setTimeout(() => {
+        showNotificationBanner();
+      }, delayMs);
+    }
+
+    function showNotificationBanner() {
+      const cfg = currentConfig.notification || MASTER_CONFIG.notification;
+      document.getElementById('notifTitleDisplay').innerText = cfg.title || "✉️ 新訊息通知";
+      document.getElementById('notifContentDisplay').innerText = cfg.content || "";
+
+      const notifWin = document.getElementById('notification-modal-win');
+      notifWin.style.display = 'block';
+      notifWin.style.zIndex = ++highestZ;
+
+      // 預設靠右上角彈出，具備真實系統通知感
+      if (!windowRestoreBounds['notification-modal-win']) {
+        notifWin.style.top = '70px';
+        notifWin.style.right = '20px';
+        notifWin.style.left = 'auto';
+        notifWin.style.transform = 'none';
+      }
+
+      delete minimizedWindows['notification-modal-win'];
+      updateTaskbar();
+
+      // 自動關閉定時器
+      clearTimeout(notifAutoCloseTimer);
+      const dur = parseInt(cfg.duration, 10);
+      if (dur > 0) {
+        notifAutoCloseTimer = setTimeout(() => {
+          closeNotificationWindow();
+        }, dur * 1000);
+      }
+    }
+
+    function closeNotificationWindow(e) {
+      if (e) e.stopPropagation();
+      clearTimeout(notifAutoCloseTimer);
+      closeWindow('notification-modal-win', e);
+    }
+
+    function openNotificationConfigModal(e) {
+      if (e) e.stopPropagation();
+      if (!isAdmin) {
+        alert("請先登入管理員！");
+        return;
+      }
+      const cfg = currentConfig.notification || MASTER_CONFIG.notification;
+      document.getElementById('cfgNotifEnabled').checked = !!cfg.enabled;
+      document.getElementById('cfgNotifDelay').value = cfg.delay !== undefined ? cfg.delay : 2;
+      document.getElementById('cfgNotifDuration').value = cfg.duration !== undefined ? cfg.duration : 0;
+      document.getElementById('cfgNotifTitle').value = cfg.title || "";
+      document.getElementById('cfgNotifContent').value = cfg.content || "";
+
+      openWindow('notif-config-win');
+    }
+
+    function saveNotificationConfig() {
+      currentConfig.notification = {
+        enabled: document.getElementById('cfgNotifEnabled').checked,
+        delay: parseInt(document.getElementById('cfgNotifDelay').value, 10) || 0,
+        duration: parseInt(document.getElementById('cfgNotifDuration').value, 10) || 0,
+        title: document.getElementById('cfgNotifTitle').value.trim(),
+        content: document.getElementById('cfgNotifContent').value
+      };
+      saveState();
+      closeWindow('notif-config-win');
+      alert("✅ 訊息通知設定已儲存！");
+    }
+
+    function testNotificationPopup() {
+      saveNotificationConfig();
+      showNotificationBanner();
     }
 
     function changeWallpaper(e) {
@@ -1628,6 +1855,11 @@
     }
     renderDesktop();
     renderStartMenu();
+
+    // 啟動進站通知檢查
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAndTriggerNotification();
+    });
   </script>
 </body>
 </html>

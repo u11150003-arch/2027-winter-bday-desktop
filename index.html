@@ -204,7 +204,6 @@
     }
     .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
 
-    /* 下載功能工具列 */
     .download-action-bar {
       display: flex; justify-content: flex-end; align-items: center; gap: 6px;
       margin-top: 6px; padding: 4px; background: #c0c0c0; border: 1px outset #fff;
@@ -310,7 +309,7 @@
 
   <div class="desktop" id="desktopContainer"></div>
 
-  <!-- 彈出型訊息通知視窗 (✉️ Notification Banner) -->
+  <!-- 彈出型訊息通知視窗 -->
   <div id="notification-modal-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="notifTitleDisplay">✉️ 來自 WINTER 的新訊息</div>
@@ -493,7 +492,7 @@
     </div>
   </div>
 
-  <!-- 照片檢視器 (新增下載原檔功能) -->
+  <!-- 照片檢視器 (支援自訂名稱原檔下載) -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -513,7 +512,7 @@
     </div>
   </div>
 
-  <!-- 多媒體播放器 (新增下載音訊/影片功能) -->
+  <!-- 多媒體播放器 (支援自訂名稱下載) -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
@@ -585,15 +584,15 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    // 全局資料設定 (新增通知欄相關設定)
+    // 全局資料配置（完全套用你提供的最新版本）
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "notification": {
         "enabled": true,
-        "delay": 2, // 進入後 2 秒彈出
-        "duration": 0, // 0 代表不自動關閉，直到使用者按關閉
+        "delay": 3,
+        "duration": 8,
         "title": "✉️ 來自 WINTER 的新訊息",
-        "content": "親愛的朋友，歡迎來到專屬於金旼炡 (WINTER) 的復古空間！✨\n\n桌面已更新 WILDWEST 視訊與 CD 隨身聽，資料夾內的照片與影片皆可直接點選下載保存喔！"
+        "content": "歡迎來到專屬於金旼炡WINTER的電腦空間⭐️\n點擊資料夾查看更多資訊!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!"
       },
       "startMenuVisibleIds": [
         "winter_wildwest_entry",
@@ -608,12 +607,15 @@
           "id": "winter_wildwest_entry",
           "parentId": null,
           "type": "wildwest_standalone",
-          "name": "WINTER WILDWEST 視訊",
+          "name": "WINTER WILDWEST",
           "iconType": "pure",
-          "icon": ICON_DOG_PONYO,
+          "icon": "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o",
           "coverBadge": "",
           "url": "https://u11150003-arch.github.io/winter-wildwest/",
-          "pos": { "x": 14, "y": 280 }
+          "pos": {
+            "x": 17,
+            "y": 345
+          }
         },
         {
           "id": "winter_cd_standalone_entry",
@@ -621,10 +623,13 @@
           "type": "cd_standalone",
           "name": "Winter Playlist",
           "iconType": "cover",
-          "icon": ICON_DISC_DRIVE,
+          "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
           "url": "https://u11150003-arch.github.io/winter-cd-player/",
-          "pos": { "x": 14, "y": 360 }
+          "pos": {
+            "x": 12,
+            "y": 430
+          }
         },
         {
           "id": "img1",
@@ -633,7 +638,10 @@
           "name": "手幅Serenade ver",
           "icon": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
           "mediaUrl": "https://lh3.googleusercontent.com/d/1sitVj0KVurInlsBz9BoIj1xA279bc9kS",
-          "pos": { "x": 16, "y": 168 }
+          "pos": {
+            "x": 16,
+            "y": 168
+          }
         },
         {
           "id": "n1",
@@ -642,16 +650,22 @@
           "name": "生咖應援物",
           "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
           "content": "1. 應援小卡\n2. 明信片",
-          "pos": { "x": 16, "y": 244 }
+          "pos": {
+            "x": 16,
+            "y": 244
+          }
         },
         {
           "id": "l1",
           "parentId": null,
           "type": "link",
           "name": "生咖預約表單",
-          "icon": W_FORM_ICON,
+          "icon": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>",
           "url": "https://wintertst0101.netlify.app/",
-          "pos": { "x": 16, "y": 200 }
+          "pos": {
+            "x": 18,
+            "y": 262
+          }
         },
         {
           "id": "1789230813079",
@@ -659,8 +673,11 @@
           "type": "note",
           "name": "Lucky Draw",
           "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
-          "content": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n客製化頭巾-6\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
-          "pos": { "x": 120, "y": 120 }
+          "content": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n照片書禮盒-20\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
+          "pos": {
+            "x": 120,
+            "y": 120
+          }
         },
         {
           "id": "folder_1789230844971",
@@ -668,9 +685,12 @@
           "type": "folder",
           "name": "Lucky Draw",
           "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 21, "y": 110 }
+          "pos": {
+            "x": 21,
+            "y": 178
+          }
         },
         {
           "id": "folder_1789230890651",
@@ -678,9 +698,12 @@
           "type": "folder",
           "name": "手幅-3款",
           "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 120, "y": 120 }
+          "pos": {
+            "x": 120,
+            "y": 120
+          }
         },
         {
           "id": "folder_1789230959703",
@@ -688,9 +711,12 @@
           "type": "folder",
           "name": "生咖應援物",
           "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 21, "y": 20 }
+          "pos": {
+            "x": 23,
+            "y": 95
+          }
         },
         {
           "id": "folder_1789233534244",
@@ -698,15 +724,18 @@
           "type": "folder",
           "name": "生咖資訊",
           "iconType": "pure",
-          "icon": ICON_FOLDER_DEFAULT,
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 110, "y": 20 }
+          "pos": {
+            "x": 27,
+            "y": 23
+          }
         }
       ]
     };
 
-    // 升級版本 Key，載入新通知設定
-    const CONFIG_VERSION = "winter_desktop_download_notif_v2026_21";
+    // 強制升級版本 Key，確保覆蓋舊設定並直接套用最新座標
+    const CONFIG_VERSION = "winter_desktop_named_download_v2026_23";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -720,7 +749,6 @@
     let activeViewingMedia = { title: "", url: "" };
     let notifAutoCloseTimer = null;
 
-    // 開啟 WILDWEST 視窗
     function openWinterWildwestWindow() {
       const item = itemsData.find(i => i.id === "winter_wildwest_entry");
       const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-wildwest/";
@@ -736,7 +764,6 @@
       closeWindow('embedded-wildwest-win', e);
     }
 
-    // 開啟 CD 播放器視窗
     function openWinterCdPlayerWindow() {
       const item = itemsData.find(i => i.id === "winter_cd_standalone_entry");
       const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-cd-player/";
@@ -1595,7 +1622,37 @@
       saveState();
     }
 
-    /* 照片檢視與下載系統 */
+    /* 檔案精準下載核心引擎 (以網站內資料命名匯出) */
+    function forceDownloadFile(url, customFilename) {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.blob();
+        })
+        .then(blob => {
+          const blobUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = blobUrl;
+          a.download = customFilename;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(blobUrl);
+          document.body.removeChild(a);
+        })
+        .catch(() => {
+          // 備援下載機制
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = customFilename;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+    }
+
+    /* 照片檢視與命名下載 */
     function openPhotoViewer(title, url) {
       activeViewingPhoto = { title, url };
       document.getElementById('photoViewerTitle').innerText = `🖼️ ${title}`;
@@ -1603,30 +1660,21 @@
       openWindow('photo-viewer-win');
     }
 
-    function triggerFileDownload(downloadUrl, filename) {
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = filename || 'download';
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
     function downloadCurrentPhoto() {
       if (!activeViewingPhoto.url) return;
       const url = activeViewingPhoto.url;
+      const fileName = `${activeViewingPhoto.title || 'photo'}.jpg`;
       const driveId = extractDriveId(url);
+
       if (driveId) {
-        // Google Drive 圖片直接下載串流
         const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
-        triggerFileDownload(directDownloadUrl, `${activeViewingPhoto.title || 'photo'}.jpg`);
+        forceDownloadFile(directDownloadUrl, fileName);
       } else {
-        triggerFileDownload(url, `${activeViewingPhoto.title || 'photo'}.jpg`);
+        forceDownloadFile(url, fileName);
       }
     }
 
-    /* 影片/音訊播放器與下載系統 */
+    /* 影片/音訊播放器與命名下載 */
     function openUniversalPlayer(title, url) {
       activeViewingMedia = { title, url };
       document.getElementById('mediaViewerTitle').innerText = `🎬 ${title}`;
@@ -1641,10 +1689,9 @@
           if (url.includes("v=")) vid = url.split("v=")[1].substring(0, 11);
           else if (url.includes("youtu.be/")) vid = url.split("youtu.be/")[1].substring(0, 11);
           finalSrc = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&enablejsapi=1&rel=0`;
-          // YouTube 無法直接下載純檔案，調整按鈕狀態
           dlBtn.innerText = "📺 在 YouTube 開啟原始頁面";
         } else {
-          dlBtn.innerText = "💾 下載影片/音訊 (Download Media)";
+          dlBtn.innerText = `💾 下載《${title}》`;
         }
         video.pause(); video.style.display = 'none';
         iframe.style.display = 'block';
@@ -1653,7 +1700,7 @@
         iframe.src = ''; iframe.style.display = 'none';
         video.style.display = 'block';
         video.src = url;
-        dlBtn.innerText = "💾 下載影片/音訊 (Download Media)";
+        dlBtn.innerText = `💾 下載《${title}》`;
       }
       openWindow('media-player-win');
     }
@@ -1662,14 +1709,15 @@
       if (!activeViewingMedia.url) return;
       const url = activeViewingMedia.url;
       const driveId = extractDriveId(url);
+      const fileName = `${activeViewingMedia.title || 'media'}.mp4`;
 
       if (url.includes('youtube.com') || url.includes('youtu.be')) {
         window.open(url, '_blank');
       } else if (driveId) {
         const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
-        triggerFileDownload(directDownloadUrl, `${activeViewingMedia.title || 'media'}.mp4`);
+        forceDownloadFile(directDownloadUrl, fileName);
       } else {
-        triggerFileDownload(url, `${activeViewingMedia.title || 'media'}.mp4`);
+        forceDownloadFile(url, fileName);
       }
     }
 
@@ -1686,7 +1734,7 @@
       const cfg = currentConfig.notification;
       if (!cfg || !cfg.enabled) return;
 
-      const delayMs = (parseInt(cfg.delay, 10) || 2) * 1000;
+      const delayMs = (parseInt(cfg.delay, 10) || 3) * 1000;
       setTimeout(() => {
         showNotificationBanner();
       }, delayMs);
@@ -1701,7 +1749,6 @@
       notifWin.style.display = 'block';
       notifWin.style.zIndex = ++highestZ;
 
-      // 預設靠右上角彈出，具備真實系統通知感
       if (!windowRestoreBounds['notification-modal-win']) {
         notifWin.style.top = '70px';
         notifWin.style.right = '20px';
@@ -1712,7 +1759,6 @@
       delete minimizedWindows['notification-modal-win'];
       updateTaskbar();
 
-      // 自動關閉定時器
       clearTimeout(notifAutoCloseTimer);
       const dur = parseInt(cfg.duration, 10);
       if (dur > 0) {
@@ -1736,8 +1782,8 @@
       }
       const cfg = currentConfig.notification || MASTER_CONFIG.notification;
       document.getElementById('cfgNotifEnabled').checked = !!cfg.enabled;
-      document.getElementById('cfgNotifDelay').value = cfg.delay !== undefined ? cfg.delay : 2;
-      document.getElementById('cfgNotifDuration').value = cfg.duration !== undefined ? cfg.duration : 0;
+      document.getElementById('cfgNotifDelay').value = cfg.delay !== undefined ? cfg.delay : 3;
+      document.getElementById('cfgNotifDuration').value = cfg.duration !== undefined ? cfg.duration : 8;
       document.getElementById('cfgNotifTitle').value = cfg.title || "";
       document.getElementById('cfgNotifContent').value = cfg.content || "";
 
@@ -1856,7 +1902,6 @@
     renderDesktop();
     renderStartMenu();
 
-    // 啟動進站通知檢查
     window.addEventListener('DOMContentLoaded', () => {
       checkAndTriggerNotification();
     });

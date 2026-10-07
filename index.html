@@ -41,24 +41,23 @@
       cursor: var(--star-cursor) !important;
     }
 
+    /* 頂部管理列：平時完全不佔用任何高度與空間 */
     .top-bar-wrapper {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
       left: max(6px, var(--safe-left));
       right: max(6px, var(--safe-right));
       z-index: 50;
-      display: flex;
+      display: none;
       flex-direction: column;
-      background: transparent;
-      border: none;
-      pointer-events: none;
-    }
-    body.admin-mode .top-bar-wrapper {
       background: #c0c0c0;
       border: 2px outset #fff;
       padding: 3px;
       box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
       pointer-events: auto;
+    }
+    body.admin-mode .top-bar-wrapper {
+      display: flex;
     }
 
     .top-actions-viewport {
@@ -67,13 +66,11 @@
     .top-actions-viewport button, .top-actions-viewport span {
       flex-shrink: 0; font-size: 11px; padding: 2px 6px; cursor: pointer; height: 25px;
     }
-    #authBtn { pointer-events: auto; align-self: flex-start; }
 
     .admin-scrollbar-bar {
-      display: none; height: 16px; background: #c0c0c0; border-top: 1px solid #808080;
+      display: flex; height: 16px; background: #c0c0c0; border-top: 1px solid #808080;
       margin-top: 3px; align-items: center; position: relative;
     }
-    body.admin-mode .admin-scrollbar-bar { display: flex; }
     .scrollbar-btn {
       width: 16px; height: 16px; padding: 0; font-size: 8px; font-weight: bold;
       border: 1px outset #fff; background: #c0c0c0; display: flex; align-items: center; justify-content: center;
@@ -92,11 +89,14 @@
 
     .desktop {
       position: absolute;
-      top: 50px;
+      top: 16px;
       left: max(0px, var(--safe-left));
       right: max(0px, var(--safe-right));
       bottom: var(--taskbar-h);
       overflow: hidden;
+    }
+    body.admin-mode .desktop {
+      top: 56px;
     }
 
     .icon-wrapper {
@@ -204,7 +204,6 @@
     }
     .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
 
-    /* 多媒體切換與下載工具列 */
     .media-toolbar {
       display: flex; justify-content: space-between; align-items: center;
       margin-top: 6px; padding: 4px; background: #c0c0c0; border: 1px outset #fff; flex-wrap: wrap; gap: 4px;
@@ -226,10 +225,31 @@
     }
     .taskbar-left { display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1; }
     .task-item-btn { font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
-    .taskbar-right { font-size: 11px; display: flex; align-items: center; gap: 8px; padding-left: 8px; flex-shrink: 0; height: 26px; }
+    .taskbar-right { font-size: 11px; display: flex; align-items: center; gap: 6px; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
-    .lang-select-box {
-      font-family: inherit; font-size: 11px; height: 24px; background: #c0c0c0; border: 2px inset #fff; padding: 0 2px; cursor: pointer;
+    
+    /* 經典地球圖示切換語言按鈕 */
+    .lang-globe-btn-wrapper {
+      position: relative; display: inline-flex; align-items: center;
+    }
+    .lang-globe-btn {
+      height: 24px; padding: 1px 4px; display: flex; align-items: center; gap: 3px; cursor: pointer;
+      font-size: 11px; background: #c0c0c0; border: 2px outset #fff;
+    }
+    .lang-globe-btn:active { border: 2px inset #fff; }
+    .lang-globe-icon {
+      width: 16px; height: 16px; object-fit: contain; image-rendering: pixelated;
+    }
+    .lang-dropdown-menu {
+      position: absolute; bottom: 28px; right: 0; background: #c0c0c0; border: 2px outset #fff;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.5); list-style: none; margin: 0; padding: 2px;
+      display: none; min-width: 90px; z-index: 10001;
+    }
+    .lang-dropdown-menu li {
+      padding: 4px 8px; font-size: 11px; cursor: pointer; white-space: nowrap;
+    }
+    .lang-dropdown-menu li:hover {
+      background: #000080; color: #fff;
     }
 
     .start-menu {
@@ -271,9 +291,10 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
+  <!-- 頂部管理工具列 (僅在管理員模式下顯示) -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
-      <button id="authBtn" onclick="toggleAdmin(event)">🔒 管理員</button>
+      <button style="background:#ffcdd2; font-weight:bold;" onclick="toggleAdmin(event)" id="topBtnExitAdmin">🔓 退出管理</button>
       <button class="admin-only" id="topBtnFolder" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
       <button class="admin-only" id="topBtnWildwest" onclick="openWinterWildwestWindow()">🤠 開啟 WILDWEST 視訊</button>
       <button class="admin-only" id="topBtnCd" onclick="openWinterCdPlayerWindow()">💿 開啟 CD 播放器</button>
@@ -370,7 +391,7 @@
   <!-- 嵌入式 WILDWEST 視訊視窗 -->
   <div id="embedded-wildwest-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text">🤠 WINTER WILDWEST 視訊</div>
+      <div class="title-bar-text" id="wildwestWinTitle">🤠 WINTER WILDWEST 視訊</div>
       <div class="title-bar-controls">
         <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-wildwest-win', 'Wildwest 視訊', event)" title="最小化"></button>
         <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-wildwest-win', event)" title="最大化/還原"></button>
@@ -494,7 +515,7 @@
     </div>
   </div>
 
-  <!-- 照片檢視器 (新增上一張/下一張切換控制) -->
+  <!-- 照片檢視器 (具備切換控制) -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -518,7 +539,7 @@
     </div>
   </div>
 
-  <!-- 多媒體播放器 (新增上一首/下一首切換控制) -->
+  <!-- 多媒體播放器 (具備切換控制) -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
@@ -569,18 +590,31 @@
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <select class="lang-select-box" id="langSelector" onchange="changeLanguage(this.value)">
-        <option value="zh-TW">繁體中文</option>
-        <option value="en">English</option>
-        <option value="ko">한국어</option>
-        <option value="ja">日本語</option>
-      </select>
+      <!-- 經典藍色像素地球語言切換選單 -->
+      <div class="lang-globe-btn-wrapper">
+        <button type="button" class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
+          <svg class="lang-globe-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="8" r="7" stroke="#0078d7" stroke-width="1.6" fill="#e0f2fe"/>
+            <ellipse cx="8" cy="8" rx="3.6" ry="7" stroke="#0078d7" stroke-width="1.2"/>
+            <line x1="1" y1="8" x2="15" y2="8" stroke="#0078d7" stroke-width="1.2"/>
+            <line x1="2.2" y1="4.5" x2="13.8" y2="4.5" stroke="#0078d7" stroke-width="1.1"/>
+            <line x1="2.2" y1="11.5" x2="13.8" y2="11.5" stroke="#0078d7" stroke-width="1.1"/>
+          </svg>
+          <span id="currentLangLabel">繁中</span>
+        </button>
+        <ul class="lang-dropdown-menu" id="langDropdownMenu">
+          <li onclick="changeLanguage('zh-TW', event)">繁體中文</li>
+          <li onclick="changeLanguage('en', event)">English</li>
+          <li onclick="changeLanguage('ko', event)">한국어</li>
+          <li onclick="changeLanguage('ja', event)">日本語</li>
+        </ul>
+      </div>
       <a href="https://www.instagram.com/winter_tst" target="_blank">© : winter_tst</a>
     </div>
   </div>
 
   <script>
-    // 管理員密碼設定為 0401，完全不在前台介面與提示字樣中顯示
+    // 管理員密碼為 0401，前台程式碼與所有提示皆不顯示明文密碼
     const ADMIN_PASSWORD = "0401";
     let isAdmin = false;
     let currentOpenFolderId = null;
@@ -601,15 +635,29 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* 多國語言字典設定 (預設繁體中文，支援英文、韓文、日文) */
+    /* 全局項目名稱多語言字典 (完整對照桌面所有資料夾與項目) */
+    const ITEM_NAMES_I18N = {
+      "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Cafe Info", "ko": "생카 정보", "ja": "センイルカフェ情報" },
+      "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods", "ko": "응원 물품", "ja": "応援グッズ" },
+      "folder_1789230844971": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ko": "럭키 드로우", "ja": "ラッキードロー" },
+      "l1": { "zh-TW": "生咖預約表單", "en": "Reservation Form", "ko": "예약 폼", "ja": "予約フォーム" },
+      "winter_wildwest_entry": { "zh-TW": "WINTER WILDWEST 視訊", "en": "WINTER WILDWEST Video", "ko": "WINTER WILDWEST 영상", "ja": "WINTER WILDWEST ビデオ" },
+      "winter_cd_standalone_entry": { "zh-TW": "Winter Playlist", "en": "Winter Playlist", "ko": "Winter Playlist", "ja": "Winter Playlist" },
+      "folder_1789230890651": { "zh-TW": "手幅-3款", "en": "Slogan - 3 Types", "ko": "슬로건 3종", "ja": "スローガン 3種" },
+      "img1": { "zh-TW": "手幅Serenade ver", "en": "Slogan Serenade ver", "ko": "슬로건 Serenade ver", "ja": "スローガン Serenade ver" },
+      "n1": { "zh-TW": "生咖應援物", "en": "Support Goods", "ko": "응원 물품", "ja": "応援グッズ" },
+      "1789230813079": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ko": "럭키 드로우", "ja": "ラッキードロー" }
+    };
+
+    /* 介面操作多語言字典 */
     const I18N = {
       "zh-TW": {
+        badge: "繁中",
         adminPrompt: "請輸入管理員密碼：",
         adminLoginSuccess: "登入成功！已解鎖管理功能。",
         adminExit: "已退出管理員模式",
         adminWrongPass: "密碼錯誤！",
-        adminBtnLock: "🔒 管理員",
-        adminBtnUnlock: "🔓 退出管理",
+        adminBtnExit: "🔓 退出管理",
         topFolder: "+ 資料夾",
         topWildwest: "🤠 開啟 WILDWEST 視訊",
         topCd: "💿 開啟 CD 播放器",
@@ -647,12 +695,12 @@
         albumTracks: "曲目清單："
       },
       "en": {
+        badge: "EN",
         adminPrompt: "Please enter administrator password:",
         adminLoginSuccess: "Login successful! Admin mode unlocked.",
         adminExit: "Exited admin mode.",
         adminWrongPass: "Incorrect password!",
-        adminBtnLock: "🔒 Admin",
-        adminBtnUnlock: "🔓 Exit Admin",
+        adminBtnExit: "🔓 Exit Admin",
         topFolder: "+ Folder",
         topWildwest: "🤠 Open WILDWEST Video",
         topCd: "💿 Open CD Player",
@@ -690,12 +738,12 @@
         albumTracks: "Track List:"
       },
       "ko": {
+        badge: "한국어",
         adminPrompt: "관리자 비밀번호를 입력해주세요:",
         adminLoginSuccess: "로그인 성공! 관리자 모드가 활성화되었습니다.",
         adminExit: "관리자 모드가 종료되었습니다.",
         adminWrongPass: "비밀번호가 일치하지 않습니다!",
-        adminBtnLock: "🔒 관리자",
-        adminBtnUnlock: "🔓 관리자 종료",
+        adminBtnExit: "🔓 관리자 종료",
         topFolder: "+ 폴더",
         topWildwest: "🤠 WILDWEST 영상 열기",
         topCd: "💿 CD 플레이어 열기",
@@ -733,12 +781,12 @@
         albumTracks: "트랙 목록:"
       },
       "ja": {
+        badge: "日本語",
         adminPrompt: "管理者パスワードを入力してください：",
         adminLoginSuccess: "ログイン成功！管理者モードを解除しました。",
         adminExit: "管理者モードを終了しました。",
         adminWrongPass: "パスワードが正しくありません！",
-        adminBtnLock: "🔒 管理者",
-        adminBtnUnlock: "🔓 管理終了",
+        adminBtnExit: "🔓 管理終了",
         topFolder: "+ フォルダ",
         topWildwest: "🤠 WILDWEST ビデオを開く",
         topCd: "💿 CDプレイヤーを開く",
@@ -778,6 +826,13 @@
     };
 
     let currentLang = localStorage.getItem("winter_desktop_lang") || "zh-TW";
+
+    function getItemDisplayName(item) {
+      if (ITEM_NAMES_I18N[item.id] && ITEM_NAMES_I18N[item.id][currentLang]) {
+        return ITEM_NAMES_I18N[item.id][currentLang];
+      }
+      return item.name;
+    }
 
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
@@ -898,8 +953,8 @@
       ]
     };
 
-    // 升級版本 Key，載入新相簿導航與語言架構
-    const CONFIG_VERSION = "winter_desktop_album_nav_i18n_v2026_26";
+    // 升級版本快取
+    const CONFIG_VERSION = "winter_desktop_multilang_globe_v2026_28";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -909,7 +964,6 @@
     if (!currentConfig.notification) currentConfig.notification = MASTER_CONFIG.notification;
     let itemsData = currentConfig.items;
 
-    // 多媒體瀏覽導航索引狀態
     let activePhotoPlaylist = [];
     let currentPhotoIndex = -1;
     let activeMediaPlaylist = [];
@@ -918,12 +972,11 @@
 
     function applyLanguageUI() {
       const t = I18N[currentLang] || I18N["zh-TW"];
-      const authBtn = document.getElementById('authBtn');
-      if (authBtn) authBtn.innerText = isAdmin ? t.adminBtnUnlock : t.adminBtnLock;
-
       const setTxt = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
       const setHtml = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
 
+      setTxt('currentLangLabel', t.badge);
+      setTxt('topBtnExitAdmin', t.adminBtnExit);
       setTxt('topBtnFolder', t.topFolder);
       setTxt('topBtnWildwest', t.topWildwest);
       setTxt('topBtnCd', t.topCd);
@@ -959,13 +1012,27 @@
       setTxt('btnDownloadMedia', t.downloadMedia);
       setTxt('linkBtnText', t.visitLink);
       setTxt('albumTracksListLabel', t.albumTracks);
+
+      renderDesktop();
+      renderStartMenu();
+      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
-    function changeLanguage(lang) {
+    function toggleLangMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('langDropdownMenu');
+      if (menu) {
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      }
+    }
+
+    function changeLanguage(lang, e) {
+      if (e) e.stopPropagation();
       currentLang = lang;
       localStorage.setItem("winter_desktop_lang", lang);
+      const menu = document.getElementById('langDropdownMenu');
+      if (menu) menu.style.display = 'none';
       applyLanguageUI();
-      if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
     }
 
     function openWinterWildwestWindow() {
@@ -1060,6 +1127,8 @@
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
       const menu = document.getElementById('startMenu');
       if (menu) menu.style.display = 'none';
+      const langMenu = document.getElementById('langDropdownMenu');
+      if (langMenu) langMenu.style.display = 'none';
     }
 
     function selectItem(id, e) {
@@ -1095,25 +1164,25 @@
         item.pos = { x: 120, y: 120 };
         saveState();
         closeWindow('move-modal-win');
-        alert(`已將「${item.name}」移至最外層桌面！`);
+        alert(`已將「${getItemDisplayName(item)}」移至最外層桌面！`);
       };
       box.appendChild(desktopOpt);
 
       targetFolders.forEach(folder => {
         const btn = document.createElement('button');
         btn.style.cssText = "text-align:left; padding:4px 8px; font-size:12px; cursor:pointer;";
-        btn.innerHTML = `📁 ${folder.name} (${folder.type === 'album' ? '專輯' : '資料夾'})`;
+        btn.innerHTML = `📁 ${getItemDisplayName(folder)} (${folder.type === 'album' ? '專輯' : '資料夾'})`;
         btn.onclick = (ev) => {
           ev.stopPropagation();
           item.parentId = folder.id;
           saveState();
           closeWindow('move-modal-win');
-          alert(`已將「${item.name}」移入「${folder.name}」！`);
+          alert(`已將「${getItemDisplayName(item)}」移入「${getItemDisplayName(folder)}」！`);
         };
         box.appendChild(btn);
       });
 
-      document.getElementById('moveModalTitle').innerText = `📦 移動「${item.name}」至...`;
+      document.getElementById('moveModalTitle').innerText = `📦 移動「${getItemDisplayName(item)}」至...`;
       openWindow('move-modal-win');
     }
 
@@ -1124,7 +1193,7 @@
       if (!item) return;
       clipboardItem = item;
       isCutOperation = false;
-      alert(`已複製「${item.name}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
+      alert(`已複製「${getItemDisplayName(item)}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
     }
 
     function cutSelectedItem(e) {
@@ -1136,7 +1205,7 @@
       isCutOperation = true;
       renderDesktop();
       if (currentOpenFolderId) renderFolderContent(currentOpenFolderId);
-      alert(`已剪下「${item.name}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
+      alert(`已剪下「${getItemDisplayName(item)}」！點擊頂部或資料夾內的「📌 貼上」即可。`);
     }
 
     function editSelectedItem(e) {
@@ -1189,7 +1258,6 @@
       if (isAdmin) {
         isAdmin = false;
         document.body.classList.remove('admin-mode');
-        document.getElementById('authBtn').innerText = t.adminBtnLock;
         selectedItemId = null;
         alert(t.adminExit);
       } else {
@@ -1197,7 +1265,6 @@
         if (input === ADMIN_PASSWORD) {
           isAdmin = true;
           document.body.classList.add('admin-mode');
-          document.getElementById('authBtn').innerText = t.adminBtnUnlock;
           setTimeout(updateScrollBarUI, 80);
           alert(t.adminLoginSuccess);
         } else if (input !== null) {
@@ -1264,7 +1331,7 @@
       }
 
       const checkHtml = `<input type="checkbox" class="icon-select-check" ${isSelected ? 'checked' : ''} onclick="selectItem('${item.id}', event)">`;
-      div.innerHTML = `${checkHtml}${iconHtml}<span>${item.name}</span>`;
+      div.innerHTML = `${checkHtml}${iconHtml}<span>${getItemDisplayName(item)}</span>`;
       return div;
     }
 
@@ -1344,7 +1411,7 @@
       } else if (item.type === 'cd_standalone') {
         openWinterCdPlayerWindow();
       } else if (item.type === 'folder') {
-        openFolderWithHistory(item.id, item.name);
+        openFolderWithHistory(item.id, getItemDisplayName(item));
       } else if (item.type === 'album') {
         openAlbumPlayer(item);
       } else if (item.type === 'image') {
@@ -1352,9 +1419,9 @@
       } else if (item.type === 'video') {
         openUniversalPlayerByItem(item);
       } else if (item.type === 'note') {
-        alert(`【${item.name}】\n\n${item.content}`);
+        alert(`【${getItemDisplayName(item)}】\n\n${item.content}`);
       } else if (item.type === 'link') {
-        document.getElementById('linkTitle').innerText = `🔗 ${item.name}`;
+        document.getElementById('linkTitle').innerText = `🔗 ${getItemDisplayName(item)}`;
         document.getElementById('linkText').innerText = `即將前往：${item.url}`;
         document.getElementById('linkBtn').href = item.url;
         openWindow('link-win');
@@ -1378,8 +1445,9 @@
       showItems.forEach(item => {
         const li = document.createElement('li');
         const iconSrc = (item.type === 'image' && item.mediaUrl) ? item.mediaUrl : (item.icon || ICON_FOLDER_DEFAULT);
-        li.title = `開啟 ${item.name}`;
-        li.innerHTML = `<img src="${iconSrc}" width="18" height="18" style="object-fit:contain;"> <span>${item.name}</span>`;
+        const displayName = getItemDisplayName(item);
+        li.title = `開啟 ${displayName}`;
+        li.innerHTML = `<img src="${iconSrc}" width="18" height="18" style="object-fit:contain;"> <span>${displayName}</span>`;
         li.onclick = (e) => {
           e.stopPropagation();
           toggleStartMenu();
@@ -1403,7 +1471,7 @@
         const row = document.createElement('label');
         row.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;";
         const isChecked = currentIds.includes(item.id) ? 'checked' : '';
-        row.innerHTML = `<input type="checkbox" value="${item.id}" ${isChecked}> <span>${item.name}</span>`;
+        row.innerHTML = `<input type="checkbox" value="${item.id}" ${isChecked}> <span>${getItemDisplayName(item)}</span>`;
         box.appendChild(row);
       });
 
@@ -1490,7 +1558,7 @@
 
     function openAlbumPlayer(albumItem) {
       currentOpenAlbumId = albumItem.id;
-      document.getElementById('albumTitleBar').innerText = `💿 專輯：${albumItem.name}`;
+      document.getElementById('albumTitleBar').innerText = `💿 專輯：${getItemDisplayName(albumItem)}`;
       renderAlbumTrackList();
       openWindow('album-win');
     }
@@ -1843,7 +1911,6 @@
       saveState();
     }
 
-    /* 檔案精準下載核心引擎 */
     function forceDownloadFile(url, customFilename) {
       fetch(url)
         .then(response => {
@@ -1872,7 +1939,7 @@
         });
     }
 
-    /* 照片檢視器 (支援相簿陣列 + 上一張/下一張) */
+    /* 照片檢視器 (支援相簿切換) */
     function openPhotoViewerByItem(item) {
       const scopeParentId = item.parentId;
       activePhotoPlaylist = itemsData.filter(i => i.type === 'image' && i.parentId === scopeParentId);
@@ -1889,7 +1956,7 @@
       if (currentPhotoIndex < 0 || currentPhotoIndex >= activePhotoPlaylist.length) return;
       const item = activePhotoPlaylist[currentPhotoIndex];
       const countText = activePhotoPlaylist.length > 1 ? ` (${currentPhotoIndex + 1}/${activePhotoPlaylist.length})` : '';
-      document.getElementById('photoViewerTitle').innerText = `🖼️ ${item.name}${countText}`;
+      document.getElementById('photoViewerTitle').innerText = `🖼️ ${getItemDisplayName(item)}${countText}`;
       document.getElementById('largePhotoDisplay').src = item.mediaUrl;
 
       const pBtn = document.getElementById('btnPrevPhoto');
@@ -1910,7 +1977,7 @@
     function downloadCurrentPhoto() {
       if (currentPhotoIndex < 0 || currentPhotoIndex >= activePhotoPlaylist.length) return;
       const item = activePhotoPlaylist[currentPhotoIndex];
-      const fileName = `${item.name || 'photo'}.jpg`;
+      const fileName = `${getItemDisplayName(item) || 'photo'}.jpg`;
       const driveId = extractDriveId(item.mediaUrl);
 
       if (driveId) {
@@ -1921,7 +1988,7 @@
       }
     }
 
-    /* 多媒體播放器 (支援多媒體清單 + 上一個/下一個) */
+    /* 多媒體播放器 (支援清單切換) */
     function openUniversalPlayerByItem(item) {
       const scopeParentId = item.parentId;
       activeMediaPlaylist = itemsData.filter(i => i.type === 'video' && i.parentId === scopeParentId);
@@ -1938,7 +2005,7 @@
       if (currentMediaIndex < 0 || currentMediaIndex >= activeMediaPlaylist.length) return;
       const item = activeMediaPlaylist[currentMediaIndex];
       const countText = activeMediaPlaylist.length > 1 ? ` (${currentMediaIndex + 1}/${activeMediaPlaylist.length})` : '';
-      document.getElementById('mediaViewerTitle').innerText = `🎬 ${item.name}${countText}`;
+      document.getElementById('mediaViewerTitle').innerText = `🎬 ${getItemDisplayName(item)}${countText}`;
 
       const iframe = document.getElementById('universalIframe');
       const video = document.getElementById('universalVideo');
@@ -1954,7 +2021,7 @@
           finalSrc = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&enablejsapi=1&rel=0`;
           dlBtn.innerText = "📺 在 YouTube 開啟原始頁面";
         } else {
-          dlBtn.innerText = `💾 下載《${item.name}》`;
+          dlBtn.innerText = `💾 下載《${getItemDisplayName(item)}》`;
         }
         video.pause(); video.style.display = 'none';
         iframe.style.display = 'block';
@@ -1963,7 +2030,7 @@
         iframe.src = ''; iframe.style.display = 'none';
         video.style.display = 'block';
         video.src = url;
-        dlBtn.innerText = `💾 下載《${item.name}》`;
+        dlBtn.innerText = `💾 下載《${getItemDisplayName(item)}》`;
       }
 
       const pBtn = document.getElementById('btnPrevMedia');
@@ -1986,7 +2053,7 @@
       const item = activeMediaPlaylist[currentMediaIndex];
       const url = item.mediaUrl;
       const driveId = extractDriveId(url);
-      const fileName = `${item.name || 'media'}.mp4`;
+      const fileName = `${getItemDisplayName(item) || 'media'}.mp4`;
 
       if (url.includes('youtube.com') || url.includes('youtu.be')) {
         window.open(url, '_blank');
@@ -2006,7 +2073,6 @@
       closeWindow('media-player-win');
     }
 
-    /* 彈出通知欄核心管理系統 */
     function checkAndTriggerNotification() {
       const cfg = currentConfig.notification;
       if (!cfg || !cfg.enabled) return;
@@ -2019,7 +2085,8 @@
 
     function showNotificationBanner() {
       const cfg = currentConfig.notification || MASTER_CONFIG.notification;
-      document.getElementById('notifTitleDisplay').innerText = cfg.title || "✉️ 新訊息通知";
+      const t = I18N[currentLang] || I18N["zh-TW"];
+      document.getElementById('notifTitleDisplay').innerText = t.notifTitle;
       document.getElementById('notifContentDisplay').innerText = cfg.content || "";
 
       const notifWin = document.getElementById('notification-modal-win');
@@ -2171,7 +2238,7 @@
       }, { passive: false });
     }
 
-    // 鍵盤左右鍵切換相片捷徑
+    // 鍵盤左右鍵快捷切換照片
     window.addEventListener('keydown', (e) => {
       const pWin = document.getElementById('photo-viewer-win');
       if (pWin && pWin.style.display === 'block') {
@@ -2190,8 +2257,6 @@
     renderStartMenu();
 
     window.addEventListener('DOMContentLoaded', () => {
-      const sel = document.getElementById('langSelector');
-      if (sel) sel.value = currentLang;
       applyLanguageUI();
       checkAndTriggerNotification();
     });

@@ -41,6 +41,7 @@
       cursor: var(--star-cursor) !important;
     }
 
+    /* 頂部管理列 */
     .top-bar-wrapper {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
@@ -100,7 +101,7 @@
 
     .icon-wrapper {
       position: absolute;
-      width: 90px;
+      width: 108px;
       display: flex; flex-direction: column; align-items: center;
       cursor: var(--star-cursor); text-align: center;
       color: white; text-shadow: 1px 1px 2px black;
@@ -138,7 +139,7 @@
     }
 
     .icon-wrapper span {
-      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: break-word; white-space: normal; line-height: 1.2; pointer-events: none;
+      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: break-word; white-space: normal; line-height: 1.25; pointer-events: none;
       font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
     }
 
@@ -227,22 +228,29 @@
     .taskbar-right { font-size: 11px; display: flex; align-items: center; gap: 8px; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
     
-    /* 經典地球無外框按鈕 */
+    /* 經典地球無按鍵框樣式 */
     .lang-globe-btn-wrapper {
       position: relative; display: inline-flex; align-items: center;
     }
     .lang-globe-btn {
-      height: 24px; padding: 1px 2px; display: flex; align-items: center; gap: 4px; cursor: pointer;
+      height: 24px; padding: 0 4px; display: flex; align-items: center; gap: 3px; cursor: pointer;
       font-size: 11px; font-weight: bold; color: #000; background: transparent !important; border: none !important;
+      outline: none;
     }
-    .lang-globe-btn:active { opacity: 0.7; }
+    .lang-globe-btn:hover {
+      background: rgba(0,0,0,0.06) !important;
+      border-radius: 2px;
+    }
+    .lang-globe-btn:active {
+      background: rgba(0,0,0,0.12) !important;
+    }
     .lang-globe-icon {
-      width: 17px; height: 17px; object-fit: contain; image-rendering: pixelated;
+      width: 16px; height: 16px; object-fit: contain; image-rendering: pixelated; display: block;
     }
     .lang-dropdown-menu {
       position: absolute; bottom: 28px; right: 0; background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 2px 2px 8px rgba(0,0,0,0.5); list-style: none; margin: 0; padding: 2px;
-      display: none; min-width: 90px; z-index: 10001;
+      display: none; min-width: 95px; z-index: 10001;
     }
     .lang-dropdown-menu li {
       padding: 4px 8px; font-size: 11px; cursor: pointer; white-space: nowrap;
@@ -578,14 +586,13 @@
 
   <div class="taskbar">
     <div class="taskbar-left">
-      <!-- 已去除 HOME 按鍵，僅保留乾淨的 WINTER 選單鈕 -->
       <button type="button" onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
       </button>
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <!-- 經典藍色地球圖示切換鈕（無突兀灰色邊框） -->
+      <!-- 經典藍色地球圖示切換鈕（無突兀灰色邊框，直接顯示對應縮寫代碼） -->
       <div class="lang-globe-btn-wrapper">
         <button type="button" class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
           <svg class="lang-globe-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -595,13 +602,14 @@
             <line x1="2.2" y1="4.5" x2="13.8" y2="4.5" stroke="#0078d7" stroke-width="1.1"/>
             <line x1="2.2" y1="11.5" x2="13.8" y2="11.5" stroke="#0078d7" stroke-width="1.1"/>
           </svg>
-          <span id="currentLangLabel">繁中</span>
+          <span id="currentLangLabel">TW</span>
         </button>
         <ul class="lang-dropdown-menu" id="langDropdownMenu">
           <li onclick="changeLanguage('zh-TW', event)">繁體中文</li>
           <li onclick="changeLanguage('en', event)">English</li>
-          <li onclick="changeLanguage('ko', event)">한국어</li>
           <li onclick="changeLanguage('ja', event)">日本語</li>
+          <li onclick="changeLanguage('ko', event)">한국어</li>
+          <li onclick="changeLanguage('th', event)">ไทย</li>
         </ul>
       </div>
       <a href="https://www.instagram.com/winter_tst" target="_blank">© : winter_tst</a>
@@ -629,40 +637,44 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* 全局項目名稱多語言字典 (修正 Cafe Info 為 Bday Cafe Info，全面支援多語言) */
+    /* 全局項目名稱多語言字典 (含泰文，名稱精確對齊) */
     const ITEM_NAMES_I18N = {
-      "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Bday Cafe Info", "ko": "생카 정보", "ja": "センイルカフェ情報" },
-      "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods", "ko": "응원 물품", "ja": "応援グッズ" },
-      "folder_1789230844971": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ko": "럭키 드로우", "ja": "ラッキードロー" },
-      "l1": { "zh-TW": "生咖預約表單", "en": "Reservation Form", "ko": "예약 폼", "ja": "予約フォーム" },
-      "winter_wildwest_entry": { "zh-TW": "WINTER WILDWEST 視訊", "en": "WINTER WILDWEST Video", "ko": "WINTER WILDWEST 영상", "ja": "WINTER WILDWEST ビデオ" },
-      "winter_cd_standalone_entry": { "zh-TW": "Winter Playlist", "en": "Winter Playlist", "ko": "Winter Playlist", "ja": "Winter Playlist" },
-      "folder_1789230890651": { "zh-TW": "手幅-3款", "en": "Slogan - 3 Types", "ko": "슬로건 3종", "ja": "スローガン 3種" },
-      "img1": { "zh-TW": "手幅Serenade ver", "en": "Slogan Serenade ver", "ko": "슬로건 Serenade ver", "ja": "スローガン Serenade ver" },
-      "n1": { "zh-TW": "生咖應援物", "en": "Support Goods", "ko": "응원 물품", "ja": "応援グッズ" },
-      "1789230813079": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ko": "럭키 드로우", "ja": "ラッキードロー" }
+      "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Bday Cafe Info", "ja": "センイルカフェ情報", "ko": "생카 정보", "th": "ข้อมูลคาเฟ่วันเกิด" },
+      "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods", "ja": "応援グッズ", "ko": "응원 물품", "th": "ของซัพพอร์ตคาเฟ่" },
+      "folder_1789230844971": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ja": "ラッキードロー", "ko": "럭키 드로우", "th": "Lucky Draw" },
+      "l1": { "zh-TW": "生咖預約", "en": "Cafe Booking", "ja": "カフェ予約", "ko": "생카 예약", "th": "จองคาเฟ่" },
+      "winter_wildwest_entry": { "zh-TW": "WINTER WILDWEST 視訊", "en": "WINTER WILDWEST Video", "ja": "WINTER WILDWEST ビデオ", "ko": "WINTER WILDWEST 영상", "th": "WINTER WILDWEST วิดีโอ" },
+      "winter_cd_standalone_entry": { "zh-TW": "Winter Playlist", "en": "Winter Playlist", "ja": "Winter Playlist", "ko": "Winter Playlist", "th": "Winter Playlist" },
+      "folder_1789230890651": { "zh-TW": "手幅-3款", "en": "Slogan - 3 Types", "ja": "スローガン 3種", "ko": "슬로건 3종", "th": "สโลแกน 3 แบบ" },
+      "img1": { "zh-TW": "手幅Serenade ver", "en": "Slogan Serenade ver", "ja": "スローガン Serenade ver", "ko": "슬로건 Serenade ver", "th": "สโลแกน Serenade ver" },
+      "1791354343327": { "zh-TW": "手幅Saddle Up ver", "en": "Slogan Saddle Up ver", "ja": "スローガン Saddle Up ver", "ko": "슬로건 Saddle Up ver", "th": "สโลแกน Saddle Up ver" },
+      "folder_1791354254088": { "zh-TW": "新資料夾", "en": "New Folder", "ja": "新しいフォルダ", "ko": "새 폴더", "th": "โฟลเดอร์ใหม่" },
+      "n1": { "zh-TW": "生咖應援物", "en": "Support Goods", "ja": "応援グッズ", "ko": "응원 물품", "th": "ของซัพพอร์ตคาเฟ่" },
+      "1789230813079": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ja": "ラッキードロー", "ko": "럭키 드로우", "th": "Lucky Draw" }
     };
 
-    /* 便籤/彈窗內文多國語言字典 (徹底去除英文模式下的殘留中文) */
+    /* 便籤/彈窗內文多國語言字典 */
     const NOTE_CONTENT_I18N = {
       "n1": {
         "zh-TW": "1. 應援小卡\n2. 明信片",
         "en": "1. Photocard\n2. Postcard",
+        "ja": "1. 応援トレカ\n2. ポストカード",
         "ko": "1. 응원 포토카드\n2. 엽서",
-        "ja": "1. 応援トレカ\n2. ポストカード"
+        "th": "1. โฟโต้การ์ดซัพพอร์ต\n2. โปสการ์ด"
       },
       "1789230813079": {
         "zh-TW": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n照片書禮盒-20\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
         "en": "Total 250 draws, unlimited per day\r\nDoosan Jersey - 1\r\nA2 Crystal Print - 8\r\nA3 Canvas Print - 8\r\n15*20cm Small Canvas - 30\r\nCustom Slogan - 18\r\nPhoto Book Box - 20\r\nSOLO Album - 30\r\nCalendar - 80\r\nHot Wheels Car - 50\r\nStandee - 3\r\nUnsealed Album - 15",
+        "ja": "全250回、1日の回数制限なし\r\n斗山ユニフォーム - 1\r\nA2クリスタル版画 - 8\r\nA3キャンバス額縁 - 8\r\n15*20cmミニキャンバス - 30\r\nオリジナルスローガン - 18\r\nフォトブックボックス - 20\r\nソロアルバム - 30\r\nカレンダー - 80\r\nホットウィールミニカー - 50\r\nアクリルスタンド - 3\r\n開封済みアルバム - 15",
         "ko": "총 250회, 일일 제한 없음\r\n두산 유니폼 - 1\r\nA2 크리스탈 판화 - 8\r\nA3 캔버스 액자 - 8\r\n15*20cm 미니 캔버스 - 30\r\n자체제작 슬로건 - 18\r\n포토북 박스 - 20\r\n솔로 앨범 - 30\r\n시즌그리팅 캘린더 - 80\r\n핫휠 미니카 - 50\r\n스탠드 - 3\r\n개봉 앨범 - 15",
-        "ja": "全250回、1日の回数制限なし\r\n斗山ユニフォーム - 1\r\nA2クリスタル版画 - 8\r\nA3キャンバス額縁 - 8\r\n15*20cmミニキャンバス - 30\r\nオリジナルスローガン - 18\r\nフォトブックボックス - 20\r\nソロアルバム - 30\r\nカレンダー - 80\r\nホットウィールミニカー - 50\r\nアクリルスタンド - 3\r\n開封済みアルバム - 15"
+        "th": "ทั้งหมด 250 สิทธิ์ สุ่มได้ไม่จำกัดต่อวัน\r\nเสื้อทีม Doosan - 1\r\nกรอบรูปคริสตัล A2 - 8\r\nกรอบรูปแคนวาส A3 - 8\r\nกรอบรูปแคนวาส 15*20cm - 30\r\nสโลแกนสั่งทำ - 18\r\nเซ็ตโฟโต้บุ๊ค - 20\r\nอัลบั้มเดี่ยว - 30\r\nปฏิทิน - 80\r\nโมเดลรถ Hot Wheels - 50\r\nสแตนดี้ตกแต่ง - 3\r\nอัลบั้มเปล่า - 15"
       }
     };
 
     /* 介面操作多語言字典 */
     const I18N = {
       "zh-TW": {
-        badge: "繁中",
+        badge: "TW",
         adminPrompt: "請輸入管理員密碼：",
         adminLoginSuccess: "登入成功！已解鎖管理功能。",
         adminExit: "已退出管理員模式",
@@ -751,8 +763,53 @@
         albumTracks: "Track List:",
         wildwestTitle: "🤠 WINTER WILDWEST Video"
       },
+      "ja": {
+        badge: "JP",
+        adminPrompt: "管理者パスワードを入力してください：",
+        adminLoginSuccess: "ログイン成功！管理者モードを解除しました。",
+        adminExit: "管理者モードを終了しました。",
+        adminWrongPass: "パスワードが正しくありません！",
+        adminBtnExit: "🔓 管理終了",
+        topFolder: "+ フォルダ",
+        topWildwest: "🤠 WILDWEST ビデオを開く",
+        topCd: "💿 CDプレイヤーを開く",
+        topAlbum: "+ アルバム",
+        topVideo: "+ 動画/音楽",
+        topImage: "+ 画像",
+        topNote: "+ メモ",
+        topLink: "+ リンク",
+        topPaste: "📌 貼り付け",
+        topMove: "📦 移動...",
+        topCopy: "📋 コピー",
+        topCut: "✂️ 切り取り",
+        topEdit: "✏️ 編集",
+        topDelete: "❌ 削除",
+        topWallpaper: "🎨 壁紙",
+        topNotif: "✉️ 通知設定",
+        topStartCfg: "⭐ スタートメニュー",
+        topSave: "💾 永久保存",
+        menuHome: "🖥️ <strong>1. デスクトップに戻る</strong>",
+        menuCd: "💿 <strong>2. WINTER CD PLAYER を開く</strong>",
+        menuWildwest: "🤠 <strong>3. WINTER WILDWEST ビデオへ</strong>",
+        menuAdmin: "⚙️ 管理者モード切替",
+        notifTitle: "✉️ WINTER からの新しいメッセージ",
+        notifContent: "ウィンター（冬子）のためのレトロなPC空間へようこそ⭐️\nフォルダをクリックして詳細をチェックしてみてください!!",
+        notifOk: "確認 (OK)",
+        emptyFolder: "このフォルダは空です",
+        navBack: "⬅ 戻る",
+        navForward: "➡ 進む",
+        prevBtn: "◀ 前へ",
+        nextBtn: "▶ 次へ",
+        prevPhotoBtn: "◀ 前の写真",
+        nextPhotoBtn: "▶ 次の写真",
+        downloadPhoto: "💾 写真を保存",
+        downloadMedia: "💾 ファイルを保存",
+        visitLink: "リンク先へ移動",
+        albumTracks: "曲目リスト:",
+        wildwestTitle: "🤠 WINTER WILDWEST ビデオ"
+      },
       "ko": {
-        badge: "한국어",
+        badge: "KR",
         adminPrompt: "관리자 비밀번호를 입력해주세요:",
         adminLoginSuccess: "로그인 성공! 관리자 모드가 활성화되었습니다.",
         adminExit: "관리자 모드가 종료되었습니다.",
@@ -796,50 +853,50 @@
         albumTracks: "트랙 목록:",
         wildwestTitle: "🤠 WINTER WILDWEST 영상"
       },
-      "ja": {
-        badge: "日本語",
-        adminPrompt: "管理者パスワードを入力してください：",
-        adminLoginSuccess: "ログイン成功！管理者モードを解除しました。",
-        adminExit: "管理者モードを終了しました。",
-        adminWrongPass: "パスワードが正しくありません！",
-        adminBtnExit: "🔓 管理終了",
-        topFolder: "+ フォルダ",
-        topWildwest: "🤠 WILDWEST ビデオを開く",
-        topCd: "💿 CDプレイヤーを開く",
-        topAlbum: "+ アルバム",
-        topVideo: "+ 動画/音楽",
-        topImage: "+ 画像",
-        topNote: "+ メモ",
-        topLink: "+ リンク",
-        topPaste: "📌 貼り付け",
-        topMove: "📦 移動...",
-        topCopy: "📋 コピー",
-        topCut: "✂️ 切り取り",
-        topEdit: "✏️ 編集",
-        topDelete: "❌ 削除",
-        topWallpaper: "🎨 壁紙",
-        topNotif: "✉️ 通知設定",
-        topStartCfg: "⭐ スタートメニュー",
-        topSave: "💾 永久保存",
-        menuHome: "🖥️ <strong>1. デスクトップに戻る</strong>",
-        menuCd: "💿 <strong>2. WINTER CD PLAYER を開く</strong>",
-        menuWildwest: "🤠 <strong>3. WINTER WILDWEST ビデオへ</strong>",
-        menuAdmin: "⚙️ 管理者モード切替",
-        notifTitle: "✉️ WINTER からの新しいメッセージ",
-        notifContent: "ウィンター（冬子）のためのレトロなPC空間へようこそ⭐️\nフォルダをクリックして詳細をチェックしてみてください!!",
-        notifOk: "確認 (OK)",
-        emptyFolder: "このフォルダは空です",
-        navBack: "⬅ 戻る",
-        navForward: "➡ 進む",
-        prevBtn: "◀ 前へ",
-        nextBtn: "▶ 次へ",
-        prevPhotoBtn: "◀ 前の写真",
-        nextPhotoBtn: "▶ 次の写真",
-        downloadPhoto: "💾 写真を保存",
-        downloadMedia: "💾 ファイルを保存",
-        visitLink: "リンク先へ移動",
-        albumTracks: "曲目リスト:",
-        wildwestTitle: "🤠 WINTER WILDWEST ビデオ"
+      "th": {
+        badge: "THA",
+        adminPrompt: "กรุณากรอกรหัสผ่านผู้ดูแลระบบ:",
+        adminLoginSuccess: "เข้าสู่ระบบสำเร็จ! ปลดล็อกโหมดผู้ดูแลระบบแล้ว",
+        adminExit: "ออกจากโหมดผู้ดูแลระบบแล้ว",
+        adminWrongPass: "รหัสผ่านไม่ถูกต้อง!",
+        adminBtnExit: "🔓 ออกจากโหมดผู้ดูแล",
+        topFolder: "+ โฟลเดอร์",
+        topWildwest: "🤠 เปิดวิดีโอ WILDWEST",
+        topCd: "💿 เปิดเครื่องเล่น CD",
+        topAlbum: "+ อัลบั้ม",
+        topVideo: "+ วิดีโอ/เพลง",
+        topImage: "+ รูปภาพ",
+        topNote: "+ โน้ต",
+        topLink: "+ ลิงก์ภายนอก",
+        topPaste: "📌 วาง",
+        topMove: "📦 ย้ายไปที่...",
+        topCopy: "📋 คัดลอก",
+        topCut: "✂️ ตัด",
+        topEdit: "✏️ แก้ไข",
+        topDelete: "❌ ลบ",
+        topWallpaper: "🎨 ภาพพื้นหลัง",
+        topNotif: "✉️ ตั้งค่าการแจ้งเตือน",
+        topStartCfg: "⭐ ตั้งค่าเมนูเริ่ม",
+        topSave: "💾 บันทึกถาวร",
+        menuHome: "🖥️ <strong>1. กลับสู่หน้าจอหลัก</strong>",
+        menuCd: "💿 <strong>2. เปิด WINTER CD PLAYER</strong>",
+        menuWildwest: "🤠 <strong>3. เข้าสู่วิดีโอ WINTER WILDWEST</strong>",
+        menuAdmin: "⚙️ สลับโหมดผู้ดูแล",
+        notifTitle: "✉️ ข้อความใหม่จาก WINTER",
+        notifContent: "ยินดีต้อนรับสู่พื้นที่เดสก์ท็อปสุดพิเศษของวินเทอร์ (คิมมินจอง)⭐️\nคลิกโฟลเดอร์เพื่อดูข้อมูลเพิ่มเติมได้เลย!!",
+        notifOk: "รับทราบ (OK)",
+        emptyFolder: "โฟลเดอร์นี้ว่างเปล่า",
+        navBack: "⬅ ย้อนกลับ",
+        navForward: "➡ ไปข้างหน้า",
+        prevBtn: "◀ ก่อนหน้า",
+        nextBtn: "▶ ถัดไป",
+        prevPhotoBtn: "◀ รูปก่อนหน้า",
+        nextPhotoBtn: "▶ รูปถัดไป",
+        downloadPhoto: "💾 ดาวน์โหลดรูปภาพ",
+        downloadMedia: "💾 ดาวน์โหลดไฟล์",
+        visitLink: "เปิดลิงก์ (Visit Site)",
+        albumTracks: "รายชื่อเพลง:",
+        wildwestTitle: "🤠 WINTER WILDWEST วิดีโอ"
       }
     };
 
@@ -859,6 +916,7 @@
       return item.content || "";
     }
 
+    // 最新全域資料配置（已納入您的修改與新增項目）
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
       "notification": {
@@ -921,7 +979,7 @@
           "id": "l1",
           "parentId": null,
           "type": "link",
-          "name": "生咖預約表單",
+          "name": "生咖預約",
           "icon": W_FORM_ICON,
           "url": "https://wintertst0101.netlify.app/",
           "pos": { "x": 16, "y": 262 }
@@ -974,11 +1032,32 @@
           "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
           "pos": { "x": 16, "y": 16 }
+        },
+        {
+          "id": "folder_1791354254088",
+          "parentId": "folder_1789230959703",
+          "type": "folder",
+          "name": "新資料夾",
+          "iconType": "pure",
+          "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+          "coverBadge": "",
+          "pos": { "x": 120, "y": 120 }
+        },
+        {
+          "id": "1791354343327",
+          "parentId": "folder_1789230890651",
+          "type": "image",
+          "name": "手幅Saddle Up ver",
+          "icon": "https://lh3.googleusercontent.com/d/1pVL-i2bZIoceIEzgkAYQIyJi2iH0dnr8",
+          "content": "",
+          "url": "",
+          "mediaUrl": "https://lh3.googleusercontent.com/d/1pVL-i2bZIoceIEzgkAYQIyJi2iH0dnr8",
+          "pos": { "x": 120, "y": 120 }
         }
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_perfect_multilang_v2026_30";
+    const CONFIG_VERSION = "winter_desktop_perfect_thai_v2026_33";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));

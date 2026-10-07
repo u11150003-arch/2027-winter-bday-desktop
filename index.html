@@ -215,7 +215,7 @@
       display: inline-flex; align-items: center; gap: 4px;
     }
     .btn-svg-icon {
-      width: 12px; height: 12px; fill: currentColor; display: inline-block; vertical-align: middle;
+      width: 13px; height: 13px; fill: currentColor; display: inline-block; vertical-align: middle; flex-shrink: 0;
     }
 
     .taskbar {
@@ -753,7 +753,7 @@
       }
     };
 
-    /* 介面操作多語言字典 */
+    /* 介面操作多語言字典 (全語系彈窗皆保持雙語對照：該語系 + English) */
     const I18N = {
       "zh-TW": {
         badge: "TW",
@@ -877,7 +877,7 @@
         menuWildwest: "🤠 <strong>3. WINTER WILDWEST ビデオへ</strong>",
         menuAdmin: "⚙️ 管理者モード切替",
         notifTitle: "✉️ WINTER からの新しいメッセージ",
-        notifContent: "ウィンター（冬子）のためのレトロなPC空間へようこそ⭐️\nフォルダをクリックして詳細をチェックしてみてください!!",
+        notifContent: "ウィンター（冬子）のためのレトロなPC空間へようこそ⭐️\nフォルダをクリックして詳細をチェックしてみてください!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
         notifOk: "確認 (OK)",
         emptyFolder: "このフォルダは空です",
         navBack: "⬅ 戻る",
@@ -923,7 +923,7 @@
         menuWildwest: "🤠 <strong>3. WINTER WILDWEST 영상 들어가기</strong>",
         menuAdmin: "⚙️ 관리자 모드 전환",
         notifTitle: "✉️ WINTER로부터 온 새 메시지",
-        notifContent: "윈터(김민정)만을 위한 레트로 데스크톱 공간에 오신 것을 환영합니다⭐️\n폴더를 클릭하여 더 많은 정보를 확인해보세요!!",
+        notifContent: "윈터(김민정)만을 위한 레트로 데스크톱 공간에 오신 것을 환영합니다⭐️\n폴더를 클릭하여 더 많은 정보를 확인해보세요!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
         notifOk: "확인 (OK)",
         emptyFolder: "폴더가 비어 있습니다",
         navBack: "⬅ 뒤로",
@@ -969,7 +969,7 @@
         menuWildwest: "🤠 <strong>3. เข้าสู่วิดีโอ WINTER WILDWEST</strong>",
         menuAdmin: "⚙️ สลับโหมดผู้ดูแล",
         notifTitle: "✉️ ข้อความใหม่จาก WINTER",
-        notifContent: "ยินดีต้อนรับสู่พื้นที่เดสก์ท็อปสุดพิเศษของวินเทอร์ (คิมมินจอง)⭐️\nคลิกโฟลเดอร์เพื่อดูข้อมูลเพิ่มเติมได้เลย!!",
+        notifContent: "ยินดีต้อนรับสู่พื้นที่เดสก์ท็อปสุดพิเศษของวินเทอร์ (คิมมินจอง)⭐️\nคลิกโฟลเดอร์เพื่อดูข้อมูลเพิ่มเติมได้เลย!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
         notifOk: "รับทราบ (OK)",
         emptyFolder: "โฟลเดอร์นี้ว่างเปล่า",
         navBack: "⬅ ย้อนกลับ",
@@ -1143,7 +1143,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_save_modal_v2026_41";
+    const CONFIG_VERSION = "winter_desktop_dual_notif_fixed_v2026_45";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));

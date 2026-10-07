@@ -41,7 +41,6 @@
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部管理列：平時完全不佔用任何高度與空間 */
     .top-bar-wrapper {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
@@ -90,8 +89,8 @@
     .desktop {
       position: absolute;
       top: 16px;
-      left: max(0px, var(--safe-left));
-      right: max(0px, var(--safe-right));
+      left: max(6px, var(--safe-left));
+      right: max(6px, var(--safe-right));
       bottom: var(--taskbar-h);
       overflow: hidden;
     }
@@ -101,7 +100,7 @@
 
     .icon-wrapper {
       position: absolute;
-      width: 84px;
+      width: 90px;
       display: flex; flex-direction: column; align-items: center;
       cursor: var(--star-cursor); text-align: center;
       color: white; text-shadow: 1px 1px 2px black;
@@ -139,7 +138,7 @@
     }
 
     .icon-wrapper span {
-      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: keep-all; white-space: nowrap; pointer-events: none;
+      font-size: 11px; padding: 1px 3px; margin-top: 3px; word-break: break-word; white-space: normal; line-height: 1.2; pointer-events: none;
       font-family: "Pixelated MS Sans Serif", Arial, sans-serif !important;
     }
 
@@ -225,20 +224,20 @@
     }
     .taskbar-left { display: flex; align-items: center; gap: 4px; overflow-x: auto; flex: 1; }
     .task-item-btn { font-size: 11px; padding: 2px 6px; height: 26px; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
-    .taskbar-right { font-size: 11px; display: flex; align-items: center; gap: 6px; padding-left: 8px; flex-shrink: 0; height: 26px; }
+    .taskbar-right { font-size: 11px; display: flex; align-items: center; gap: 8px; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
     
-    /* 經典地球圖示切換語言按鈕 */
+    /* 經典地球無外框按鈕 */
     .lang-globe-btn-wrapper {
       position: relative; display: inline-flex; align-items: center;
     }
     .lang-globe-btn {
-      height: 24px; padding: 1px 4px; display: flex; align-items: center; gap: 3px; cursor: pointer;
-      font-size: 11px; background: #c0c0c0; border: 2px outset #fff;
+      height: 24px; padding: 1px 2px; display: flex; align-items: center; gap: 4px; cursor: pointer;
+      font-size: 11px; font-weight: bold; color: #000; background: transparent !important; border: none !important;
     }
-    .lang-globe-btn:active { border: 2px inset #fff; }
+    .lang-globe-btn:active { opacity: 0.7; }
     .lang-globe-icon {
-      width: 16px; height: 16px; object-fit: contain; image-rendering: pixelated;
+      width: 17px; height: 17px; object-fit: contain; image-rendering: pixelated;
     }
     .lang-dropdown-menu {
       position: absolute; bottom: 28px; right: 0; background: #c0c0c0; border: 2px outset #fff;
@@ -291,7 +290,7 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列 (僅在管理員模式下顯示) -->
+  <!-- 頂部管理工具列 (僅在管理員登入後展開) -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button style="background:#ffcdd2; font-weight:bold;" onclick="toggleAdmin(event)" id="topBtnExitAdmin">🔓 退出管理</button>
@@ -422,7 +421,7 @@
     </div>
   </div>
 
-  <!-- 開始選單 (導覽互通) -->
+  <!-- 開始選單 -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>⭐ WINTER NAVIGATION</span>
@@ -515,7 +514,6 @@
     </div>
   </div>
 
-  <!-- 照片檢視器 (具備切換控制) -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -539,7 +537,6 @@
     </div>
   </div>
 
-  <!-- 多媒體播放器 (具備切換控制) -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
@@ -581,16 +578,14 @@
 
   <div class="taskbar">
     <div class="taskbar-left">
-      <button type="button" onclick="goHome(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
-        ⭐️ HOME
-      </button>
+      <!-- 已去除 HOME 按鍵，僅保留乾淨的 WINTER 選單鈕 -->
       <button type="button" onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
         <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" height="16"> WINTER
       </button>
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <!-- 經典藍色像素地球語言切換選單 -->
+      <!-- 經典藍色地球圖示切換鈕（無突兀灰色邊框） -->
       <div class="lang-globe-btn-wrapper">
         <button type="button" class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
           <svg class="lang-globe-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -614,7 +609,6 @@
   </div>
 
   <script>
-    // 管理員密碼為 0401，前台程式碼與所有提示皆不顯示明文密碼
     const ADMIN_PASSWORD = "0401";
     let isAdmin = false;
     let currentOpenFolderId = null;
@@ -635,9 +629,9 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* 全局項目名稱多語言字典 (完整對照桌面所有資料夾與項目) */
+    /* 全局項目名稱多語言字典 (修正 Cafe Info 為 Bday Cafe Info，全面支援多語言) */
     const ITEM_NAMES_I18N = {
-      "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Cafe Info", "ko": "생카 정보", "ja": "センイルカフェ情報" },
+      "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Bday Cafe Info", "ko": "생카 정보", "ja": "センイルカフェ情報" },
       "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods", "ko": "응원 물품", "ja": "応援グッズ" },
       "folder_1789230844971": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ko": "럭키 드로우", "ja": "ラッキードロー" },
       "l1": { "zh-TW": "生咖預約表單", "en": "Reservation Form", "ko": "예약 폼", "ja": "予約フォーム" },
@@ -647,6 +641,22 @@
       "img1": { "zh-TW": "手幅Serenade ver", "en": "Slogan Serenade ver", "ko": "슬로건 Serenade ver", "ja": "スローガン Serenade ver" },
       "n1": { "zh-TW": "生咖應援物", "en": "Support Goods", "ko": "응원 물품", "ja": "応援グッズ" },
       "1789230813079": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ko": "럭키 드로우", "ja": "ラッキードロー" }
+    };
+
+    /* 便籤/彈窗內文多國語言字典 (徹底去除英文模式下的殘留中文) */
+    const NOTE_CONTENT_I18N = {
+      "n1": {
+        "zh-TW": "1. 應援小卡\n2. 明信片",
+        "en": "1. Photocard\n2. Postcard",
+        "ko": "1. 응원 포토카드\n2. 엽서",
+        "ja": "1. 応援トレカ\n2. ポストカード"
+      },
+      "1789230813079": {
+        "zh-TW": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n照片書禮盒-20\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
+        "en": "Total 250 draws, unlimited per day\r\nDoosan Jersey - 1\r\nA2 Crystal Print - 8\r\nA3 Canvas Print - 8\r\n15*20cm Small Canvas - 30\r\nCustom Slogan - 18\r\nPhoto Book Box - 20\r\nSOLO Album - 30\r\nCalendar - 80\r\nHot Wheels Car - 50\r\nStandee - 3\r\nUnsealed Album - 15",
+        "ko": "총 250회, 일일 제한 없음\r\n두산 유니폼 - 1\r\nA2 크리스탈 판화 - 8\r\nA3 캔버스 액자 - 8\r\n15*20cm 미니 캔버스 - 30\r\n자체제작 슬로건 - 18\r\n포토북 박스 - 20\r\n솔로 앨범 - 30\r\n시즌그리팅 캘린더 - 80\r\n핫휠 미니카 - 50\r\n스탠드 - 3\r\n개봉 앨범 - 15",
+        "ja": "全250回、1日の回数制限なし\r\n斗山ユニフォーム - 1\r\nA2クリスタル版画 - 8\r\nA3キャンバス額縁 - 8\r\n15*20cmミニキャンバス - 30\r\nオリジナルスローガン - 18\r\nフォトブックボックス - 20\r\nソロアルバム - 30\r\nカレンダー - 80\r\nホットウィールミニカー - 50\r\nアクリルスタンド - 3\r\n開封済みアルバム - 15"
+      }
     };
 
     /* 介面操作多語言字典 */
@@ -681,6 +691,7 @@
         menuWildwest: "🤠 <strong>3. 進入 WINTER WILDWEST 視訊</strong>",
         menuAdmin: "⚙️ 切換管理員模式",
         notifTitle: "✉️ 來自 WINTER 的新訊息",
+        notifContent: "歡迎來到專屬於金旼炡WINTER的電腦空間⭐️\n點擊資料夾查看更多資訊!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
         notifOk: "我知道了 (OK)",
         emptyFolder: "此資料夾為空",
         navBack: "⬅ 上一步",
@@ -692,7 +703,8 @@
         downloadPhoto: "💾 下載照片",
         downloadMedia: "💾 下載檔案",
         visitLink: "開啟連結 (Visit Site)",
-        albumTracks: "曲目清單："
+        albumTracks: "曲目清單：",
+        wildwestTitle: "🤠 WINTER WILDWEST 視訊"
       },
       "en": {
         badge: "EN",
@@ -724,6 +736,7 @@
         menuWildwest: "🤠 <strong>3. Enter WINTER WILDWEST Video</strong>",
         menuAdmin: "⚙️ Toggle Admin Mode",
         notifTitle: "✉️ New message from WINTER",
+        notifContent: "Welcome to WINTER's retro computer space⭐️\nClick on the folders to explore more information!!",
         notifOk: "Got it (OK)",
         emptyFolder: "This folder is empty",
         navBack: "⬅ Back",
@@ -735,7 +748,8 @@
         downloadPhoto: "💾 Download Photo",
         downloadMedia: "💾 Download Media",
         visitLink: "Visit Link",
-        albumTracks: "Track List:"
+        albumTracks: "Track List:",
+        wildwestTitle: "🤠 WINTER WILDWEST Video"
       },
       "ko": {
         badge: "한국어",
@@ -767,6 +781,7 @@
         menuWildwest: "🤠 <strong>3. WINTER WILDWEST 영상 들어가기</strong>",
         menuAdmin: "⚙️ 관리자 모드 전환",
         notifTitle: "✉️ WINTER로부터 온 새 메시지",
+        notifContent: "윈터(김민정)만을 위한 레트로 데스크톱 공간에 오신 것을 환영합니다⭐️\n폴더를 클릭하여 더 많은 정보를 확인해보세요!!",
         notifOk: "확인 (OK)",
         emptyFolder: "폴더가 비어 있습니다",
         navBack: "⬅ 뒤로",
@@ -778,7 +793,8 @@
         downloadPhoto: "💾 사진 다운로드",
         downloadMedia: "💾 미디어 다운로드",
         visitLink: "링크 열기",
-        albumTracks: "트랙 목록:"
+        albumTracks: "트랙 목록:",
+        wildwestTitle: "🤠 WINTER WILDWEST 영상"
       },
       "ja": {
         badge: "日本語",
@@ -810,6 +826,7 @@
         menuWildwest: "🤠 <strong>3. WINTER WILDWEST ビデオへ</strong>",
         menuAdmin: "⚙️ 管理者モード切替",
         notifTitle: "✉️ WINTER からの新しいメッセージ",
+        notifContent: "ウィンター（冬子）のためのレトロなPC空間へようこそ⭐️\nフォルダをクリックして詳細をチェックしてみてください!!",
         notifOk: "確認 (OK)",
         emptyFolder: "このフォルダは空です",
         navBack: "⬅ 戻る",
@@ -821,7 +838,8 @@
         downloadPhoto: "💾 写真を保存",
         downloadMedia: "💾 ファイルを保存",
         visitLink: "リンク先へ移動",
-        albumTracks: "曲目リスト:"
+        albumTracks: "曲目リスト:",
+        wildwestTitle: "🤠 WINTER WILDWEST ビデオ"
       }
     };
 
@@ -832,6 +850,13 @@
         return ITEM_NAMES_I18N[item.id][currentLang];
       }
       return item.name;
+    }
+
+    function getItemDisplayContent(item) {
+      if (NOTE_CONTENT_I18N[item.id] && NOTE_CONTENT_I18N[item.id][currentLang]) {
+        return NOTE_CONTENT_I18N[item.id][currentLang];
+      }
+      return item.content || "";
     }
 
     const MASTER_CONFIG = {
@@ -861,7 +886,7 @@
           "icon": "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o",
           "coverBadge": "",
           "url": "https://u11150003-arch.github.io/winter-wildwest/",
-          "pos": { "x": 17, "y": 345 }
+          "pos": { "x": 16, "y": 345 }
         },
         {
           "id": "winter_cd_standalone_entry",
@@ -872,7 +897,7 @@
           "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
           "url": "https://u11150003-arch.github.io/winter-cd-player/",
-          "pos": { "x": 12, "y": 430 }
+          "pos": { "x": 16, "y": 430 }
         },
         {
           "id": "img1",
@@ -899,7 +924,7 @@
           "name": "生咖預約表單",
           "icon": W_FORM_ICON,
           "url": "https://wintertst0101.netlify.app/",
-          "pos": { "x": 18, "y": 262 }
+          "pos": { "x": 16, "y": 262 }
         },
         {
           "id": "1789230813079",
@@ -918,7 +943,7 @@
           "iconType": "pure",
           "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 21, "y": 178 }
+          "pos": { "x": 16, "y": 178 }
         },
         {
           "id": "folder_1789230890651",
@@ -938,7 +963,7 @@
           "iconType": "pure",
           "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 23, "y": 95 }
+          "pos": { "x": 16, "y": 95 }
         },
         {
           "id": "folder_1789233534244",
@@ -948,13 +973,12 @@
           "iconType": "pure",
           "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 27, "y": 23 }
+          "pos": { "x": 16, "y": 16 }
         }
       ]
     };
 
-    // 升級版本快取
-    const CONFIG_VERSION = "winter_desktop_multilang_globe_v2026_28";
+    const CONFIG_VERSION = "winter_desktop_perfect_multilang_v2026_30";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1012,6 +1036,7 @@
       setTxt('btnDownloadMedia', t.downloadMedia);
       setTxt('linkBtnText', t.visitLink);
       setTxt('albumTracksListLabel', t.albumTracks);
+      setTxt('wildwestWinTitle', t.wildwestTitle);
 
       renderDesktop();
       renderStartMenu();
@@ -1284,7 +1309,7 @@
         if (!item.pos) {
           const col = Math.floor(index / 5);
           const row = index % 5;
-          item.pos = { x: 16 + col * 84, y: 16 + row * 76 };
+          item.pos = { x: 16 + col * 94, y: 16 + row * 76 };
         }
         const el = createIconElement(item);
         el.style.left = item.pos.x + "px";
@@ -1419,7 +1444,7 @@
       } else if (item.type === 'video') {
         openUniversalPlayerByItem(item);
       } else if (item.type === 'note') {
-        alert(`【${getItemDisplayName(item)}】\n\n${item.content}`);
+        alert(`【${getItemDisplayName(item)}】\n\n${getItemDisplayContent(item)}`);
       } else if (item.type === 'link') {
         document.getElementById('linkTitle').innerText = `🔗 ${getItemDisplayName(item)}`;
         document.getElementById('linkText').innerText = `即將前往：${item.url}`;
@@ -2087,7 +2112,7 @@
       const cfg = currentConfig.notification || MASTER_CONFIG.notification;
       const t = I18N[currentLang] || I18N["zh-TW"];
       document.getElementById('notifTitleDisplay').innerText = t.notifTitle;
-      document.getElementById('notifContentDisplay').innerText = cfg.content || "";
+      document.getElementById('notifContentDisplay').innerText = t.notifContent || cfg.content || "";
 
       const notifWin = document.getElementById('notification-modal-win');
       notifWin.style.display = 'block';
@@ -2238,7 +2263,6 @@
       }, { passive: false });
     }
 
-    // 鍵盤左右鍵快捷切換照片
     window.addEventListener('keydown', (e) => {
       const pWin = document.getElementById('photo-viewer-win');
       if (pWin && pWin.style.display === 'block') {

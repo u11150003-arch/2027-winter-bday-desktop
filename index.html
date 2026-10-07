@@ -204,12 +204,19 @@
     }
     .photo-stage img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; }
 
+    /* 多媒體工具列 */
     .media-toolbar {
       display: flex; justify-content: space-between; align-items: center;
       margin-top: 6px; padding: 4px; background: #c0c0c0; border: 1px outset #fff; flex-wrap: wrap; gap: 4px;
     }
     .media-nav-group { display: flex; gap: 4px; align-items: center; }
-    .media-toolbar button { font-weight: bold; font-size: 11px; padding: 3px 8px; }
+    .media-toolbar button { 
+      font-weight: bold; font-size: 11px; padding: 2px 8px; height: 24px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .btn-svg-icon {
+      width: 12px; height: 12px; fill: currentColor; display: inline-block; vertical-align: middle;
+    }
 
     .taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -228,7 +235,7 @@
     .taskbar-right { font-size: 11px; display: flex; align-items: center; gap: 8px; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
     
-    /* 徹底無邊框地球圖示 (避開 98.css button 樣式) */
+    /* 徹底無邊框地球圖示 */
     .lang-globe-btn-wrapper {
       position: relative; display: inline-flex; align-items: center;
     }
@@ -294,11 +301,53 @@
       box-shadow: 3px 3px 14px rgba(0,0,0,0.7);
       background: #c0c0c0;
     }
+
+    /* 原地長按儲存圖片彈窗 */
+    #photo-save-modal {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.78);
+      z-index: 10005;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+    #photo-save-modal .modal-card {
+      background: #c0c0c0;
+      border: 2px outset #fff;
+      padding: 12px;
+      max-width: 90vw;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 3px 3px 15px rgba(0,0,0,0.8);
+    }
+    #photo-save-modal img {
+      max-width: 82vw;
+      max-height: 60vh;
+      object-fit: contain;
+      border: 2px inset #fff;
+      user-select: auto !important;
+      -webkit-user-select: auto !important;
+      -webkit-touch-callout: default !important;
+    }
+    #photo-save-modal .modal-hint {
+      font-size: 12px;
+      font-weight: bold;
+      color: #000080;
+      text-align: center;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列 (僅在管理員登入後展開) -->
+  <!-- 頂部管理工具列 -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button style="background:#ffcdd2; font-weight:bold;" onclick="toggleAdmin(event)" id="topBtnExitAdmin">🔓 退出管理</button>
@@ -522,6 +571,7 @@
     </div>
   </div>
 
+  <!-- 照片檢視器 (具備高解析預覽與長按儲存) -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -537,14 +587,37 @@
       </div>
       <div class="media-toolbar">
         <div class="media-nav-group">
-          <button type="button" id="btnPrevPhoto" onclick="switchViewerPhoto(-1)">◀ 上一張 (Prev)</button>
-          <button type="button" id="btnNextPhoto" onclick="switchViewerPhoto(1)">▶ 下一張 (Next)</button>
+          <button type="button" id="btnPrevPhoto" onclick="switchViewerPhoto(-1)">
+            <svg class="btn-svg-icon" viewBox="0 0 24 24"><polygon points="15,4 7,12 15,20"/></svg>
+            <span id="prevPhotoTxt">上一張</span>
+          </button>
+          <button type="button" id="btnNextPhoto" onclick="switchViewerPhoto(1)">
+            <span id="nextPhotoTxt">下一張</span>
+            <svg class="btn-svg-icon" viewBox="0 0 24 24"><polygon points="9,4 17,12 9,20"/></svg>
+          </button>
         </div>
-        <button type="button" id="btnDownloadPhoto" onclick="downloadCurrentPhoto()">💾 下載照片 (Download Image)</button>
+        <button type="button" id="btnDownloadPhoto" onclick="triggerPhotoSaveModal()">
+          <svg class="btn-svg-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span id="downloadPhotoTxt">下載照片</span>
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- 照片原地長按下載浮層 (不跳轉任何外站網址) -->
+  <div id="photo-save-modal" onclick="closePhotoSaveModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:bold; font-size:12px;" id="photoSaveModalFileName">photo.jpg</span>
+        <button type="button" onclick="closePhotoSaveModal(event)" style="font-size:10px; padding:1px 5px;">✕</button>
+      </div>
+      <img id="photoSaveModalImg" src="" alt="Save Image">
+      <div class="modal-hint" id="photoSaveModalHint">📱 手機請長按圖片選擇「儲存影像」或「加入照片」<br>💻 電腦請在圖片上按右鍵選擇「另存圖片」</div>
+      <button type="button" onclick="closePhotoSaveModal(event)" style="padding:2px 14px; font-weight:bold;">關閉 (Close)</button>
+    </div>
+  </div>
+
+  <!-- 多媒體播放器 -->
   <div id="media-player-win" class="window win-modal" style="max-width: 640px;" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="mediaViewerTitle">🎬 播放器</div>
@@ -561,10 +634,19 @@
       </div>
       <div class="media-toolbar">
         <div class="media-nav-group">
-          <button type="button" id="btnPrevMedia" onclick="switchViewerMedia(-1)">◀ 上一個 (Prev)</button>
-          <button type="button" id="btnNextMedia" onclick="switchViewerMedia(1)">▶ 下一個 (Next)</button>
+          <button type="button" id="btnPrevMedia" onclick="switchViewerMedia(-1)">
+            <svg class="btn-svg-icon" viewBox="0 0 24 24"><polygon points="15,4 7,12 15,20"/></svg>
+            <span id="prevMediaTxt">上一個</span>
+          </button>
+          <button type="button" id="btnNextMedia" onclick="switchViewerMedia(1)">
+            <span id="nextMediaTxt">下一個</span>
+            <svg class="btn-svg-icon" viewBox="0 0 24 24"><polygon points="9,4 17,12 9,20"/></svg>
+          </button>
         </div>
-        <button type="button" id="btnDownloadMedia" onclick="downloadCurrentMedia()">💾 下載檔案 (Download Media)</button>
+        <button type="button" id="btnDownloadMedia" onclick="downloadCurrentMedia()">
+          <svg class="btn-svg-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span id="downloadMediaTxt">下載檔案</span>
+        </button>
       </div>
     </div>
   </div>
@@ -592,7 +674,7 @@
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <!-- 徹底無框、低飽和莫蘭迪藍地球圖示 -->
+      <!-- 徹底無框莫蘭迪低飽和地球圖示 -->
       <div class="lang-globe-btn-wrapper">
         <div class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
           <svg class="lang-globe-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -708,15 +790,16 @@
         emptyFolder: "此資料夾為空",
         navBack: "⬅ 上一步",
         navForward: "➡ 下一步",
-        prevBtn: "◀ 上一個",
-        nextBtn: "▶ 下一個",
-        prevPhotoBtn: "◀ 上一張",
-        nextPhotoBtn: "▶ 下一張",
-        downloadPhoto: "💾 下載照片",
-        downloadMedia: "💾 下載檔案",
+        prevBtn: "上一個",
+        nextBtn: "下一個",
+        prevPhotoBtn: "上一張",
+        nextPhotoBtn: "下一張",
+        downloadPhoto: "下載照片",
+        downloadMedia: "下載檔案",
         visitLink: "開啟連結 (Visit Site)",
         albumTracks: "曲目清單：",
-        wildwestTitle: "🤠 WINTER WILDWEST 視訊"
+        wildwestTitle: "🤠 WINTER WILDWEST 視訊",
+        saveModalHint: "📱 手機請長按圖片選擇「儲存影像」或「加入照片」<br>💻 電腦請在圖片上按右鍵選擇「另存圖片」"
       },
       "en": {
         badge: "EN",
@@ -753,15 +836,16 @@
         emptyFolder: "This folder is empty",
         navBack: "⬅ Back",
         navForward: "➡ Forward",
-        prevBtn: "◀ Prev",
-        nextBtn: "▶ Next",
-        prevPhotoBtn: "◀ Previous Photo",
-        nextPhotoBtn: "▶ Next Photo",
-        downloadPhoto: "💾 Download Photo",
-        downloadMedia: "💾 Download Media",
+        prevBtn: "Prev",
+        nextBtn: "Next",
+        prevPhotoBtn: "Prev",
+        nextPhotoBtn: "Next",
+        downloadPhoto: "Save Photo",
+        downloadMedia: "Download",
         visitLink: "Visit Link",
         albumTracks: "Track List:",
-        wildwestTitle: "🤠 WINTER WILDWEST Video"
+        wildwestTitle: "🤠 WINTER WILDWEST Video",
+        saveModalHint: "📱 Long-press the image to Save to Photos<br>💻 Right-click the image to Save As"
       },
       "ja": {
         badge: "JP",
@@ -798,15 +882,16 @@
         emptyFolder: "このフォルダは空です",
         navBack: "⬅ 戻る",
         navForward: "➡ 進む",
-        prevBtn: "◀ 前へ",
-        nextBtn: "▶ 次へ",
-        prevPhotoBtn: "◀ 前の写真",
-        nextPhotoBtn: "▶ 次の写真",
-        downloadPhoto: "💾 写真を保存",
-        downloadMedia: "💾 ファイルを保存",
+        prevBtn: "前へ",
+        nextBtn: "次へ",
+        prevPhotoBtn: "前の写真",
+        nextPhotoBtn: "次の写真",
+        downloadPhoto: "写真を保存",
+        downloadMedia: "保存",
         visitLink: "リンク先へ移動",
         albumTracks: "曲目リスト:",
-        wildwestTitle: "🤠 WINTER WILDWEST ビデオ"
+        wildwestTitle: "🤠 WINTER WILDWEST ビデオ",
+        saveModalHint: "📱 画像を長押しして「写真に追加」を選択してください<br>💻 右クリックして「名前を付けて画像を保存」を選択してください"
       },
       "ko": {
         badge: "KR",
@@ -843,15 +928,16 @@
         emptyFolder: "폴더가 비어 있습니다",
         navBack: "⬅ 뒤로",
         navForward: "➡ 앞으로",
-        prevBtn: "◀ 이전",
-        nextBtn: "▶ 다음",
-        prevPhotoBtn: "◀ 이전 사진",
-        nextPhotoBtn: "▶ 다음 사진",
-        downloadPhoto: "💾 사진 다운로드",
-        downloadMedia: "💾 미디어 다운로드",
+        prevBtn: "이전",
+        nextBtn: "다음",
+        prevPhotoBtn: "이전 사진",
+        nextPhotoBtn: "다음 사진",
+        downloadPhoto: "사진 저장",
+        downloadMedia: "다운로드",
         visitLink: "링크 열기",
         albumTracks: "트랙 목록:",
-        wildwestTitle: "🤠 WINTER WILDWEST 영상"
+        wildwestTitle: "🤠 WINTER WILDWEST 영상",
+        saveModalHint: "📱 이미지를 길게 눌러「사진에 추가」를 선택하세요<br>💻 마우스 우클릭 후「이미지를 다른 이름으로 저장」을 선택하세요"
       },
       "th": {
         badge: "THA",
@@ -888,15 +974,16 @@
         emptyFolder: "โฟลเดอร์นี้ว่างเปล่า",
         navBack: "⬅ ย้อนกลับ",
         navForward: "➡ ไปข้างหน้า",
-        prevBtn: "◀ ก่อนหน้า",
-        nextBtn: "▶ ถัดไป",
-        prevPhotoBtn: "◀ รูปก่อนหน้า",
-        nextPhotoBtn: "▶ รูปถัดไป",
-        downloadPhoto: "💾 ดาวน์โหลดรูปภาพ",
-        downloadMedia: "💾 ดาวน์โหลดไฟล์",
+        prevBtn: "ก่อนหน้า",
+        nextBtn: "ถัดไป",
+        prevPhotoBtn: "รูปก่อนหน้า",
+        nextPhotoBtn: "รูปถัดไป",
+        downloadPhoto: "บันทึกรูปภาพ",
+        downloadMedia: "ดาวน์โหลด",
         visitLink: "เปิดลิงก์ (Visit Site)",
         albumTracks: "รายชื่อเพลง:",
-        wildwestTitle: "🤠 WINTER WILDWEST วิดีโอ"
+        wildwestTitle: "🤠 WINTER WILDWEST วิดีโอ",
+        saveModalHint: "📱 แตะรูปภาพค้างไว้เพื่อ「บันทึกรูปภาพ」<br>💻 คลิกขวาที่รูปภาพเพื่อเลือก「บันทึกรูปภาพเป็น」"
       }
     };
 
@@ -916,7 +1003,6 @@
       return item.content || "";
     }
 
-    // 全域配置（已更新為指定背景與左移座標）
     const MASTER_CONFIG = {
       "wallpaper": "https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5",
       "notification": {
@@ -1057,7 +1143,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_left_aligned_v2026_38";
+    const CONFIG_VERSION = "winter_desktop_save_modal_v2026_41";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1107,15 +1193,18 @@
       setTxt('notifOkBtn', t.notifOk);
       setTxt('btnNavBack', t.navBack);
       setTxt('btnNavForward', t.navForward);
-      setTxt('btnPrevPhoto', t.prevPhotoBtn);
-      setTxt('btnNextPhoto', t.nextPhotoBtn);
-      setTxt('btnDownloadPhoto', t.downloadPhoto);
-      setTxt('btnPrevMedia', t.prevBtn);
-      setTxt('btnNextMedia', t.nextBtn);
-      setTxt('btnDownloadMedia', t.downloadMedia);
+      setTxt('prevPhotoTxt', t.prevPhotoBtn);
+      setTxt('nextPhotoTxt', t.nextPhotoBtn);
+      setTxt('downloadPhotoTxt', t.downloadPhoto);
+      setTxt('prevMediaTxt', t.prevBtn);
+      setTxt('nextMediaTxt', t.nextBtn);
+      setTxt('downloadMediaTxt', t.downloadMedia);
       setTxt('linkBtnText', t.visitLink);
       setTxt('albumTracksListLabel', t.albumTracks);
       setTxt('wildwestWinTitle', t.wildwestTitle);
+
+      const hintEl = document.getElementById('photoSaveModalHint');
+      if (hintEl) hintEl.innerHTML = t.saveModalHint;
 
       renderDesktop();
       renderStartMenu();
@@ -1215,6 +1304,7 @@
       closeAlbumWindow();
       closeEmbeddedCdWindow();
       closeEmbeddedWildwestWindow();
+      closePhotoSaveModal();
       currentOpenFolderId = null;
       currentOpenAlbumId = null;
       folderHistory = [];
@@ -2015,34 +2105,6 @@
       saveState();
     }
 
-    function forceDownloadFile(url, customFilename) {
-      fetch(url)
-        .then(response => {
-          if (!response.ok) throw new Error('Network error');
-          return response.blob();
-        })
-        .then(blob => {
-          const blobUrl = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = blobUrl;
-          a.download = customFilename;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(blobUrl);
-          document.body.removeChild(a);
-        })
-        .catch(() => {
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = customFilename;
-          a.target = '_blank';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        });
-    }
-
     /* 照片檢視器 (支援相簿切換) */
     function openPhotoViewerByItem(item) {
       const scopeParentId = item.parentId;
@@ -2078,18 +2140,24 @@
       renderActiveViewerPhoto();
     }
 
-    function downloadCurrentPhoto() {
+    /* 原地長按儲存圖片浮層觸發 (依網頁命名顯示，徹底不外跳網頁) */
+    function triggerPhotoSaveModal() {
       if (currentPhotoIndex < 0 || currentPhotoIndex >= activePhotoPlaylist.length) return;
       const item = activePhotoPlaylist[currentPhotoIndex];
+      const modal = document.getElementById('photo-save-modal');
+      const img = document.getElementById('photoSaveModalImg');
+      const nameLabel = document.getElementById('photoSaveModalFileName');
+      
       const fileName = `${getItemDisplayName(item) || 'photo'}.jpg`;
-      const driveId = extractDriveId(item.mediaUrl);
+      nameLabel.innerText = `💾 ${fileName}`;
+      img.src = item.mediaUrl;
+      modal.style.display = 'flex';
+    }
 
-      if (driveId) {
-        const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
-        forceDownloadFile(directDownloadUrl, fileName);
-      } else {
-        forceDownloadFile(item.mediaUrl, fileName);
-      }
+    function closePhotoSaveModal(e) {
+      if (e) e.stopPropagation();
+      const modal = document.getElementById('photo-save-modal');
+      if (modal) modal.style.display = 'none';
     }
 
     /* 多媒體播放器 (支援清單切換) */
@@ -2113,7 +2181,7 @@
 
       const iframe = document.getElementById('universalIframe');
       const video = document.getElementById('universalVideo');
-      const dlBtn = document.getElementById('btnDownloadMedia');
+      const dlBtn = document.getElementById('downloadMediaTxt');
       const url = item.mediaUrl;
 
       if (url.includes('drive.google.com') || url.includes('youtube.com') || url.includes('youtu.be')) {
@@ -2123,9 +2191,9 @@
           if (url.includes("v=")) vid = url.split("v=")[1].substring(0, 11);
           else if (url.includes("youtu.be/")) vid = url.split("youtu.be/")[1].substring(0, 11);
           finalSrc = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&enablejsapi=1&rel=0`;
-          dlBtn.innerText = "📺 在 YouTube 開啟原始頁面";
+          dlBtn.innerText = "在 YouTube 開啟";
         } else {
-          dlBtn.innerText = `💾 下載《${getItemDisplayName(item)}》`;
+          dlBtn.innerText = `下載《${getItemDisplayName(item)}》`;
         }
         video.pause(); video.style.display = 'none';
         iframe.style.display = 'block';
@@ -2134,7 +2202,7 @@
         iframe.src = ''; iframe.style.display = 'none';
         video.style.display = 'block';
         video.src = url;
-        dlBtn.innerText = `💾 下載《${getItemDisplayName(item)}》`;
+        dlBtn.innerText = `下載《${getItemDisplayName(item)}》`;
       }
 
       const pBtn = document.getElementById('btnPrevMedia');
@@ -2163,9 +2231,12 @@
         window.open(url, '_blank');
       } else if (driveId) {
         const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
-        forceDownloadFile(directDownloadUrl, fileName);
-      } else {
-        forceDownloadFile(url, fileName);
+        const a = document.createElement('a');
+        a.href = directDownloadUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }
     }
 

@@ -7,9 +7,9 @@
 
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A retro desktop space for WINTER">
-  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
+  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g">
+  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8">
 
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
@@ -30,18 +30,18 @@
       height: 100vh;
       overflow: hidden;
       background-color: #000;
-      background-image: url('https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g');
+      background-image: url('https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8');
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
       font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
     }
     
-    .icon-wrapper, .top-bar-wrapper button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button {
+    .icon-wrapper, .top-bar-wrapper button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button, .lang-globe-btn {
       cursor: var(--star-cursor) !important;
     }
 
-    /* 頂部管理列 */
+    /* 頂部管理工具列 */
     .top-bar-wrapper {
       position: absolute;
       top: max(6px, env(safe-area-inset-top, 6px));
@@ -228,21 +228,21 @@
     .taskbar-right { font-size: 11px; display: flex; align-items: center; gap: 8px; padding-left: 8px; flex-shrink: 0; height: 26px; }
     .taskbar-right a { color: #000; text-decoration: none; font-weight: bold; border-bottom: 1px dotted #555; }
     
-    /* 經典地球無按鍵框樣式 */
+    /* 徹底無邊框地球圖示 (避開 98.css button 樣式) */
     .lang-globe-btn-wrapper {
       position: relative; display: inline-flex; align-items: center;
     }
     .lang-globe-btn {
-      height: 24px; padding: 0 4px; display: flex; align-items: center; gap: 3px; cursor: pointer;
-      font-size: 11px; font-weight: bold; color: #000; background: transparent !important; border: none !important;
-      outline: none;
-    }
-    .lang-globe-btn:hover {
-      background: rgba(0,0,0,0.06) !important;
+      height: 24px; padding: 0 4px; display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; font-weight: bold; color: #000; background: transparent !important;
+      border: none !important; box-shadow: none !important; outline: none !important;
       border-radius: 2px;
     }
+    .lang-globe-btn:hover {
+      background: rgba(0,0,0,0.08) !important;
+    }
     .lang-globe-btn:active {
-      background: rgba(0,0,0,0.12) !important;
+      background: rgba(0,0,0,0.15) !important;
     }
     .lang-globe-icon {
       width: 16px; height: 16px; object-fit: contain; image-rendering: pixelated; display: block;
@@ -298,7 +298,7 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列 (僅在管理員登入後展開) -->
+  <!-- 頂部管理工具列 -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button style="background:#ffcdd2; font-weight:bold;" onclick="toggleAdmin(event)" id="topBtnExitAdmin">🔓 退出管理</button>
@@ -592,18 +592,18 @@
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <!-- 經典藍色地球圖示切換鈕（無突兀灰色邊框，直接顯示對應縮寫代碼） -->
+      <!-- 徹底無框、低飽和莫蘭迪藍地球圖示 -->
       <div class="lang-globe-btn-wrapper">
-        <button type="button" class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
+        <div class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
           <svg class="lang-globe-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="8" cy="8" r="7" stroke="#0078d7" stroke-width="1.6" fill="#e0f2fe"/>
-            <ellipse cx="8" cy="8" rx="3.6" ry="7" stroke="#0078d7" stroke-width="1.2"/>
-            <line x1="1" y1="8" x2="15" y2="8" stroke="#0078d7" stroke-width="1.2"/>
-            <line x1="2.2" y1="4.5" x2="13.8" y2="4.5" stroke="#0078d7" stroke-width="1.1"/>
-            <line x1="2.2" y1="11.5" x2="13.8" y2="11.5" stroke="#0078d7" stroke-width="1.1"/>
+            <circle cx="8" cy="8" r="7" stroke="#4a7b9d" stroke-width="1.5" fill="#d9e6f2"/>
+            <ellipse cx="8" cy="8" rx="3.6" ry="7" stroke="#4a7b9d" stroke-width="1.2"/>
+            <line x1="1" y1="8" x2="15" y2="8" stroke="#4a7b9d" stroke-width="1.2"/>
+            <line x1="2.2" y1="4.5" x2="13.8" y2="4.5" stroke="#4a7b9d" stroke-width="1.1"/>
+            <line x1="2.2" y1="11.5" x2="13.8" y2="11.5" stroke="#4a7b9d" stroke-width="1.1"/>
           </svg>
           <span id="currentLangLabel">TW</span>
-        </button>
+        </div>
         <ul class="lang-dropdown-menu" id="langDropdownMenu">
           <li onclick="changeLanguage('zh-TW', event)">繁體中文</li>
           <li onclick="changeLanguage('en', event)">English</li>
@@ -637,7 +637,7 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* 全局項目名稱多語言字典 (含泰文，名稱精確對齊) */
+    /* 全局項目名稱多語言字典 (精準對齊，防止文字過長裁切) */
     const ITEM_NAMES_I18N = {
       "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Bday Cafe Info", "ja": "センイルカフェ情報", "ko": "생카 정보", "th": "ข้อมูลคาเฟ่วันเกิด" },
       "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods", "ja": "応援グッズ", "ko": "응원 물품", "th": "ของซัพพอร์ตคาเฟ่" },
@@ -671,7 +671,7 @@
       }
     };
 
-    /* 介面操作多語言字典 */
+    /* 介面操作多語言字典 (地球旁縮寫為 TW, EN, JP, KR, THA) */
     const I18N = {
       "zh-TW": {
         badge: "TW",
@@ -916,9 +916,8 @@
       return item.content || "";
     }
 
-    // 最新全域資料配置（已納入您的修改與新增項目）
     const MASTER_CONFIG = {
-      "wallpaper": "https://lh3.googleusercontent.com/d/1FxNNT9a2bBobCvFCBaI1ze3d7fVsPm9g",
+      "wallpaper": "https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8",
       "notification": {
         "enabled": true,
         "delay": 3,
@@ -939,7 +938,7 @@
           "id": "winter_wildwest_entry",
           "parentId": null,
           "type": "wildwest_standalone",
-          "name": "WINTER WILDWEST",
+          "name": "WINTER WILDWEST 視訊",
           "iconType": "pure",
           "icon": "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o",
           "coverBadge": "",
@@ -955,7 +954,7 @@
           "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
           "url": "https://u11150003-arch.github.io/winter-cd-player/",
-          "pos": { "x": 16, "y": 430 }
+          "pos": { "x": 16, "y": 435 }
         },
         {
           "id": "img1",
@@ -1057,7 +1056,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_perfect_thai_v2026_33";
+    const CONFIG_VERSION = "winter_desktop_perfect_thai_v2026_36";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));

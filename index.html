@@ -7,9 +7,9 @@
 
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A retro desktop space for WINTER">
-  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8">
+  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8">
+  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5">
 
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
@@ -30,7 +30,7 @@
       height: 100vh;
       overflow: hidden;
       background-color: #000;
-      background-image: url('https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8');
+      background-image: url('https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5');
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
@@ -90,7 +90,7 @@
     .desktop {
       position: absolute;
       top: 16px;
-      left: max(6px, var(--safe-left));
+      left: max(0px, var(--safe-left));
       right: max(6px, var(--safe-right));
       bottom: var(--taskbar-h);
       overflow: hidden;
@@ -298,7 +298,7 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 頂部管理工具列 -->
+  <!-- 頂部管理工具列 (僅在管理員登入後展開) -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
       <button style="background:#ffcdd2; font-weight:bold;" onclick="toggleAdmin(event)" id="topBtnExitAdmin">🔓 退出管理</button>
@@ -637,7 +637,7 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* 全局項目名稱多語言字典 (精準對齊，防止文字過長裁切) */
+    /* 全局項目名稱多語言字典 */
     const ITEM_NAMES_I18N = {
       "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Bday Cafe Info", "ja": "センイルカフェ情報", "ko": "생카 정보", "th": "ข้อมูลคาเฟ่วันเกิด" },
       "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods", "ja": "応援グッズ", "ko": "응원 물품", "th": "ของซัพพอร์ตคาเฟ่" },
@@ -671,7 +671,7 @@
       }
     };
 
-    /* 介面操作多語言字典 (地球旁縮寫為 TW, EN, JP, KR, THA) */
+    /* 介面操作多語言字典 */
     const I18N = {
       "zh-TW": {
         badge: "TW",
@@ -916,8 +916,9 @@
       return item.content || "";
     }
 
+    // 全域配置（已更新為指定背景與左移座標）
     const MASTER_CONFIG = {
-      "wallpaper": "https://lh3.googleusercontent.com/d/1s4n2xifvX3Rp0URc_xiKv05dHIJbODz8",
+      "wallpaper": "https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5",
       "notification": {
         "enabled": true,
         "delay": 3,
@@ -943,7 +944,7 @@
           "icon": "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o",
           "coverBadge": "",
           "url": "https://u11150003-arch.github.io/winter-wildwest/",
-          "pos": { "x": 16, "y": 345 }
+          "pos": { "x": 6, "y": 345 }
         },
         {
           "id": "winter_cd_standalone_entry",
@@ -954,7 +955,7 @@
           "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
           "url": "https://u11150003-arch.github.io/winter-cd-player/",
-          "pos": { "x": 16, "y": 435 }
+          "pos": { "x": 6, "y": 435 }
         },
         {
           "id": "img1",
@@ -972,7 +973,7 @@
           "name": "生咖應援物",
           "icon": "https://win98icons.alexmeub.com/icons/png/notepad-5.png",
           "content": "1. 應援小卡\n2. 明信片",
-          "pos": { "x": 16, "y": 244 }
+          "pos": { "x": 6, "y": 244 }
         },
         {
           "id": "l1",
@@ -981,7 +982,7 @@
           "name": "生咖預約",
           "icon": W_FORM_ICON,
           "url": "https://wintertst0101.netlify.app/",
-          "pos": { "x": 16, "y": 262 }
+          "pos": { "x": 6, "y": 262 }
         },
         {
           "id": "1789230813079",
@@ -1000,7 +1001,7 @@
           "iconType": "pure",
           "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 16, "y": 178 }
+          "pos": { "x": 6, "y": 178 }
         },
         {
           "id": "folder_1789230890651",
@@ -1020,7 +1021,7 @@
           "iconType": "pure",
           "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 16, "y": 95 }
+          "pos": { "x": 6, "y": 95 }
         },
         {
           "id": "folder_1789233534244",
@@ -1030,7 +1031,7 @@
           "iconType": "pure",
           "icon": "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
           "coverBadge": "",
-          "pos": { "x": 16, "y": 16 }
+          "pos": { "x": 6, "y": 16 }
         },
         {
           "id": "folder_1791354254088",
@@ -1056,7 +1057,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_perfect_thai_v2026_36";
+    const CONFIG_VERSION = "winter_desktop_left_aligned_v2026_38";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1387,7 +1388,7 @@
         if (!item.pos) {
           const col = Math.floor(index / 5);
           const row = index % 5;
-          item.pos = { x: 16 + col * 94, y: 16 + row * 76 };
+          item.pos = { x: 6 + col * 94, y: 16 + row * 76 };
         }
         const el = createIconElement(item);
         el.style.left = item.pos.x + "px";
@@ -1451,7 +1452,7 @@
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         startX = clientX;
         startY = clientY;
-        origX = item.pos ? item.pos.x : parseInt(el.style.left) || 16;
+        origX = item.pos ? item.pos.x : parseInt(el.style.left) || 6;
         origY = item.pos ? item.pos.y : parseInt(el.style.top) || 16;
         hasMoved = false;
 

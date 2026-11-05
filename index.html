@@ -7,9 +7,9 @@
 
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A retro desktop space for WINTER">
-  <meta property="og:image" content="assets/background/winter_bday_background.jpg">
+  <meta property="og:image" content="assets/websitecover/voyage_cd_200.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="assets/background/winter_bday_background.jpg">
+  <meta name="twitter:image" content="assets/websitecover/voyage_cd_200.jpg">
 
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
@@ -257,7 +257,7 @@
     .lang-dropdown-menu {
       position: absolute; bottom: 28px; right: 0; background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 2px 2px 8px rgba(0,0,0,0.5); list-style: none; margin: 0; padding: 2px;
-      display: none; min-width: 95px; z-index: 10001;
+      display: none; min-width: 85px; z-index: 10001;
     }
     .lang-dropdown-menu li {
       padding: 4px 8px; font-size: 11px; cursor: pointer; white-space: nowrap;
@@ -266,14 +266,15 @@
       background: #000080; color: #fff;
     }
 
+    /* 開始選單：低彩度復古風 */
     .start-menu {
       position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
       width: 260px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 10000; padding: 3px;
     }
     .start-menu-banner {
-      background: linear-gradient(180deg, #104e8b, #1e90ff);
-      color: #fff; font-weight: bold; padding: 8px 10px; font-size: 13px; margin-bottom: 4px;
+      background: linear-gradient(180deg, #42586e, #5a758e);
+      color: #fff; font-weight: bold; padding: 8px 10px; font-size: 12px; margin-bottom: 4px;
       letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between;
     }
     .start-menu ul { list-style: none; margin: 0; padding: 0; }
@@ -461,10 +462,10 @@
     </div>
   </div>
 
-  <!-- 開始選單 -->
+  <!-- 開始選單 (無多餘重複項目，顏色低彩度) -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
-      <span>⭐ WINTER NAVIGATION</span>
+      <span>WINTER NAVIGATION</span>
       <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal(event)">設定</button>
     </div>
     <ul>
@@ -587,7 +588,7 @@
     </div>
   </div>
 
-  <!-- 照片長按儲存浮層 -->
+  <!-- 照片長按儲存浮層 (原地彈出，不跳轉外站) -->
   <div id="photo-save-modal" onclick="closePhotoSaveModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
       <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
@@ -823,7 +824,7 @@
       return item.content || "";
     }
 
-    // 全域配置：更新背景圖片為 assets 資料夾相對路徑、移除重疊與多餘設定
+    // 全域配置：使用 assets 本地背景，項目清單已更新最新命名與連結
     const MASTER_CONFIG = {
       "wallpaper": "assets/background/winter_bday_background.jpg",
       "notification": {
@@ -962,7 +963,8 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_clean_link_v2026_50";
+    // 強制升級版本快取，洗掉舊的「生咖預約」與快取紀錄
+    const CONFIG_VERSION = "winter_desktop_direct_links_v2026_60";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1405,7 +1407,7 @@
       if (item.type === 'wildwest_standalone') {
         openWinterWildwestWindow();
       } else if (item.type === 'cd_standalone') {
-        // 直接跳轉 WINTER PLAYLIST
+        // 直接新分頁開啟 WINTER PLAYLIST
         window.open('https://winterplaylist.netlify.app', '_blank');
       } else if (item.type === 'folder') {
         openFolderWithHistory(item.id, getItemDisplayName(item));
@@ -1418,7 +1420,7 @@
       } else if (item.type === 'note') {
         alert(`【${getItemDisplayName(item)}】\n\n${getItemDisplayContent(item)}`);
       } else if (item.type === 'link') {
-        // 不跳轉中介確認視窗，直接開啟網址
+        // 直接跳轉目標網址，不彈出中介視窗
         if (item.url) window.open(item.url, '_blank');
       }
     }
@@ -1435,7 +1437,12 @@
       list.innerHTML = '';
       
       const visibleIds = currentConfig.startMenuVisibleIds || [];
-      const showItems = itemsData.filter(i => visibleIds.includes(i.id));
+      // 過濾掉前 3 個固定的 Desktop, CD, Wildwest，防止選單內出現重複項目
+      const showItems = itemsData.filter(i => 
+        visibleIds.includes(i.id) && 
+        i.id !== 'winter_wildwest_entry' && 
+        i.id !== 'winter_cd_standalone_entry'
+      );
 
       showItems.forEach(item => {
         const li = document.createElement('li');
@@ -1462,7 +1469,7 @@
       box.innerHTML = '';
       const currentIds = currentConfig.startMenuVisibleIds || [];
 
-      // 排除前三個固定導覽項目，避免選單內部出現重複項目
+      // 候選項目排除前三個固定導覽項目，避免重複
       const customCandidateItems = itemsData.filter(i => i.id !== 'winter_wildwest_entry' && i.id !== 'winter_cd_standalone_entry');
 
       customCandidateItems.forEach(item => {

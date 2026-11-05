@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>2027 WINTER Bday desktop</title>
 
+  <!-- PWA & iOS 主畫面圖示與標題設定 -->
+  <link rel="apple-touch-icon" href="assets/websitecover/voyage_cd_200.jpg">
+  <link rel="icon" type="image/jpeg" href="assets/websitecover/voyage_cd_200.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WINTER Bday desktop">
+
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A retro desktop space for WINTER">
   <meta property="og:image" content="assets/websitecover/voyage_cd_200.jpg">
@@ -21,6 +28,7 @@
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
       --taskbar-h: calc(38px + var(--safe-bottom));
+      --header-bg-gradient: linear-gradient(90deg, #42586e, #5a758e);
     }
 
     html, body {
@@ -39,6 +47,12 @@
     
     .icon-wrapper, .top-bar-wrapper button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button, .lang-globe-btn {
       cursor: var(--star-cursor) !important;
+    }
+
+    /* 全域視窗標題列低彩度莫蘭迪灰藍調 (覆蓋 98.css 亮藍色) */
+    .title-bar {
+      background: var(--header-bg-gradient) !important;
+      padding: 3px 4px !important;
     }
 
     /* 頂部管理工具列 */
@@ -111,7 +125,7 @@
       background: rgba(0, 0, 128, 0.45); outline: 1px dotted #ffff00;
     }
     .icon-wrapper.selected span {
-      background: #000080; color: #fff;
+      background: #42586e; color: #fff;
     }
     .icon-wrapper.cut-mode {
       opacity: 0.45; filter: grayscale(80%);
@@ -263,17 +277,17 @@
       padding: 4px 8px; font-size: 11px; cursor: pointer; white-space: nowrap;
     }
     .lang-dropdown-menu li:hover {
-      background: #000080; color: #fff;
+      background: #42586e; color: #fff;
     }
 
-    /* 開始選單：低彩度復古風 */
+    /* 開始選單：低彩度莫蘭迪復古風格 */
     .start-menu {
       position: fixed; bottom: var(--taskbar-h); left: max(6px, var(--safe-left));
       width: 260px; max-width: 85vw; background: #c0c0c0; border: 2px outset #fff;
       box-shadow: 3px 3px 12px rgba(0,0,0,0.5); display: none; z-index: 10000; padding: 3px;
     }
     .start-menu-banner {
-      background: linear-gradient(180deg, #42586e, #5a758e);
+      background: var(--header-bg-gradient);
       color: #fff; font-weight: bold; padding: 8px 10px; font-size: 12px; margin-bottom: 4px;
       letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between;
     }
@@ -281,7 +295,17 @@
     .start-menu li {
       padding: 7px 10px; font-size: 12px; cursor: var(--star-cursor); display: flex; align-items: center; gap: 8px;
     }
-    .start-menu li:hover { background: #000080; color: #fff; }
+    .start-menu li:hover { background: #42586e; color: #fff; }
+
+    .menu-custom-disc {
+      position: relative; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .menu-custom-disc .base-disc {
+      width: 18px; height: 18px; object-fit: contain;
+    }
+    .menu-custom-disc .badge-disc {
+      position: absolute; width: 9px; height: 9px; object-fit: cover; border: 1px solid #fff; border-radius: 2px; bottom: 0; right: 0;
+    }
 
     .playlist-box {
       list-style: none; margin: 8px 0 0 0; padding: 0;
@@ -290,8 +314,8 @@
     .playlist-box li {
       padding: 5px 8px; font-size: 12px; cursor: var(--star-cursor); display: flex; justify-content: space-between; align-items: center;
     }
-    .playlist-box li:hover { background: #000080; color: #fff; }
-    .playlist-box li.active { background: #000080; color: #fff; font-weight: bold; }
+    .playlist-box li:hover { background: #42586e; color: #fff; }
+    .playlist-box li.active { background: #42586e; color: #fff; font-weight: bold; }
 
     #notification-modal-win {
       position: fixed;
@@ -340,7 +364,7 @@
     #photo-save-modal .modal-hint {
       font-size: 12px;
       font-weight: bold;
-      color: #000080;
+      color: #2b3d4f;
       text-align: center;
       line-height: 1.4;
     }
@@ -375,7 +399,7 @@
       <button class="admin-only" id="topBtnWallpaper" onclick="changeWallpaper(event)">🎨 桌布</button>
       <button class="admin-only" id="topBtnNotif" onclick="openNotificationConfigModal(event)" style="background:#fff3e0; font-weight:bold;">✉️ 設定通知</button>
       <button class="admin-only" id="topBtnStartCfg" onclick="openStartMenuConfigModal(event)">⭐ 設定開始選單</button>
-      <button class="admin-only" id="topBtnSave" style="background:#000080; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
+      <button class="admin-only" id="topBtnSave" style="background:#42586e; color:#fff; font-weight:bold;" onclick="exportCurrentState(event)">💾 永久儲存</button>
     </div>
 
     <div class="admin-scrollbar-bar" id="adminScrollbarBar">
@@ -440,7 +464,7 @@
       </div>
       <div style="display:flex; justify-content:space-between; margin-top:8px;">
         <button type="button" onclick="testNotificationPopup()">⚡ 立即測試彈出</button>
-        <button type="button" style="font-weight:bold; background:#000080; color:#fff;" onclick="saveNotificationConfig()">儲存設定</button>
+        <button type="button" style="font-weight:bold; background:#42586e; color:#fff;" onclick="saveNotificationConfig()">儲存設定</button>
       </div>
     </div>
   </div>
@@ -462,22 +486,37 @@
     </div>
   </div>
 
-  <!-- 開始選單 (無多餘重複項目，顏色低彩度) -->
+  <!-- 開始選單 (精確同步桌面圖示、無重複項目、莫蘭迪色調) -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>WINTER NAVIGATION</span>
       <button class="admin-only" style="font-size:9px; padding:1px 3px;" onclick="openStartMenuConfigModal(event)">設定</button>
     </div>
     <ul>
-      <li onclick="goHome(event); toggleStartMenu(event);" id="menuItemHome">🖥️ <strong>1. 回到原始 Desktop 桌面</strong></li>
-      <li onclick="window.open('https://winterplaylist.netlify.app', '_blank'); toggleStartMenu(event);" id="menuItemCd">💿 <strong>2. 開啟 WINTER PLAYLIST</strong></li>
-      <li onclick="openWinterWildwestWindow(); toggleStartMenu(event);" id="menuItemWildwest">🤠 <strong>3. 進入 WINTER WILDWEST 視訊</strong></li>
+      <li onclick="goHome(event); toggleStartMenu(event);" id="menuItemHome">
+        <img src="https://win98icons.alexmeub.com/icons/png/desktop-0.png" width="18" height="18">
+        <span><strong>1. 回到原始 Desktop 桌面</strong></span>
+      </li>
+      <li onclick="window.open('https://winterplaylist.netlify.app', '_blank'); toggleStartMenu(event);" id="menuItemCd">
+        <span class="menu-custom-disc">
+          <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-5.png" class="base-disc">
+          <img src="https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax" class="badge-disc">
+        </span>
+        <span><strong>2. 開啟 WINTER PLAYLIST</strong></span>
+      </li>
+      <li onclick="openWinterWildwestWindow(); toggleStartMenu(event);" id="menuItemWildwest">
+        <img src="https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o" width="18" height="18" style="object-fit:contain;">
+        <span><strong>3. 進入 WINTER WILDWEST 視訊</strong></span>
+      </li>
       <hr style="margin: 4px 0;">
     </ul>
     <ul id="startMenuList"></ul>
     <hr style="margin: 4px 0;">
     <ul>
-      <li onclick="toggleAdmin(event); toggleStartMenu(event);" id="menuItemAdmin">⚙️ 切換管理員模式</li>
+      <li onclick="toggleAdmin(event); toggleStartMenu(event);" id="menuItemAdmin">
+        <img src="https://win98icons.alexmeub.com/icons/png/settings_gear-4.png" width="16" height="16">
+        <span>切換管理員模式</span>
+      </li>
     </ul>
   </div>
 
@@ -643,7 +682,7 @@
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <!-- 經典無框地球圖示，僅保留 TW 與 EN -->
+      <!-- 徹底無框莫蘭迪低飽和地球圖示，僅保留 TW 與 EN -->
       <div class="lang-globe-btn-wrapper">
         <div class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
           <svg class="lang-globe-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -741,9 +780,9 @@
         topStartCfg: "⭐ 設定開始選單",
         topSave: "💾 永久儲存",
         menuHome: "🖥️ <strong>1. 回到原始 Desktop 桌面</strong>",
-        menuCd: "💿 <strong>2. 開啟 WINTER PLAYLIST</strong>",
-        menuWildwest: "🤠 <strong>3. 進入 WINTER WILDWEST 視訊</strong>",
-        menuAdmin: "⚙️ 切換管理員模式",
+        menuCd: "<strong>2. 開啟 WINTER PLAYLIST</strong>",
+        menuWildwest: "<strong>3. 進入 WINTER WILDWEST 視訊</strong>",
+        menuAdmin: "切換管理員模式",
         notifTitle: "✉️ 來自 WINTER 的新訊息",
         notifContent: "歡迎來到專屬於金旼炡WINTER的電腦空間⭐️\n點擊資料夾查看更多資訊!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
         notifOk: "我知道了 (OK)",
@@ -786,9 +825,9 @@
         topStartCfg: "⭐ Start Menu",
         topSave: "💾 Permanent Save",
         menuHome: "🖥️ <strong>1. Back to Desktop</strong>",
-        menuCd: "💿 <strong>2. Open WINTER PLAYLIST</strong>",
-        menuWildwest: "🤠 <strong>3. Enter WINTER WILDWEST Video</strong>",
-        menuAdmin: "⚙️ Toggle Admin Mode",
+        menuCd: "<strong>2. Open WINTER PLAYLIST</strong>",
+        menuWildwest: "<strong>3. Enter WINTER WILDWEST Video</strong>",
+        menuAdmin: "Toggle Admin Mode",
         notifTitle: "✉️ New message from WINTER",
         notifContent: "Welcome to WINTER's retro computer space⭐️\nClick on the folders to explore more information!!",
         notifOk: "Got it (OK)",
@@ -824,7 +863,7 @@
       return item.content || "";
     }
 
-    // 全域配置：使用 assets 本地背景，項目清單已更新最新命名與連結
+    // 全域配置：使用本地相對路徑
     const MASTER_CONFIG = {
       "wallpaper": "assets/background/winter_bday_background.jpg",
       "notification": {
@@ -963,8 +1002,8 @@
       ]
     };
 
-    // 強制升級版本快取，洗掉舊的「生咖預約」與快取紀錄
-    const CONFIG_VERSION = "winter_desktop_direct_links_v2026_60";
+    // 強制升級版本快取，保證新設定即時生效
+    const CONFIG_VERSION = "winter_desktop_perfect_assets_v2026_65";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1006,10 +1045,12 @@
       setTxt('topBtnStartCfg', t.topStartCfg);
       setTxt('topBtnSave', t.topSave);
 
-      setHtml('menuItemHome', t.menuHome);
-      setHtml('menuItemCd', t.menuCd);
-      setHtml('menuItemWildwest', t.menuWildwest);
-      setHtml('menuItemAdmin', t.menuAdmin);
+      const mCd = document.querySelector('#menuItemCd span strong');
+      if (mCd) mCd.innerText = t.menuCd.replace(/<[^>]+>/g, '');
+      const mWild = document.querySelector('#menuItemWildwest span strong');
+      if (mWild) mWild.innerText = t.menuWildwest.replace(/<[^>]+>/g, '');
+      const mAdmin = document.querySelector('#menuItemAdmin span');
+      if (mAdmin) mAdmin.innerText = t.menuAdmin;
 
       setTxt('notifOkBtn', t.notifOk);
       setTxt('btnNavBack', t.navBack);
@@ -1437,7 +1478,7 @@
       list.innerHTML = '';
       
       const visibleIds = currentConfig.startMenuVisibleIds || [];
-      // 過濾掉前 3 個固定的 Desktop, CD, Wildwest，防止選單內出現重複項目
+      // 過濾前三個固定項目，防止選單內出現重複項目
       const showItems = itemsData.filter(i => 
         visibleIds.includes(i.id) && 
         i.id !== 'winter_wildwest_entry' && 
@@ -1469,7 +1510,7 @@
       box.innerHTML = '';
       const currentIds = currentConfig.startMenuVisibleIds || [];
 
-      // 候選項目排除前三個固定導覽項目，避免重複
+      // 候選項目排除前三個固定導覽項目
       const customCandidateItems = itemsData.filter(i => i.id !== 'winter_wildwest_entry' && i.id !== 'winter_cd_standalone_entry');
 
       customCandidateItems.forEach(item => {

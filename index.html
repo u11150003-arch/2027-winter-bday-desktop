@@ -2136,4 +2136,108 @@
       const rawUrl = prompt("請輸入桌布圖片網址（支援 Google 雲端共享連結）：", "");
       if (rawUrl) {
         const finalUrl = autoFormatMediaUrl(rawUrl, 'wallpaper');
-        document
+        document.body.style.backgroundImage = `url('${finalUrl}')`;
+        currentConfig.wallpaper = finalUrl;
+        saveState();
+      }
+    }
+
+    const viewport = document.getElementById('topActionsViewport');
+    const track = document.getElementById('scrollbarTrack');
+    const thumb = document.getElementById('scrollbarThumb');
+
+    function updateScrollBarUI() {
+      if (!isAdmin || !viewport || !track || !thumb) return;
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      if (maxScroll <= 0) {
+        thumb.style.width = '100%'; thumb.style.left = '0px'; return;
+      }
+      const trackWidth = track.clientWidth;
+      const thumbWidth = Math.max(30, (viewport.clientWidth / viewport.scrollWidth) * trackWidth);
+      thumb.style.width = thumbWidth + 'px';
+      const scrollRatio = viewport.scrollLeft / maxScroll;
+      thumb.style.left = (scrollRatio * (trackWidth - thumbWidth)) + 'px';
+    }
+
+    function scrollAdminBar(amount) {
+      if (!viewport) return;
+      viewport.scrollLeft += amount;
+      updateScrollBarUI();
+    }
+
+    function handleTrackClick(e) {
+      if (e.target === thumb) return;
+      const rect = track.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const thumbWidth = thumb.offsetWidth;
+      const trackWidth = track.clientWidth;
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      const newScrollLeft = ((clickX - thumbWidth / 2) / (trackWidth - thumbWidth)) * maxScroll;
+      viewport.scrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
+      updateScrollBarUI();
+    }
+
+    if (thumb) {
+      let isDraggingThumb = false, thumbStartX = 0, thumbStartLeft = 0;
+      thumb.addEventListener('mousedown', (e) => {
+        isDraggingThumb = true;
+        thumbStartX = e.clientX;
+        thumbStartLeft = parseFloat(thumb.style.left) || 0;
+        document.body.style.userSelect = 'none';
+
+        function onMouseMove(moveEvent) {
+          if (!isDraggingThumb) return;
+          const dx = moveEvent.clientX - thumbStartX;
+          const trackWidth = track.clientWidth;
+          const thumbWidth = thumb.offsetWidth;
+          const maxThumbLeft = trackWidth - thumbWidth;
+          const newThumbLeft = Math.max(0, Math.min(maxThumbLeft, thumbStartLeft + dx));
+          thumb.style.left = newThumbLeft + 'px';
+          viewport.scrollLeft = (newThumbLeft / maxThumbLeft) * (viewport.scrollWidth - viewport.clientWidth);
+        }
+        function onMouseUp() {
+          isDraggingThumb = false;
+          document.body.style.userSelect = '';
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
+    if (viewport) {
+      viewport.addEventListener('wheel', (e) => {
+        if (!isAdmin) return;
+        if (e.deltaY !== 0) {
+          viewport.scrollLeft += e.deltaY;
+          updateScrollBarUI();
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const pWin = document.getElementById('photo-viewer-win');
+      if (pWin && pWin.style.display === 'block') {
+        if (e.key === 'ArrowLeft') switchViewerPhoto(-1);
+        if (e.key === 'ArrowRight') switchViewerPhoto(1);
+      }
+    });
+
+    window.addEventListener('resize', updateScrollBarUI);
+
+    if (currentConfig.wallpaper) {
+      document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;
+    }
+
+    renderDesktop();
+    renderStartMenu();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      applyLanguageUI();
+      checkAndTriggerNotification();
+    });
+  </script>
+</body>
+</html>

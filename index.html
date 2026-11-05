@@ -54,6 +54,11 @@
       background: var(--header-bg-gradient) !important;
       padding: 3px 4px !important;
     }
+    .title-bar-text {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
     /* 頂部管理工具列 */
     .top-bar-wrapper {
@@ -185,17 +190,25 @@
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
-    /* 視訊視窗自適應高度，底部與桌面工作列預留足夠距離不遮擋 */
+    /* 視訊視窗：優化手機端畫面，防止內容裁切與壓縮過小 */
     #embedded-wildwest-win {
-      height: 72vh;
-      max-height: calc(100vh - var(--taskbar-h) - 45px);
-      width: 95vw;
-      max-width: 520px;
+      height: 82vh;
+      max-height: calc(100vh - var(--taskbar-h) - 20px);
+      width: 96vw;
+      max-width: 540px;
+    }
+    @media (max-width: 768px) {
+      #embedded-wildwest-win {
+        width: 96vw;
+        height: calc(100vh - var(--taskbar-h) - 24px);
+        max-height: calc(100vh - var(--taskbar-h) - 24px);
+        top: 10px !important;
+        transform: translateX(-50%) !important;
+      }
     }
     .embedded-player-container {
       width: 100%; height: 100%; background: #000; overflow: hidden; position: relative;
     }
-    /* 將 iframe 底部的分頁列遮蔽裁剪，呈現純淨視訊 */
     .embedded-player-container iframe {
       width: 100%; height: 100%; border: none;
     }
@@ -218,7 +231,7 @@
       width: 100%; min-height: 220px; max-height: 60vh;
       display: flex; align-items: center; justify-content: center;
       background: #1a1a1a; overflow: hidden; padding: 6px; position: relative;
-      touch-action: pan-y; /* 允許垂直滾動，水平用於手勢切換 */
+      touch-action: pan-y;
     }
     .photo-stage img { 
       max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid #fff; 
@@ -478,10 +491,13 @@
     </div>
   </div>
 
-  <!-- 嵌入式 WILDWEST 視訊視窗 -->
+  <!-- 嵌入式 WILDWEST 視訊視窗 (左上角使用小狗 Ponyo 圖示) -->
   <div id="embedded-wildwest-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="wildwestWinTitle">🤠 WINTER WILDWEST 視訊</div>
+      <div class="title-bar-text" id="wildwestWinTitle">
+        <img src="https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o" width="16" height="16" style="object-fit:contain;">
+        <span>WINTER WILDWEST 視訊</span>
+      </div>
       <div class="title-bar-controls">
         <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-wildwest-win', 'Wildwest 視訊', event)" title="最小化"></button>
         <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-wildwest-win', event)" title="最大化/還原"></button>
@@ -495,7 +511,7 @@
     </div>
   </div>
 
-  <!-- 開始選單 (已去除回到桌面，Icon 與桌面完全一致) -->
+  <!-- 開始選單 (已移除標題數字，圖示完全與桌面對齊) -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
       <span>WINTER NAVIGATION</span>
@@ -617,18 +633,15 @@
       <div class="media-toolbar">
         <div class="media-nav-group">
           <button type="button" id="btnPrevPhoto" onclick="switchViewerPhoto(-1)">
-            <!-- 現代極簡線條向左箭頭 -->
             <svg class="btn-line-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
             <span id="prevPhotoTxt">上一張</span>
           </button>
           <button type="button" id="btnNextPhoto" onclick="switchViewerPhoto(1)">
             <span id="nextPhotoTxt">下一張</span>
-            <!-- 現代極簡線條向右箭頭 -->
             <svg class="btn-line-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </button>
         </div>
         <button type="button" id="btnDownloadPhoto" onclick="triggerPhotoSaveModal()">
-          <!-- 現代極簡線條下載箭頭 -->
           <svg class="btn-line-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span id="downloadPhotoTxt">下載照片</span>
         </button>
@@ -788,8 +801,8 @@
         topNotif: "✉️ 設定通知",
         topStartCfg: "⭐ 設定開始選單",
         topSave: "💾 永久儲存",
-        menuCd: "2. 開啟 WINTER PLAYLIST",
-        menuWildwest: "3. 進入 WINTER WILDWEST 視訊",
+        menuCd: "開啟 WINTER PLAYLIST",
+        menuWildwest: "進入 WINTER WILDWEST 視訊",
         menuAdmin: "切換管理員模式",
         notifTitle: "✉️ 來自 WINTER 的新訊息",
         notifContent: "歡迎來到專屬於金旼炡WINTER的電腦空間⭐️\n點擊資料夾查看更多資訊!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
@@ -804,7 +817,7 @@
         downloadPhoto: "下載照片",
         downloadMedia: "下載檔案",
         albumTracks: "曲目清單：",
-        wildwestTitle: "🤠 WINTER WILDWEST 視訊",
+        wildwestTitle: "WINTER WILDWEST 視訊",
         saveModalHint: "📱 手機請長按圖片選擇「儲存影像」或「加入照片」<br>💻 電腦請在圖片上按右鍵選擇「另存圖片」"
       },
       "en": {
@@ -832,8 +845,8 @@
         topNotif: "✉️ Notification",
         topStartCfg: "⭐ Start Menu",
         topSave: "💾 Permanent Save",
-        menuCd: "2. Open WINTER PLAYLIST",
-        menuWildwest: "3. Enter WINTER WILDWEST Video",
+        menuCd: "Open WINTER PLAYLIST",
+        menuWildwest: "Enter WINTER WILDWEST Video",
         menuAdmin: "Toggle Admin Mode",
         notifTitle: "✉️ New message from WINTER",
         notifContent: "Welcome to WINTER's retro computer space⭐️\nClick on the folders to explore more information!!",
@@ -848,7 +861,7 @@
         downloadPhoto: "Save Photo",
         downloadMedia: "Download",
         albumTracks: "Track List:",
-        wildwestTitle: "🤠 WINTER WILDWEST Video",
+        wildwestTitle: "WINTER WILDWEST Video",
         saveModalHint: "📱 Long-press the image to Save to Photos<br>💻 Right-click the image to Save As"
       }
     };
@@ -1009,8 +1022,7 @@
       ]
     };
 
-    // 強制升級版本快取
-    const CONFIG_VERSION = "winter_desktop_perfect_swipe_v2026_70";
+    const CONFIG_VERSION = "winter_desktop_clean_wildwest_v2026_80";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1065,7 +1077,9 @@
       setTxt('nextMediaTxt', t.nextBtn);
       setTxt('downloadMediaTxt', t.downloadMedia);
       setTxt('albumTracksListLabel', t.albumTracks);
-      setTxt('wildwestWinTitle', t.wildwestTitle);
+
+      const wildTitleSpan = document.querySelector('#wildwestWinTitle span');
+      if (wildTitleSpan) wildTitleSpan.innerText = t.wildwestTitle;
 
       const hintEl = document.getElementById('photoSaveModalHint');
       if (hintEl) hintEl.innerHTML = t.saveModalHint;
@@ -1685,8 +1699,8 @@
         win.style.left = '50%';
         win.style.transform = 'translate(-50%, -50%)';
         if (id === 'embedded-wildwest-win') {
-          win.style.height = '72vh';
-          win.style.width = '95vw';
+          win.style.height = '82vh';
+          win.style.width = '96vw';
         }
       }
 
@@ -1755,9 +1769,9 @@
         } else {
           win.style.top = '50%'; win.style.left = '50%';
           win.style.transform = 'translate(-50%, -50%)';
-          win.style.width = '95vw';
-          win.style.maxWidth = '520px';
-          win.style.height = '72vh';
+          win.style.width = '96vw';
+          win.style.maxWidth = '540px';
+          win.style.height = '82vh';
         }
       } else {
         windowRestoreBounds[id] = {

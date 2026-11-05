@@ -7,9 +7,9 @@
 
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A retro desktop space for WINTER">
-  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5">
+  <meta property="og:image" content="assets/background/winter_bday_background.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5">
+  <meta name="twitter:image" content="assets/background/winter_bday_background.jpg">
 
   <link rel="stylesheet" href="https://unpkg.com/98.css">
   <style>
@@ -30,7 +30,7 @@
       height: 100vh;
       overflow: hidden;
       background-color: #000;
-      background-image: url('https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5');
+      background-image: url('assets/background/winter_bday_background.jpg');
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
@@ -171,7 +171,7 @@
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
-    #embedded-cd-win, #embedded-wildwest-win {
+    #embedded-wildwest-win {
       height: 82vh;
       max-height: calc(100vh - var(--taskbar-h) - 30px);
       width: 95vw;
@@ -353,7 +353,7 @@
       <button style="background:#ffcdd2; font-weight:bold;" onclick="toggleAdmin(event)" id="topBtnExitAdmin">🔓 退出管理</button>
       <button class="admin-only" id="topBtnFolder" onclick="createFolderWithCoverChoice(null, event)">+ 資料夾</button>
       <button class="admin-only" id="topBtnWildwest" onclick="openWinterWildwestWindow()">🤠 開啟 WILDWEST 視訊</button>
-      <button class="admin-only" id="topBtnCd" onclick="openWinterCdPlayerWindow()">💿 開啟 CD 播放器</button>
+      <button class="admin-only" id="topBtnCd" onclick="window.open('https://winterplaylist.netlify.app', '_blank')">💿 開啟 WINTER PLAYLIST</button>
       <button class="admin-only" id="topBtnAlbum" onclick="createAlbumWithCoverChoice(null, event)">+ 傳統專輯</button>
       <button class="admin-only" id="topBtnVideo" onclick="createItem('video', null, event)">+ 音樂/影片</button>
       <button class="admin-only" id="topBtnImage" onclick="createItem('image', null, event)">+ 圖片</button>
@@ -461,23 +461,6 @@
     </div>
   </div>
 
-  <!-- 嵌入式 CD 播放器視窗 -->
-  <div id="embedded-cd-win" class="window win-modal" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="embeddedCdTitle">💿 WINTER CD PLAYER</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Minimize" onclick="minimizeWindow('embedded-cd-win', 'CD Player', event)" title="最小化"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Maximize" onclick="toggleMaximize('embedded-cd-win', event)" title="最大化/還原"></button>
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeEmbeddedCdWindow(event)" title="關閉"></button>
-      </div>
-    </div>
-    <div class="window-body" style="padding: 0; background: #000; overflow: hidden; height: calc(100% - 30px);">
-      <div class="embedded-player-container">
-        <iframe id="embeddedCdIframe" src="" allow="autoplay; accelerometer; gyroscope"></iframe>
-      </div>
-    </div>
-  </div>
-
   <!-- 開始選單 -->
   <div id="startMenu" class="start-menu" onclick="event.stopPropagation()">
     <div class="start-menu-banner">
@@ -486,7 +469,7 @@
     </div>
     <ul>
       <li onclick="goHome(event); toggleStartMenu(event);" id="menuItemHome">🖥️ <strong>1. 回到原始 Desktop 桌面</strong></li>
-      <li onclick="openWinterCdPlayerWindow(); toggleStartMenu(event);" id="menuItemCd">💿 <strong>2. 開啟 WINTER CD PLAYER</strong></li>
+      <li onclick="window.open('https://winterplaylist.netlify.app', '_blank'); toggleStartMenu(event);" id="menuItemCd">💿 <strong>2. 開啟 WINTER PLAYLIST</strong></li>
       <li onclick="openWinterWildwestWindow(); toggleStartMenu(event);" id="menuItemWildwest">🤠 <strong>3. 進入 WINTER WILDWEST 視訊</strong></li>
       <hr style="margin: 4px 0;">
     </ul>
@@ -571,7 +554,7 @@
     </div>
   </div>
 
-  <!-- 照片檢視器 (具備高解析預覽與長按儲存) -->
+  <!-- 照片檢視器 (具備切換與長按儲存) -->
   <div id="photo-viewer-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="photoViewerTitle">🖼️ 圖片檢視器</div>
@@ -604,7 +587,7 @@
     </div>
   </div>
 
-  <!-- 照片原地長按下載浮層 (不跳轉任何外站網址) -->
+  <!-- 照片長按儲存浮層 -->
   <div id="photo-save-modal" onclick="closePhotoSaveModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
       <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
@@ -651,21 +634,6 @@
     </div>
   </div>
 
-  <div id="link-win" class="window win-modal" style="max-width: 320px;" onclick="event.stopPropagation()">
-    <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
-      <div class="title-bar-text" id="linkTitle">🔗 外部連結</div>
-      <div class="title-bar-controls">
-        <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeWindow('link-win', event)"></button>
-      </div>
-    </div>
-    <div class="window-body" style="text-align:center;">
-      <p id="linkText" style="font-size:12px; margin: 10px 0;"></p>
-      <a id="linkBtn" href="#" target="_blank" style="text-decoration:none;">
-        <button type="button" id="linkBtnText" style="width:100%; padding:6px; font-weight:bold;">開啟連結 (Visit Site)</button>
-      </a>
-    </div>
-  </div>
-
   <div class="taskbar">
     <div class="taskbar-left">
       <button type="button" onclick="toggleStartMenu(event)" style="font-weight:bold; display:flex; align-items:center; gap:4px; height:26px; padding:0 6px;">
@@ -674,7 +642,7 @@
       <div id="taskbarItems" style="display:flex; gap:3px; align-items:center;"></div>
     </div>
     <div class="taskbar-right">
-      <!-- 徹底無框莫蘭迪低飽和地球圖示 -->
+      <!-- 經典無框地球圖示，僅保留 TW 與 EN -->
       <div class="lang-globe-btn-wrapper">
         <div class="lang-globe-btn" onclick="toggleLangMenu(event)" title="Change Language / 切換語言">
           <svg class="lang-globe-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -689,9 +657,6 @@
         <ul class="lang-dropdown-menu" id="langDropdownMenu">
           <li onclick="changeLanguage('zh-TW', event)">繁體中文</li>
           <li onclick="changeLanguage('en', event)">English</li>
-          <li onclick="changeLanguage('ja', event)">日本語</li>
-          <li onclick="changeLanguage('ko', event)">한국어</li>
-          <li onclick="changeLanguage('th', event)">ไทย</li>
         </ul>
       </div>
       <a href="https://www.instagram.com/winter_tst" target="_blank">© : winter_tst</a>
@@ -719,41 +684,35 @@
     const ICON_DOG_PONYO = "https://lh3.googleusercontent.com/d/17WOfRelvxF9qJrmBwUpOuJGdgFaLj06o";
     const W_FORM_ICON = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M10 4 h20 l10 10 v30 h-30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M30 4 v10 h10' fill='%23dfdfdf' stroke='%23000000' stroke-width='2'/><text x='13' y='35' font-family='Arial Black, sans-serif' font-size='22' font-weight='bold' fill='%230000ff'>W</text></svg>";
 
-    /* 全局項目名稱多語言字典 */
+    /* 全局項目名稱多語言字典 (僅保留繁中與英文) */
     const ITEM_NAMES_I18N = {
-      "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Bday Cafe Info", "ja": "センイルカフェ情報", "ko": "생카 정보", "th": "ข้อมูลคาเฟ่วันเกิด" },
-      "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods", "ja": "応援グッズ", "ko": "응원 물품", "th": "ของซัพพอร์ตคาเฟ่" },
-      "folder_1789230844971": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ja": "ラッキードロー", "ko": "럭키 드로우", "th": "Lucky Draw" },
-      "l1": { "zh-TW": "生咖預約", "en": "Cafe Booking", "ja": "カフェ予約", "ko": "생카 예약", "th": "จองคาเฟ่" },
-      "winter_wildwest_entry": { "zh-TW": "WINTER WILDWEST 視訊", "en": "WINTER WILDWEST Video", "ja": "WINTER WILDWEST ビデオ", "ko": "WINTER WILDWEST 영상", "th": "WINTER WILDWEST วิดีโอ" },
-      "winter_cd_standalone_entry": { "zh-TW": "Winter Playlist", "en": "Winter Playlist", "ja": "Winter Playlist", "ko": "Winter Playlist", "th": "Winter Playlist" },
-      "folder_1789230890651": { "zh-TW": "手幅-3款", "en": "Slogan - 3 Types", "ja": "スローガン 3種", "ko": "슬로건 3종", "th": "สโลแกน 3 แบบ" },
-      "img1": { "zh-TW": "手幅Serenade ver", "en": "Slogan Serenade ver", "ja": "スローガン Serenade ver", "ko": "슬로건 Serenade ver", "th": "สโลแกน Serenade ver" },
-      "1791354343327": { "zh-TW": "手幅Saddle Up ver", "en": "Slogan Saddle Up ver", "ja": "スローガン Saddle Up ver", "ko": "슬로건 Saddle Up ver", "th": "สโลแกน Saddle Up ver" },
-      "folder_1791354254088": { "zh-TW": "新資料夾", "en": "New Folder", "ja": "新しいフォルダ", "ko": "새 폴더", "th": "โฟลเดอร์ใหม่" },
-      "n1": { "zh-TW": "生咖應援物", "en": "Support Goods", "ja": "応援グッズ", "ko": "응원 물품", "th": "ของซัพพอร์ตคาเฟ่" },
-      "1789230813079": { "zh-TW": "Lucky Draw", "en": "Lucky Draw", "ja": "ラッキードロー", "ko": "럭키 드로우", "th": "Lucky Draw" }
+      "folder_1789233534244": { "zh-TW": "生咖資訊", "en": "Bday Cafe Info" },
+      "folder_1789230959703": { "zh-TW": "生咖應援物", "en": "Support Goods" },
+      "folder_1789230844971": { "zh-TW": "Lucky Draw", "en": "Lucky Draw" },
+      "l1": { "zh-TW": "生咖網站", "en": "BdayCafe Website" },
+      "winter_wildwest_entry": { "zh-TW": "WINTER WILDWEST 視訊", "en": "WINTER WILDWEST Video" },
+      "winter_cd_standalone_entry": { "zh-TW": "WINTER PLAYLIST", "en": "WINTER PLAYLIST" },
+      "folder_1789230890651": { "zh-TW": "手幅-3款", "en": "Slogan - 3 Types" },
+      "img1": { "zh-TW": "手幅Serenade ver", "en": "Slogan Serenade ver" },
+      "1791354343327": { "zh-TW": "手幅Saddle Up ver", "en": "Slogan Saddle Up ver" },
+      "folder_1791354254088": { "zh-TW": "新資料夾", "en": "New Folder" },
+      "n1": { "zh-TW": "生咖應援物", "en": "Support Goods" },
+      "1789230813079": { "zh-TW": "Lucky Draw", "en": "Lucky Draw" }
     };
 
     /* 便籤/彈窗內文多國語言字典 */
     const NOTE_CONTENT_I18N = {
       "n1": {
         "zh-TW": "1. 應援小卡\n2. 明信片",
-        "en": "1. Photocard\n2. Postcard",
-        "ja": "1. 応援トレカ\n2. ポストカード",
-        "ko": "1. 응원 포토카드\n2. 엽서",
-        "th": "1. โฟโต้การ์ดซัพพอร์ต\n2. โปสการ์ด"
+        "en": "1. Photocard\n2. Postcard"
       },
       "1789230813079": {
         "zh-TW": "共250抽，每日不限抽數\r\n斗山球衣-1\r\nA2水晶版畫-8\r\nA3無框畫-8\r\n15*20cm小無框畫-30\r\n自製手幅-18\r\n照片書禮盒-20\r\nSOLO曲目 專輯-30\r\n年曆-80\r\n風火輪小車-50\r\n場佈立牌-3\r\n空專-15",
-        "en": "Total 250 draws, unlimited per day\r\nDoosan Jersey - 1\r\nA2 Crystal Print - 8\r\nA3 Canvas Print - 8\r\n15*20cm Small Canvas - 30\r\nCustom Slogan - 18\r\nPhoto Book Box - 20\r\nSOLO Album - 30\r\nCalendar - 80\r\nHot Wheels Car - 50\r\nStandee - 3\r\nUnsealed Album - 15",
-        "ja": "全250回、1日の回数制限なし\r\n斗山ユニフォーム - 1\r\nA2クリスタル版画 - 8\r\nA3キャンバス額縁 - 8\r\n15*20cmミニキャンバス - 30\r\nオリジナルスローガン - 18\r\nフォトブックボックス - 20\r\nソロアルバム - 30\r\nカレンダー - 80\r\nホットウィールミニカー - 50\r\nアクリルスタンド - 3\r\n開封済みアルバム - 15",
-        "ko": "총 250회, 일일 제한 없음\r\n두산 유니폼 - 1\r\nA2 크리스탈 판화 - 8\r\nA3 캔버스 액자 - 8\r\n15*20cm 미니 캔버스 - 30\r\n자체제작 슬로건 - 18\r\n포토북 박스 - 20\r\n솔로 앨범 - 30\r\n시즌그리팅 캘린더 - 80\r\n핫휠 미니카 - 50\r\n스탠드 - 3\r\n개봉 앨범 - 15",
-        "th": "ทั้งหมด 250 สิทธิ์ สุ่มได้ไม่จำกัดต่อวัน\r\nเสื้อทีม Doosan - 1\r\nกรอบรูปคริสตัล A2 - 8\r\nกรอบรูปแคนวาส A3 - 8\r\nกรอบรูปแคนวาส 15*20cm - 30\r\nสโลแกนสั่งทำ - 18\r\nเซ็ตโฟโต้บุ๊ค - 20\r\nอัลบั้มเดี่ยว - 30\r\nปฏิทิน - 80\r\nโมเดลรถ Hot Wheels - 50\r\nสแตนดี้ตกแต่ง - 3\r\nอัลบั้มเปล่า - 15"
+        "en": "Total 250 draws, unlimited per day\r\nDoosan Jersey - 1\r\nA2 Crystal Print - 8\r\nA3 Canvas Print - 8\r\n15*20cm Small Canvas - 30\r\nCustom Slogan - 18\r\nPhoto Book Box - 20\r\nSOLO Album - 30\r\nCalendar - 80\r\nHot Wheels Car - 50\r\nStandee - 3\r\nUnsealed Album - 15"
       }
     };
 
-    /* 介面操作多語言字典 (全語系彈窗皆保持雙語對照：該語系 + English) */
+    /* 介面操作多語言字典 */
     const I18N = {
       "zh-TW": {
         badge: "TW",
@@ -764,7 +723,7 @@
         adminBtnExit: "🔓 退出管理",
         topFolder: "+ 資料夾",
         topWildwest: "🤠 開啟 WILDWEST 視訊",
-        topCd: "💿 開啟 CD 播放器",
+        topCd: "💿 開啟 WINTER PLAYLIST",
         topAlbum: "+ 傳統專輯",
         topVideo: "+ 音樂/影片",
         topImage: "+ 圖片",
@@ -781,7 +740,7 @@
         topStartCfg: "⭐ 設定開始選單",
         topSave: "💾 永久儲存",
         menuHome: "🖥️ <strong>1. 回到原始 Desktop 桌面</strong>",
-        menuCd: "💿 <strong>2. 開啟 WINTER CD PLAYER</strong>",
+        menuCd: "💿 <strong>2. 開啟 WINTER PLAYLIST</strong>",
         menuWildwest: "🤠 <strong>3. 進入 WINTER WILDWEST 視訊</strong>",
         menuAdmin: "⚙️ 切換管理員模式",
         notifTitle: "✉️ 來自 WINTER 的新訊息",
@@ -796,7 +755,6 @@
         nextPhotoBtn: "下一張",
         downloadPhoto: "下載照片",
         downloadMedia: "下載檔案",
-        visitLink: "開啟連結 (Visit Site)",
         albumTracks: "曲目清單：",
         wildwestTitle: "🤠 WINTER WILDWEST 視訊",
         saveModalHint: "📱 手機請長按圖片選擇「儲存影像」或「加入照片」<br>💻 電腦請在圖片上按右鍵選擇「另存圖片」"
@@ -810,7 +768,7 @@
         adminBtnExit: "🔓 Exit Admin",
         topFolder: "+ Folder",
         topWildwest: "🤠 Open WILDWEST Video",
-        topCd: "💿 Open CD Player",
+        topCd: "💿 Open WINTER PLAYLIST",
         topAlbum: "+ Album",
         topVideo: "+ Media",
         topImage: "+ Photo",
@@ -827,7 +785,7 @@
         topStartCfg: "⭐ Start Menu",
         topSave: "💾 Permanent Save",
         menuHome: "🖥️ <strong>1. Back to Desktop</strong>",
-        menuCd: "💿 <strong>2. Open WINTER CD PLAYER</strong>",
+        menuCd: "💿 <strong>2. Open WINTER PLAYLIST</strong>",
         menuWildwest: "🤠 <strong>3. Enter WINTER WILDWEST Video</strong>",
         menuAdmin: "⚙️ Toggle Admin Mode",
         notifTitle: "✉️ New message from WINTER",
@@ -842,152 +800,14 @@
         nextPhotoBtn: "Next",
         downloadPhoto: "Save Photo",
         downloadMedia: "Download",
-        visitLink: "Visit Link",
         albumTracks: "Track List:",
         wildwestTitle: "🤠 WINTER WILDWEST Video",
         saveModalHint: "📱 Long-press the image to Save to Photos<br>💻 Right-click the image to Save As"
-      },
-      "ja": {
-        badge: "JP",
-        adminPrompt: "管理者パスワードを入力してください：",
-        adminLoginSuccess: "ログイン成功！管理者モードを解除しました。",
-        adminExit: "管理者モードを終了しました。",
-        adminWrongPass: "パスワードが正しくありません！",
-        adminBtnExit: "🔓 管理終了",
-        topFolder: "+ フォルダ",
-        topWildwest: "🤠 WILDWEST ビデオを開く",
-        topCd: "💿 CDプレイヤーを開く",
-        topAlbum: "+ アルバム",
-        topVideo: "+ 動画/音楽",
-        topImage: "+ 画像",
-        topNote: "+ メモ",
-        topLink: "+ リンク",
-        topPaste: "📌 貼り付け",
-        topMove: "📦 移動...",
-        topCopy: "📋 コピー",
-        topCut: "✂️ 切り取り",
-        topEdit: "✏️ 編集",
-        topDelete: "❌ 削除",
-        topWallpaper: "🎨 壁紙",
-        topNotif: "✉️ 通知設定",
-        topStartCfg: "⭐ スタートメニュー",
-        topSave: "💾 永久保存",
-        menuHome: "🖥️ <strong>1. デスクトップに戻る</strong>",
-        menuCd: "💿 <strong>2. WINTER CD PLAYER を開く</strong>",
-        menuWildwest: "🤠 <strong>3. WINTER WILDWEST ビデオへ</strong>",
-        menuAdmin: "⚙️ 管理者モード切替",
-        notifTitle: "✉️ WINTER からの新しいメッセージ",
-        notifContent: "ウィンター（冬子）のためのレトロなPC空間へようこそ⭐️\nフォルダをクリックして詳細をチェックしてみてください!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
-        notifOk: "確認 (OK)",
-        emptyFolder: "このフォルダは空です",
-        navBack: "⬅ 戻る",
-        navForward: "➡ 進む",
-        prevBtn: "前へ",
-        nextBtn: "次へ",
-        prevPhotoBtn: "前の写真",
-        nextPhotoBtn: "次の写真",
-        downloadPhoto: "写真を保存",
-        downloadMedia: "保存",
-        visitLink: "リンク先へ移動",
-        albumTracks: "曲目リスト:",
-        wildwestTitle: "🤠 WINTER WILDWEST ビデオ",
-        saveModalHint: "📱 画像を長押しして「写真に追加」を選択してください<br>💻 右クリックして「名前を付けて画像を保存」を選択してください"
-      },
-      "ko": {
-        badge: "KR",
-        adminPrompt: "관리자 비밀번호를 입력해주세요:",
-        adminLoginSuccess: "로그인 성공! 관리자 모드가 활성화되었습니다.",
-        adminExit: "관리자 모드가 종료되었습니다.",
-        adminWrongPass: "비밀번호가 일치하지 않습니다!",
-        adminBtnExit: "🔓 관리자 종료",
-        topFolder: "+ 폴더",
-        topWildwest: "🤠 WILDWEST 영상 열기",
-        topCd: "💿 CD 플레이어 열기",
-        topAlbum: "+ 앨범",
-        topVideo: "+ 영상/음악",
-        topImage: "+ 사진",
-        topNote: "+ 메모",
-        topLink: "+ 링크",
-        topPaste: "📌 붙여넣기",
-        topMove: "📦 이동...",
-        topCopy: "📋 복사",
-        topCut: "✂️ 잘라내기",
-        topEdit: "✏️ 편집",
-        topDelete: "❌ 삭제",
-        topWallpaper: "🎨 배경화면",
-        topNotif: "✉️ 알림 설정",
-        topStartCfg: "⭐ 시작 메뉴 설정",
-        topSave: "💾 영구 저장",
-        menuHome: "🖥️ <strong>1. 데스크톱으로 돌아가기</strong>",
-        menuCd: "💿 <strong>2. WINTER CD PLAYER 열기</strong>",
-        menuWildwest: "🤠 <strong>3. WINTER WILDWEST 영상 들어가기</strong>",
-        menuAdmin: "⚙️ 관리자 모드 전환",
-        notifTitle: "✉️ WINTER로부터 온 새 메시지",
-        notifContent: "윈터(김민정)만을 위한 레트로 데스크톱 공간에 오신 것을 환영합니다⭐️\n폴더를 클릭하여 더 많은 정보를 확인해보세요!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
-        notifOk: "확인 (OK)",
-        emptyFolder: "폴더가 비어 있습니다",
-        navBack: "⬅ 뒤로",
-        navForward: "➡ 앞으로",
-        prevBtn: "이전",
-        nextBtn: "다음",
-        prevPhotoBtn: "이전 사진",
-        nextPhotoBtn: "다음 사진",
-        downloadPhoto: "사진 저장",
-        downloadMedia: "다운로드",
-        visitLink: "링크 열기",
-        albumTracks: "트랙 목록:",
-        wildwestTitle: "🤠 WINTER WILDWEST 영상",
-        saveModalHint: "📱 이미지를 길게 눌러「사진에 추가」를 선택하세요<br>💻 마우스 우클릭 후「이미지를 다른 이름으로 저장」을 선택하세요"
-      },
-      "th": {
-        badge: "THA",
-        adminPrompt: "กรุณากรอกรหัสผ่านผู้ดูแลระบบ:",
-        adminLoginSuccess: "เข้าสู่ระบบสำเร็จ! ปลดล็อกโหมดผู้ดูแลระบบแล้ว",
-        adminExit: "ออกจากโหมดผู้ดูแลระบบแล้ว",
-        adminWrongPass: "รหัสผ่านไม่ถูกต้อง!",
-        adminBtnExit: "🔓 ออกจากโหมดผู้ดูแล",
-        topFolder: "+ โฟลเดอร์",
-        topWildwest: "🤠 เปิดวิดีโอ WILDWEST",
-        topCd: "💿 เปิดเครื่องเล่น CD",
-        topAlbum: "+ อัลบั้ม",
-        topVideo: "+ วิดีโอ/เพลง",
-        topImage: "+ รูปภาพ",
-        topNote: "+ โน้ต",
-        topLink: "+ ลิงก์ภายนอก",
-        topPaste: "📌 วาง",
-        topMove: "📦 ย้ายไปที่...",
-        topCopy: "📋 คัดลอก",
-        topCut: "✂️ ตัด",
-        topEdit: "✏️ แก้ไข",
-        topDelete: "❌ ลบ",
-        topWallpaper: "🎨 ภาพพื้นหลัง",
-        topNotif: "✉️ ตั้งค่าการแจ้งเตือน",
-        topStartCfg: "⭐ ตั้งค่าเมนูเริ่ม",
-        topSave: "💾 บันทึกถาวร",
-        menuHome: "🖥️ <strong>1. กลับสู่หน้าจอหลัก</strong>",
-        menuCd: "💿 <strong>2. เปิด WINTER CD PLAYER</strong>",
-        menuWildwest: "🤠 <strong>3. เข้าสู่วิดีโอ WINTER WILDWEST</strong>",
-        menuAdmin: "⚙️ สลับโหมดผู้ดูแล",
-        notifTitle: "✉️ ข้อความใหม่จาก WINTER",
-        notifContent: "ยินดีต้อนรับสู่พื้นที่เดสก์ท็อปสุดพิเศษของวินเทอร์ (คิมมินจอง)⭐️\nคลิกโฟลเดอร์เพื่อดูข้อมูลเพิ่มเติมได้เลย!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!",
-        notifOk: "รับทราบ (OK)",
-        emptyFolder: "โฟลเดอร์นี้ว่างเปล่า",
-        navBack: "⬅ ย้อนกลับ",
-        navForward: "➡ ไปข้างหน้า",
-        prevBtn: "ก่อนหน้า",
-        nextBtn: "ถัดไป",
-        prevPhotoBtn: "รูปก่อนหน้า",
-        nextPhotoBtn: "รูปถัดไป",
-        downloadPhoto: "บันทึกรูปภาพ",
-        downloadMedia: "ดาวน์โหลด",
-        visitLink: "เปิดลิงก์ (Visit Site)",
-        albumTracks: "รายชื่อเพลง:",
-        wildwestTitle: "🤠 WINTER WILDWEST วิดีโอ",
-        saveModalHint: "📱 แตะรูปภาพค้างไว้เพื่อ「บันทึกรูปภาพ」<br>💻 คลิกขวาที่รูปภาพเพื่อเลือก「บันทึกรูปภาพเป็น」"
       }
     };
 
     let currentLang = localStorage.getItem("winter_desktop_lang") || "zh-TW";
+    if (currentLang !== "zh-TW" && currentLang !== "en") currentLang = "zh-TW";
 
     function getItemDisplayName(item) {
       if (ITEM_NAMES_I18N[item.id] && ITEM_NAMES_I18N[item.id][currentLang]) {
@@ -1003,8 +823,9 @@
       return item.content || "";
     }
 
+    // 全域配置：更新背景圖片為 assets 資料夾相對路徑、移除重疊與多餘設定
     const MASTER_CONFIG = {
-      "wallpaper": "https://lh3.googleusercontent.com/d/1PGz8beXPyyJavuXhTpdK5loQBuqHhnX5",
+      "wallpaper": "assets/background/winter_bday_background.jpg",
       "notification": {
         "enabled": true,
         "delay": 3,
@@ -1013,8 +834,6 @@
         "content": "歡迎來到專屬於金旼炡WINTER的電腦空間⭐️\n點擊資料夾查看更多資訊!!\n\nWelcome to WINTER's computer space⭐️\nClick the folder to see more information!!"
       },
       "startMenuVisibleIds": [
-        "winter_wildwest_entry",
-        "winter_cd_standalone_entry",
         "l1",
         "folder_1789230844971",
         "folder_1789230959703",
@@ -1036,11 +855,11 @@
           "id": "winter_cd_standalone_entry",
           "parentId": null,
           "type": "cd_standalone",
-          "name": "Winter Playlist",
+          "name": "WINTER PLAYLIST",
           "iconType": "cover",
           "icon": "https://win98icons.alexmeub.com/icons/png/cd_drive-5.png",
           "coverBadge": "https://lh3.googleusercontent.com/d/1R3m2fbip6zXRkHx0ujIQtW4VcoOkDnax",
-          "url": "https://u11150003-arch.github.io/winter-cd-player/",
+          "url": "https://winterplaylist.netlify.app",
           "pos": { "x": 6, "y": 435 }
         },
         {
@@ -1065,7 +884,7 @@
           "id": "l1",
           "parentId": null,
           "type": "link",
-          "name": "生咖預約",
+          "name": "生咖網站",
           "icon": W_FORM_ICON,
           "url": "https://wintertst0101.netlify.app/",
           "pos": { "x": 6, "y": 262 }
@@ -1143,7 +962,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_dual_notif_fixed_v2026_45";
+    const CONFIG_VERSION = "winter_desktop_clean_link_v2026_50";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1199,7 +1018,6 @@
       setTxt('prevMediaTxt', t.prevBtn);
       setTxt('nextMediaTxt', t.nextBtn);
       setTxt('downloadMediaTxt', t.downloadMedia);
-      setTxt('linkBtnText', t.visitLink);
       setTxt('albumTracksListLabel', t.albumTracks);
       setTxt('wildwestWinTitle', t.wildwestTitle);
 
@@ -1241,21 +1059,6 @@
       const iframe = document.getElementById('embeddedWildwestIframe');
       iframe.src = '';
       closeWindow('embedded-wildwest-win', e);
-    }
-
-    function openWinterCdPlayerWindow() {
-      const item = itemsData.find(i => i.id === "winter_cd_standalone_entry");
-      const targetUrl = (item && item.url) ? item.url : "https://u11150003-arch.github.io/winter-cd-player/";
-      const iframe = document.getElementById('embeddedCdIframe');
-      if (iframe.src !== targetUrl) iframe.src = targetUrl;
-      openWindow('embedded-cd-win');
-    }
-
-    function closeEmbeddedCdWindow(e) {
-      if (e) e.stopPropagation();
-      const iframe = document.getElementById('embeddedCdIframe');
-      iframe.src = '';
-      closeWindow('embedded-cd-win', e);
     }
 
     function extractDriveId(url) {
@@ -1302,7 +1105,6 @@
       });
       closeUniversalPlayer();
       closeAlbumWindow();
-      closeEmbeddedCdWindow();
       closeEmbeddedWildwestWindow();
       closePhotoSaveModal();
       currentOpenFolderId = null;
@@ -1603,7 +1405,8 @@
       if (item.type === 'wildwest_standalone') {
         openWinterWildwestWindow();
       } else if (item.type === 'cd_standalone') {
-        openWinterCdPlayerWindow();
+        // 直接跳轉 WINTER PLAYLIST
+        window.open('https://winterplaylist.netlify.app', '_blank');
       } else if (item.type === 'folder') {
         openFolderWithHistory(item.id, getItemDisplayName(item));
       } else if (item.type === 'album') {
@@ -1615,10 +1418,8 @@
       } else if (item.type === 'note') {
         alert(`【${getItemDisplayName(item)}】\n\n${getItemDisplayContent(item)}`);
       } else if (item.type === 'link') {
-        document.getElementById('linkTitle').innerText = `🔗 ${getItemDisplayName(item)}`;
-        document.getElementById('linkText').innerText = `即將前往：${item.url}`;
-        document.getElementById('linkBtn').href = item.url;
-        openWindow('link-win');
+        // 不跳轉中介確認視窗，直接開啟網址
+        if (item.url) window.open(item.url, '_blank');
       }
     }
 
@@ -1661,7 +1462,10 @@
       box.innerHTML = '';
       const currentIds = currentConfig.startMenuVisibleIds || [];
 
-      itemsData.forEach(item => {
+      // 排除前三個固定導覽項目，避免選單內部出現重複項目
+      const customCandidateItems = itemsData.filter(i => i.id !== 'winter_wildwest_entry' && i.id !== 'winter_cd_standalone_entry');
+
+      customCandidateItems.forEach(item => {
         const row = document.createElement('label');
         row.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;";
         const isChecked = currentIds.includes(item.id) ? 'checked' : '';
@@ -1833,7 +1637,7 @@
         win.style.top = '50%';
         win.style.left = '50%';
         win.style.transform = 'translate(-50%, -50%)';
-        if (id === 'embedded-cd-win' || id === 'embedded-wildwest-win') {
+        if (id === 'embedded-wildwest-win') {
           win.style.height = '82vh';
           win.style.width = '95vw';
         }
@@ -2140,7 +1944,7 @@
       renderActiveViewerPhoto();
     }
 
-    /* 原地長按儲存圖片浮層觸發 (依網頁命名顯示，徹底不外跳網頁) */
+    /* 原地長按儲存圖片浮層觸發 (依網頁命名顯示，不跳轉外站) */
     function triggerPhotoSaveModal() {
       if (currentPhotoIndex < 0 || currentPhotoIndex >= activePhotoPlaylist.length) return;
       const item = activePhotoPlaylist[currentPhotoIndex];
@@ -2332,108 +2136,4 @@
       const rawUrl = prompt("請輸入桌布圖片網址（支援 Google 雲端共享連結）：", "");
       if (rawUrl) {
         const finalUrl = autoFormatMediaUrl(rawUrl, 'wallpaper');
-        document.body.style.backgroundImage = `url('${finalUrl}')`;
-        currentConfig.wallpaper = finalUrl;
-        saveState();
-      }
-    }
-
-    const viewport = document.getElementById('topActionsViewport');
-    const track = document.getElementById('scrollbarTrack');
-    const thumb = document.getElementById('scrollbarThumb');
-
-    function updateScrollBarUI() {
-      if (!isAdmin || !viewport || !track || !thumb) return;
-      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-      if (maxScroll <= 0) {
-        thumb.style.width = '100%'; thumb.style.left = '0px'; return;
-      }
-      const trackWidth = track.clientWidth;
-      const thumbWidth = Math.max(30, (viewport.clientWidth / viewport.scrollWidth) * trackWidth);
-      thumb.style.width = thumbWidth + 'px';
-      const scrollRatio = viewport.scrollLeft / maxScroll;
-      thumb.style.left = (scrollRatio * (trackWidth - thumbWidth)) + 'px';
-    }
-
-    function scrollAdminBar(amount) {
-      if (!viewport) return;
-      viewport.scrollLeft += amount;
-      updateScrollBarUI();
-    }
-
-    function handleTrackClick(e) {
-      if (e.target === thumb) return;
-      const rect = track.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const thumbWidth = thumb.offsetWidth;
-      const trackWidth = track.clientWidth;
-      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-      const newScrollLeft = ((clickX - thumbWidth / 2) / (trackWidth - thumbWidth)) * maxScroll;
-      viewport.scrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
-      updateScrollBarUI();
-    }
-
-    if (thumb) {
-      let isDraggingThumb = false, thumbStartX = 0, thumbStartLeft = 0;
-      thumb.addEventListener('mousedown', (e) => {
-        isDraggingThumb = true;
-        thumbStartX = e.clientX;
-        thumbStartLeft = parseFloat(thumb.style.left) || 0;
-        document.body.style.userSelect = 'none';
-
-        function onMouseMove(moveEvent) {
-          if (!isDraggingThumb) return;
-          const dx = moveEvent.clientX - thumbStartX;
-          const trackWidth = track.clientWidth;
-          const thumbWidth = thumb.offsetWidth;
-          const maxThumbLeft = trackWidth - thumbWidth;
-          const newThumbLeft = Math.max(0, Math.min(maxThumbLeft, thumbStartLeft + dx));
-          thumb.style.left = newThumbLeft + 'px';
-          viewport.scrollLeft = (newThumbLeft / maxThumbLeft) * (viewport.scrollWidth - viewport.clientWidth);
-        }
-        function onMouseUp() {
-          isDraggingThumb = false;
-          document.body.style.userSelect = '';
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-        }
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-      });
-    }
-
-    if (viewport) {
-      viewport.addEventListener('wheel', (e) => {
-        if (!isAdmin) return;
-        if (e.deltaY !== 0) {
-          viewport.scrollLeft += e.deltaY;
-          updateScrollBarUI();
-          e.preventDefault();
-        }
-      }, { passive: false });
-    }
-
-    window.addEventListener('keydown', (e) => {
-      const pWin = document.getElementById('photo-viewer-win');
-      if (pWin && pWin.style.display === 'block') {
-        if (e.key === 'ArrowLeft') switchViewerPhoto(-1);
-        if (e.key === 'ArrowRight') switchViewerPhoto(1);
-      }
-    });
-
-    window.addEventListener('resize', updateScrollBarUI);
-
-    if (currentConfig.wallpaper) {
-      document.body.style.backgroundImage = `url('${currentConfig.wallpaper}')`;
-    }
-
-    renderDesktop();
-    renderStartMenu();
-
-    window.addEventListener('DOMContentLoaded', () => {
-      applyLanguageUI();
-      checkAndTriggerNotification();
-    });
-  </script>
-</body>
-</html>
+        document

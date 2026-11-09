@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="WINTER Bday desktop">
-  <meta name="theme-color" content="#42586e">
+  <meta name="theme-color" content="#c0c0c0">
 
   <meta property="og:title" content="2027 WINTER Bday desktop">
   <meta property="og:description" content="A retro desktop space for WINTER">
@@ -33,42 +33,54 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
+      /* 頂部灰色狀態列高度（適應各款手機瀏海與動態島） */
+      --topbar-h: calc(26px + var(--safe-top));
       --taskbar-h: calc(36px + var(--safe-bottom));
       --header-bg-gradient: linear-gradient(90deg, #42586e, #5a758e);
     }
 
-    html {
-      width: 100vw;
-      height: 100%;
-      height: -webkit-fill-available;
-      overflow: hidden;
-      background-color: #000;
-    }
-
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       width: 100vw;
       height: 100vh;
       height: 100dvh;
-      min-height: -webkit-fill-available;
       overflow: hidden;
-      background-color: #000;
+      background-color: #c0c0c0;
       background-image: url('assets/background/winter_bday_background.jpg');
       background-repeat: no-repeat;
-      background-position: center top;
+      background-position: center center;
       background-size: cover;
-      background-attachment: fixed;
       font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
     }
     
     .icon-wrapper, .top-bar-wrapper button, .folder-nav-bar button, .start-menu li, .taskbar button, a, .title-bar-controls button, .lang-globe-btn {
       cursor: var(--star-cursor) !important;
+    }
+
+    /* 手機頂部與底部工作列風格一致的灰色系統列 */
+    .system-top-strip {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--topbar-h);
+      background: #c0c0c0;
+      border-bottom: 2px solid #808080;
+      z-index: 9998;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 10px 4px 10px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #333;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    @media (max-width: 768px) {
+      .system-top-strip {
+        display: flex;
+      }
     }
 
     /* 全域視窗標題列低彩度莫蘭迪灰藍調 */
@@ -99,6 +111,7 @@
     }
     body.admin-mode .top-bar-wrapper {
       display: flex;
+      top: max(6px, calc(var(--topbar-h) + 2px));
     }
 
     .top-actions-viewport {
@@ -130,14 +143,19 @@
 
     .desktop {
       position: absolute;
-      top: max(16px, var(--safe-top));
+      top: 16px;
       left: max(0px, var(--safe-left));
       right: max(6px, var(--safe-right));
       bottom: var(--taskbar-h);
       overflow: hidden;
     }
+    @media (max-width: 768px) {
+      .desktop {
+        top: calc(var(--topbar-h) + 6px);
+      }
+    }
     body.admin-mode .desktop {
-      top: calc(max(6px, var(--safe-top)) + 48px);
+      top: calc(var(--topbar-h) + 52px);
     }
 
     .icon-wrapper {
@@ -206,27 +224,45 @@
     }
 
     .win-modal.maximized {
-      top: var(--safe-top) !important; left: 0 !important; transform: none !important;
+      top: var(--topbar-h) !important; left: 0 !important; transform: none !important;
       width: 100vw !important; max-width: 100vw !important;
-      height: calc(100dvh - var(--taskbar-h) - var(--safe-top)) !important;
+      height: calc(100dvh - var(--taskbar-h) - var(--topbar-h)) !important;
       z-index: 1500 !important; resize: none !important;
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
-    /* 手機與直向螢幕自適應：視窗靠上展開，大幅解放垂直瀏覽空間 */
+    /* 手機直向：資料夾/視訊/相簿等視窗靠上展開，釋放垂直空間 */
     @media (max-width: 768px) {
-      .win-modal:not(.maximized) {
-        top: calc(var(--safe-top) + 8px) !important;
+      .win-modal:not(.maximized):not(#notification-modal-win) {
+        top: calc(var(--topbar-h) + 8px) !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 96vw !important;
         max-width: 96vw !important;
-        max-height: calc(100dvh - var(--taskbar-h) - var(--safe-top) - 16px) !important;
+        max-height: calc(100dvh - var(--taskbar-h) - var(--topbar-h) - 16px) !important;
         resize: none !important;
       }
-      .win-modal:not(.maximized) .window-body {
-        max-height: calc(100dvh - var(--taskbar-h) - var(--safe-top) - 48px) !important;
+      .win-modal:not(.maximized):not(#notification-modal-win) .window-body {
+        max-height: calc(100dvh - var(--taskbar-h) - var(--topbar-h) - 48px) !important;
       }
+    }
+
+    /* 訊息通知視窗：恢復小巧適中的尺寸，不佔滿手機螢幕 */
+    #notification-modal-win {
+      position: fixed;
+      display: none;
+      width: 320px !important;
+      max-width: 90vw !important;
+      min-width: 260px !important;
+      min-height: auto !important;
+      height: auto !important;
+      z-index: 8000;
+      box-shadow: 3px 3px 14px rgba(0,0,0,0.7);
+      background: #c0c0c0;
+    }
+    #notification-modal-win .window-body {
+      height: auto !important;
+      max-height: 70vh !important;
     }
 
     /* 視訊視窗自適應 */
@@ -239,8 +275,8 @@
     @media (max-width: 768px) {
       #embedded-wildwest-win {
         width: 96vw;
-        height: calc(100dvh - var(--taskbar-h) - var(--safe-top) - 16px);
-        max-height: calc(100dvh - var(--taskbar-h) - var(--safe-top) - 16px);
+        height: calc(100dvh - var(--taskbar-h) - var(--topbar-h) - 16px);
+        max-height: calc(100dvh - var(--taskbar-h) - var(--topbar-h) - 16px);
       }
     }
     .embedded-player-container {
@@ -275,7 +311,6 @@
       pointer-events: none;
     }
 
-    /* 多媒體工具列 */
     .media-toolbar {
       display: flex; justify-content: space-between; align-items: center;
       margin-top: 6px; padding: 4px; background: #c0c0c0; border: 1px outset #fff; flex-wrap: wrap; gap: 4px;
@@ -366,16 +401,6 @@
     .playlist-box li:hover { background: #42586e; color: #fff; }
     .playlist-box li.active { background: #42586e; color: #fff; font-weight: bold; }
 
-    #notification-modal-win {
-      position: fixed;
-      display: none;
-      width: 330px;
-      max-width: 90vw;
-      z-index: 8000;
-      box-shadow: 3px 3px 14px rgba(0,0,0,0.7);
-      background: #c0c0c0;
-    }
-
     #photo-save-modal {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -420,6 +445,12 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
+  <!-- 手機專屬：頂部復古灰色系統條（消弭瀏覽器黑框並與下方工作列完美呼應） -->
+  <div class="system-top-strip">
+    <span>🖥️ WINTER OS</span>
+    <span id="topClockDisplay">12:00</span>
+  </div>
+
   <!-- 頂部管理工具列 -->
   <div class="top-bar-wrapper" id="topBarWrapper">
     <div class="top-actions-viewport" id="topActionsViewport">
@@ -461,7 +492,7 @@
 
   <div class="desktop" id="desktopContainer"></div>
 
-  <!-- 彈出型訊息通知視窗 -->
+  <!-- 彈出型訊息通知視窗 (尺寸維持適中) -->
   <div id="notification-modal-win" class="window win-modal" onclick="event.stopPropagation()">
     <div class="title-bar" onmousedown="dragElement(this.parentElement, event)">
       <div class="title-bar-text" id="notifTitleDisplay">✉️ 來自 WINTER 的新訊息</div>
@@ -471,8 +502,8 @@
         <button type="button" onmousedown="event.stopPropagation()" aria-label="Close" onclick="closeNotificationWindow(event)" title="關閉"></button>
       </div>
     </div>
-    <div class="window-body" style="padding: 12px; font-size: 12px; line-height: 1.6;">
-      <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:12px;">
+    <div class="window-body" style="padding: 10px; font-size: 12px; line-height: 1.5;">
+      <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;">
         <img src="https://win98icons.alexmeub.com/icons/png/envelope_closed-0.png" width="32" height="32" style="flex-shrink:0;">
         <div id="notifContentDisplay" style="white-space: pre-wrap; word-break: break-word; flex:1;"></div>
       </div>
@@ -1041,7 +1072,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_clean_wildwest_v2026_81";
+    const CONFIG_VERSION = "winter_desktop_clean_wildwest_v2026_82";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1056,6 +1087,16 @@
     let activeMediaPlaylist = [];
     let currentMediaIndex = -1;
     let notifAutoCloseTimer = null;
+
+    function updateTopClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const clockEl = document.getElementById('topClockDisplay');
+      if (clockEl) clockEl.innerText = `${hrs}:${mins}`;
+    }
+    setInterval(updateTopClock, 1000);
+    updateTopClock();
 
     function applyLanguageUI() {
       const t = I18N[currentLang] || I18N["zh-TW"];
@@ -1697,8 +1738,14 @@
       const isMobile = window.innerWidth <= 768;
 
       if (!win.classList.contains('maximized') && !windowRestoreBounds[id]) {
-        if (isMobile) {
-          win.style.top = 'calc(var(--safe-top) + 8px)';
+        if (id === 'notification-modal-win') {
+          // 訊息視窗尺寸維持預設，垂直水平置中
+          win.style.top = isMobile ? '35%' : '50%';
+          win.style.left = '50%';
+          win.style.transform = 'translate(-50%, -50%)';
+        } else if (isMobile) {
+          // 一般資料夾/視訊/相簿等：靠頂部展開
+          win.style.top = 'calc(var(--topbar-h) + 8px)';
           win.style.left = '50%';
           win.style.transform = 'translateX(-50%)';
         } else {
@@ -1774,7 +1821,7 @@
           win.style.transform = prev.transform || 'none';
         } else {
           if (isMobile) {
-            win.style.top = 'calc(var(--safe-top) + 8px)';
+            win.style.top = 'calc(var(--topbar-h) + 8px)';
             win.style.left = '50%';
             win.style.transform = 'translateX(-50%)';
             win.style.width = '96vw';
@@ -2164,10 +2211,10 @@
       notifWin.style.zIndex = ++highestZ;
 
       if (!windowRestoreBounds['notification-modal-win']) {
-        notifWin.style.top = 'calc(var(--safe-top) + 65px)';
-        notifWin.style.right = '16px';
-        notifWin.style.left = 'auto';
-        notifWin.style.transform = 'none';
+        const isMobile = window.innerWidth <= 768;
+        notifWin.style.top = isMobile ? '35%' : '50%';
+        notifWin.style.left = '50%';
+        notifWin.style.transform = 'translate(-50%, -50%)';
       }
 
       delete minimizedWindows['notification-modal-win'];

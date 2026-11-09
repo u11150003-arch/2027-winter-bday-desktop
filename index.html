@@ -33,10 +33,21 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
-      /* 頂部灰色狀態列高度（適應各款手機瀏海與動態島） */
+      
+      /* 預設頂部系統條高度 (Chrome & 電腦版) */
       --topbar-h: calc(26px + var(--safe-top));
       --taskbar-h: calc(36px + var(--safe-bottom));
       --header-bg-gradient: linear-gradient(90deg, #42586e, #5a758e);
+    }
+
+    /* iOS Safari 專屬微調：將頂部灰條上移緊縮，減少佔比 */
+    @supports (-webkit-touch-callout: none) {
+      :root {
+        --topbar-h: calc(16px + var(--safe-top));
+      }
+      .system-top-strip {
+        padding-bottom: 2px !important;
+      }
     }
 
     html, body {
@@ -58,9 +69,9 @@
       cursor: var(--star-cursor) !important;
     }
 
-    /* 手機頂部與底部工作列風格一致的灰色系統列 */
+    /* 電腦與手機全域頂部灰色系統條 */
     .system-top-strip {
-      display: none;
+      display: flex;
       position: fixed;
       top: 0;
       left: 0;
@@ -76,11 +87,6 @@
       font-weight: bold;
       color: #333;
       box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-    @media (max-width: 768px) {
-      .system-top-strip {
-        display: flex;
-      }
     }
 
     /* 全域視窗標題列低彩度莫蘭迪灰藍調 */
@@ -111,7 +117,7 @@
     }
     body.admin-mode .top-bar-wrapper {
       display: flex;
-      top: max(6px, calc(var(--topbar-h) + 2px));
+      top: calc(var(--topbar-h) + 4px);
     }
 
     .top-actions-viewport {
@@ -143,19 +149,14 @@
 
     .desktop {
       position: absolute;
-      top: 16px;
+      top: calc(var(--topbar-h) + 8px);
       left: max(0px, var(--safe-left));
       right: max(6px, var(--safe-right));
       bottom: var(--taskbar-h);
       overflow: hidden;
     }
-    @media (max-width: 768px) {
-      .desktop {
-        top: calc(var(--topbar-h) + 6px);
-      }
-    }
     body.admin-mode .desktop {
-      top: calc(var(--topbar-h) + 52px);
+      top: calc(var(--topbar-h) + 54px);
     }
 
     .icon-wrapper {
@@ -231,7 +232,7 @@
     }
     .win-modal.maximized .title-bar { cursor: default; }
 
-    /* 手機直向：資料夾/視訊/相簿等視窗靠上展開，釋放垂直空間 */
+    /* 手機直向：資料夾/視訊/相簿靠上展開 */
     @media (max-width: 768px) {
       .win-modal:not(.maximized):not(#notification-modal-win) {
         top: calc(var(--topbar-h) + 8px) !important;
@@ -247,7 +248,7 @@
       }
     }
 
-    /* 訊息通知視窗：恢復小巧適中的尺寸，不佔滿手機螢幕 */
+    /* 訊息通知視窗維持經典適中尺寸 */
     #notification-modal-win {
       position: fixed;
       display: none;
@@ -445,9 +446,9 @@
 </head>
 <body onclick="handleGlobalClick(event)">
 
-  <!-- 手機專屬：頂部復古灰色系統條（消弭瀏覽器黑框並與下方工作列完美呼應） -->
+  <!-- 頂部經典復古系統列（電腦與手機均顯示，手機 Safari 自適應上移緊湊） -->
   <div class="system-top-strip">
-    <span>🖥️ WINTER OS</span>
+    <span>🖥️ Winter XP</span>
     <span id="topClockDisplay">12:00</span>
   </div>
 
@@ -1072,7 +1073,7 @@
       ]
     };
 
-    const CONFIG_VERSION = "winter_desktop_clean_wildwest_v2026_82";
+    const CONFIG_VERSION = "winter_desktop_clean_wildwest_v2026_83";
     if (localStorage.getItem("winter_version") !== CONFIG_VERSION) {
       localStorage.setItem("winter_version", CONFIG_VERSION);
       localStorage.setItem("winter_desktop_config", JSON.stringify(MASTER_CONFIG));
@@ -1739,12 +1740,10 @@
 
       if (!win.classList.contains('maximized') && !windowRestoreBounds[id]) {
         if (id === 'notification-modal-win') {
-          // 訊息視窗尺寸維持預設，垂直水平置中
           win.style.top = isMobile ? '35%' : '50%';
           win.style.left = '50%';
           win.style.transform = 'translate(-50%, -50%)';
         } else if (isMobile) {
-          // 一般資料夾/視訊/相簿等：靠頂部展開
           win.style.top = 'calc(var(--topbar-h) + 8px)';
           win.style.left = '50%';
           win.style.transform = 'translateX(-50%)';
